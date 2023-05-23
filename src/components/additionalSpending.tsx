@@ -10,7 +10,9 @@ interface DataTableItem {
 const AdditionalSpending: FC = () => {
     const [text, setText] = useState('');
     const [currency, setCurrency] = useState(0);
-    const [dataTable, setDataTable] = useState<DataTableItem[]>([]);
+    const [dataTable, setDataTable] = useState<DataTableItem[]>(
+        [],
+    );
 
     const handleAddButtonClick = () => {
         const newItem: DataTableItem = { text, currency };
@@ -31,7 +33,9 @@ const AdditionalSpending: FC = () => {
                 <input
                     type="number"
                     value={currency}
-                    onChange={(e) => setCurrency(parseFloat(e.target.value))}
+                    onChange={(e) =>
+                        setCurrency(parseFloat(e.target.value))
+                    }
                     className="mr-2 p-2 border text-white dark:text-black"
                 />
                 <button
@@ -44,16 +48,24 @@ const AdditionalSpending: FC = () => {
             <table className="w-full">
                 <thead>
                     <tr>
-                        <th className="w-1/2 text-left">Text</th>
-                        <th className="w-1/2 text-left">Currency</th>
+                        <th className="w-1/2 text-left">
+                            Text
+                        </th>
+                        <th className="w-1/2 text-left">
+                            Currency
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     {dataTable.map((item, index) => (
                         <tr key={index}>
-                            <td className="w-1/2">{item.text}</td>
                             <td className="w-1/2">
-                                {convertNumberToCurrencyString(item.currency)}
+                                {item.text}
+                            </td>
+                            <td className="w-1/2">
+                                {convertNumberToCurrencyString(
+                                    item.currency,
+                                )}
                             </td>
                         </tr>
                     ))}

@@ -8,10 +8,16 @@ export const metadata = {
     description: 'Rae Budget App for tracking pay vs spending',
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+    children,
+}: {
+    children: ReactNode;
+}) {
     return (
         <html lang="en">
-            <body className={montserrat.className}>{children}</body>
+            <body className={montserrat.className}>
+                {children}
+            </body>
         </html>
     );
 }
