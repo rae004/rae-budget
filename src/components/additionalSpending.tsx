@@ -1,8 +1,9 @@
 'use client';
 import { FC, useState } from 'react';
 import convertNumberToCurrencyString from '@/lib/convertNumberToCurrencyString';
+import TwoColumnDataTableTextAndCurrency from '@/components/twoColumnDataTableTextAndCurrency';
 
-interface DataTableItem {
+export interface DataTableItem {
     text: string;
     currency: number;
 }
@@ -14,6 +15,15 @@ const AdditionalSpending: FC = () => {
         [],
     );
 
+    const totalAdditionalSpending = dataTable.reduce(
+        (total, item) => {
+            total += item.currency;
+            return total;
+        },
+        0,
+    );
+    console.log(totalAdditionalSpending);
+
     const handleAddButtonClick = () => {
         const newItem: DataTableItem = { text, currency };
         setDataTable([...dataTable, newItem]);
@@ -23,12 +33,13 @@ const AdditionalSpending: FC = () => {
 
     return (
         <div className="container mx-auto">
-            <div className="w-full flex justify-center items-center mb-4">
+            <div className="w-full flex justify-start items-start mb-4">
                 <input
                     type="text"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    className="mr-2 p-2 border text-white dark:text-black"
+                    className="mr-2 p-2 border text-white dark:text-black w-full"
+                    placeholder={'Name'}
                 />
                 <input
                     type="number"
@@ -36,7 +47,7 @@ const AdditionalSpending: FC = () => {
                     onChange={(e) =>
                         setCurrency(parseFloat(e.target.value))
                     }
-                    className="mr-2 p-2 border text-white dark:text-black"
+                    className="mr-2 p-2 border text-white dark:text-black w-5/6"
                 />
                 <button
                     onClick={handleAddButtonClick}
@@ -45,32 +56,10 @@ const AdditionalSpending: FC = () => {
                     Add
                 </button>
             </div>
-            <table className="w-full">
-                <thead>
-                    <tr>
-                        <th className="w-1/2 text-left">
-                            Text
-                        </th>
-                        <th className="w-1/2 text-left">
-                            Currency
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {dataTable.map((item, index) => (
-                        <tr key={index}>
-                            <td className="w-1/2">
-                                {item.text}
-                            </td>
-                            <td className="w-1/2">
-                                {convertNumberToCurrencyString(
-                                    item.currency,
-                                )}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+
+            <TwoColumnDataTableTextAndCurrency
+                dataTable={dataTable}
+            />
         </div>
     );
 };
