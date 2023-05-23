@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import 'primereact/resources/primereact.min.css';
 import '@/app/globals.css';
 import { montserrat } from '@/app/fonts';
 
