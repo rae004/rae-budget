@@ -1,11 +1,12 @@
 import convertNumberToCurrencyString from '@/lib/convertNumberToCurrencyString';
 import { DataTableItem } from '@/components/additionalSpending';
+import { FC } from 'react';
 
 type Props = { dataTable: DataTableItem[] };
 
-const TwoColumnDataTableTextAndCurrency = ({
+const TwoColumnDataTableTextAndCurrency: FC<Props> = ({
     ...props
-}: Props) => {
+}) => {
     const { dataTable } = props;
     return (
         <table className="w-full">

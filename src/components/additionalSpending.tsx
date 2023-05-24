@@ -1,7 +1,7 @@
 'use client';
-import { FC, useState } from 'react';
-import convertNumberToCurrencyString from '@/lib/convertNumberToCurrencyString';
+import { FC, useContext, useEffect, useState } from 'react';
 import TwoColumnDataTableTextAndCurrency from '@/components/twoColumnDataTableTextAndCurrency';
+import { GlobalContext } from '@/lib/globalContext';
 
 export interface DataTableItem {
     text: string;
@@ -9,20 +9,19 @@ export interface DataTableItem {
 }
 
 const AdditionalSpending: FC = () => {
+    const { setGlobalState } = useContext(GlobalContext);
     const [text, setText] = useState('');
     const [currency, setCurrency] = useState(0);
     const [dataTable, setDataTable] = useState<DataTableItem[]>(
         [],
     );
 
-    const totalAdditionalSpending = dataTable.reduce(
-        (total, item) => {
+    const getTotalAdditionalSpending = () => {
+        return dataTable.reduce((total, item) => {
             total += item.currency;
             return total;
-        },
-        0,
-    );
-    console.log(totalAdditionalSpending);
+        }, 0);
+    };
 
     const handleAddButtonClick = () => {
         const newItem: DataTableItem = { text, currency };
@@ -30,6 +29,15 @@ const AdditionalSpending: FC = () => {
         setText('');
         setCurrency(0);
     };
+
+    // update global state total additional spending when dataTable changes
+    useEffect(() => {
+        const totalAdditionalSpending =
+            getTotalAdditionalSpending();
+        setGlobalState({
+            totalAdditionalSpending,
+        });
+    }, [dataTable, getTotalAdditionalSpending, setGlobalState]);
 
     return (
         <div className="container mx-auto">

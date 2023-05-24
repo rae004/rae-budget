@@ -8,11 +8,12 @@ export const metadata = {
     description: 'Rae Budget App for tracking pay vs spending',
 };
 
+type LayoutProps = {
+    children: ReactNode;
+};
 export default function RootLayout({
     children,
-}: {
-    children: ReactNode;
-}) {
+}: LayoutProps): ReactNode {
     return (
         <html lang="en">
             <body className={montserrat.className}>
