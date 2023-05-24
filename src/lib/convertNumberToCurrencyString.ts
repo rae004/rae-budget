@@ -1,3 +1,7 @@
+const countDecimals = (number: number): number => {
+    return number.toString().split('.')[1]?.length || 0;
+};
+
 const convertNumberToCurrencyString = (
     number: number,
 ): string => {
@@ -5,11 +9,16 @@ const convertNumberToCurrencyString = (
     const convertedNumber = Math.round(number * 100) / 100;
 
     // check if number has decimal
-    const noChange = number % 1 === 0;
+    if (number % 1 === 0) {
+        return `$${convertedNumber}.00`;
+    }
 
-    return noChange
-        ? `$${convertedNumber}.00`
-        : `$${convertedNumber}`;
+    // check if number has one decimal and add trialing zero
+    if (countDecimals(convertedNumber) === 1) {
+        return `$${convertedNumber}0`;
+    }
+
+    return `$${convertedNumber}`;
 };
 
 export default convertNumberToCurrencyString;

@@ -37,7 +37,7 @@ const AdditionalSpending: FC = () => {
         setGlobalState({
             totalAdditionalSpending,
         });
-    }, [dataTable, getTotalAdditionalSpending, setGlobalState]);
+    }, [dataTable]);
 
     return (
         <div className="container mx-auto">
