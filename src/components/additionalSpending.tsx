@@ -1,7 +1,7 @@
 'use client';
 import { FC, useContext, useEffect, useState } from 'react';
 import TwoColumnDataTableTextAndCurrency from '@/components/twoColumnDataTableTextAndCurrency';
-import { GlobalContext } from '@/lib/globalContext';
+import { AdditionalSpendingContext } from '@/lib/globalContext';
 
 export interface DataTableItem {
     text: string;
@@ -9,7 +9,9 @@ export interface DataTableItem {
 }
 
 const AdditionalSpending: FC = () => {
-    const { setGlobalState } = useContext(GlobalContext);
+    const { setGlobalAdditionalSpendingState } = useContext(
+        AdditionalSpendingContext,
+    );
     const [text, setText] = useState('');
     const [currency, setCurrency] = useState(0);
     const [dataTable, setDataTable] = useState<DataTableItem[]>(
@@ -34,7 +36,7 @@ const AdditionalSpending: FC = () => {
     useEffect(() => {
         const totalAdditionalSpending =
             getTotalAdditionalSpending();
-        setGlobalState({
+        setGlobalAdditionalSpendingState({
             totalAdditionalSpending,
         });
     }, [dataTable]);

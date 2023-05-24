@@ -1,14 +1,18 @@
 import { createContext } from 'react';
 
-export type GlobalState = {
+export type GlobalAdditionalSpendingState = {
     totalAdditionalSpending: number;
+    // totalMonthlyBillsSpending?: number;
 };
 
-export type GlobalProps = {
-    setGlobalState: (state: GlobalState) => void;
-} & GlobalState;
+export type GlobalAdditionalSpendingProps = {
+    setGlobalAdditionalSpendingState: (
+        state: GlobalAdditionalSpendingState,
+    ) => void;
+} & GlobalAdditionalSpendingState;
 
-export const GlobalContext = createContext<GlobalProps>({
-    totalAdditionalSpending: 0,
-    setGlobalState: () => {},
-});
+export const AdditionalSpendingContext =
+    createContext<GlobalAdditionalSpendingProps>({
+        totalAdditionalSpending: 0,
+        setGlobalAdditionalSpendingState: () => {},
+    });
