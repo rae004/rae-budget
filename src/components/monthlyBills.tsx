@@ -9,11 +9,11 @@ import CurrencyInput, {
 } from '@/components/inputs/CurrencyInput';
 import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
-import {
-    AdditionalSpendingContext,
-    GlobalMonthlySpendingState,
-    MonthlySpendingContext,
-} from '@/lib/globalContext';
+import { MonthlySpendingContext } from '@/lib/globalContext';
+import RaeDataTable, {
+    ColumnMeta,
+    RaeDataTableProps,
+} from '@/components/DataTable';
 
 const MonthlyBills = () => {
     const { setGlobalMonthlySpendingState } = useContext(
@@ -24,6 +24,17 @@ const MonthlyBills = () => {
     const [dataTable, setDataTable] = useState<DataTableItem[]>(
         [],
     );
+
+    const columns: ColumnMeta[] = [
+        {
+            field: 'text',
+            header: 'Text',
+        },
+        {
+            field: 'currency',
+            header: 'Amount',
+        },
+    ];
 
     const getTotalMonthlyBillsSpending = () => {
         return dataTable.reduce((total, item) => {
@@ -60,8 +71,14 @@ const MonthlyBills = () => {
         locale: 'en-US',
     };
 
+    const dataTableProps: RaeDataTableProps = {
+        dataTable,
+        columns,
+    };
+
     return (
         <div>
+            <h2>Monthly Bills</h2>
             <div className="flex flex-wrap flex-row gap-3 p-fluid align-items-end">
                 <div className="flex-auto">
                     <label
@@ -88,10 +105,7 @@ const MonthlyBills = () => {
                     />
                 </div>
             </div>
-
-            {/*<TwoColumnDataTableTextAndCurrency*/}
-            {/*    dataTable={dataTable}*/}
-            {/*/>*/}
+            <RaeDataTable {...dataTableProps} />
         </div>
     );
 };

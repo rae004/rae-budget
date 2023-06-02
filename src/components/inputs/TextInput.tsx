@@ -12,10 +12,9 @@ const TextInput = ({ ...props }: TextInputProps) => {
         e: React.ChangeEvent<HTMLInputElement>,
     ) => {
         const value = e.target.value ? e.target.value : '';
-        console.log('our props value:', value);
         props.setText(value);
     };
-    console.log('our props value:', props);
+
     return (
         <InputText
             value={props.value}
