@@ -1,5 +1,5 @@
 import TwoColumnDataTableTextAndCurrency from '@/components/twoColumnDataTableTextAndCurrency';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { DataTableItem } from '@/components/additionalSpending';
 import TextInput, {
     TextInputProps,
@@ -9,26 +9,28 @@ import CurrencyInput, {
 } from '@/components/inputs/CurrencyInput';
 import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
+import {
+    AdditionalSpendingContext,
+    GlobalMonthlySpendingState,
+    MonthlySpendingContext,
+} from '@/lib/globalContext';
 
 const MonthlyBills = () => {
-    // const { setGlobalState } = useContext(GlobalContext);
+    const { setGlobalMonthlySpendingState } = useContext(
+        MonthlySpendingContext,
+    );
     const [text, setText] = useState<string>('');
     const [currency, setCurrency] = useState(0);
     const [dataTable, setDataTable] = useState<DataTableItem[]>(
         [],
     );
 
-    useEffect(
-        () => console.log('our main text: ', text),
-        [text],
-    );
-
-    // const getTotalMonthlyBillsSpending = () => {
-    //     return dataTable.reduce((total, item) => {
-    //         total += item.currency;
-    //         return total;
-    //     }, 0);
-    // };
+    const getTotalMonthlyBillsSpending = () => {
+        return dataTable.reduce((total, item) => {
+            total += item.currency;
+            return total;
+        }, 0);
+    };
 
     const handleAddButtonClick = () => {
         const newItem: DataTableItem = { text, currency };
@@ -37,14 +39,15 @@ const MonthlyBills = () => {
         setCurrency(0);
     };
 
-    // // update global state total additional spending when dataTable changes
-    // useEffect(() => {
-    //     const totalMonthlyBillsSpending =
-    //         getTotalMonthlyBillsSpending();
-    //     setGlobalState({
-    //         totalMonthlyBillsSpending,
-    //     });
-    // }, [dataTable]);
+    // update global state total monthly spending when dataTable changes
+    useEffect(() => {
+        const totalMonthlySpending =
+            getTotalMonthlyBillsSpending();
+        setGlobalMonthlySpendingState({
+            totalMonthlySpending,
+        });
+    }, [dataTable]);
+
     const textProps: TextInputProps = {
         value: text,
         setText,
@@ -79,13 +82,16 @@ const MonthlyBills = () => {
                     <TextInput {...textProps} />
                 </div>
                 <div className="flex-auto">
-                    <SimpleButton label={'Add'} />
+                    <SimpleButton
+                        label={'Add'}
+                        clickHandler={handleAddButtonClick}
+                    />
                 </div>
             </div>
 
-            <TwoColumnDataTableTextAndCurrency
-                dataTable={dataTable}
-            />
+            {/*<TwoColumnDataTableTextAndCurrency*/}
+            {/*    dataTable={dataTable}*/}
+            {/*/>*/}
         </div>
     );
 };
