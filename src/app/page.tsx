@@ -26,18 +26,22 @@ export default function Home(): ReactElement {
         <AdditionalSpendingContext.Provider
             value={globalAdditionalSpendingStateProps}
         >
-            <main className="flex min-h-screen flex-col items-center justify-center p-24">
+            {/*<main className="flex min-h-screen flex-col items-center justify-center p-24">*/}
+            <main>
                 <div className={'w-2/3 text-right'}>
                     Additional Spending:{' '}
                     {convertNumberToCurrencyString(
                         additionalSpending.totalAdditionalSpending,
                     )}
                 </div>
-                <div className={'w-2/3 flex flex-row m-2'}>
-                    <span className={'w-1/2 mr-4'}>
+                {/*<div className={'w-2/3 flex flex-row m-2'}>*/}
+                <div>
+                    {/*<span className={'w-1/2 mr-4'}>*/}
+                    <span>
                         <MonthlyBills />
                     </span>
-                    <span className={'w-1/2 mr-2'}>
+                    {/*<span className={'w-1/2 mr-2'}>*/}
+                    <span>
                         <AdditionalSpending />
                     </span>
                 </div>

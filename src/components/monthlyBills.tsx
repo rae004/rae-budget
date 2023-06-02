@@ -1,13 +1,26 @@
 import TwoColumnDataTableTextAndCurrency from '@/components/twoColumnDataTableTextAndCurrency';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DataTableItem } from '@/components/additionalSpending';
+import TextInput, {
+    TextInputProps,
+} from '@/components/inputs/TextInput';
+import CurrencyInput, {
+    CurrencyInputProps,
+} from '@/components/inputs/CurrencyInput';
+import 'primereact/resources/primereact.min.css';
+import SimpleButton from '@/components/buttons/SimpleButton';
 
 const MonthlyBills = () => {
     // const { setGlobalState } = useContext(GlobalContext);
-    const [text, setText] = useState('');
+    const [text, setText] = useState<string>('');
     const [currency, setCurrency] = useState(0);
     const [dataTable, setDataTable] = useState<DataTableItem[]>(
         [],
+    );
+
+    useEffect(
+        () => console.log('our main text: ', text),
+        [text],
     );
 
     // const getTotalMonthlyBillsSpending = () => {
@@ -32,31 +45,42 @@ const MonthlyBills = () => {
     //         totalMonthlyBillsSpending,
     //     });
     // }, [dataTable]);
+    const textProps: TextInputProps = {
+        value: text,
+        setText,
+    };
+    const currencyProps: CurrencyInputProps = {
+        value: currency,
+        setCurrency,
+        inputClasses: '',
+        currency: 'USD',
+        locale: 'en-US',
+    };
 
     return (
-        <div className="container mx-auto">
-            <div className="w-full flex justify-start items-start mb-4">
-                <input
-                    type="text"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    className="mr-2 p-2 border text-white dark:text-black w-full"
-                    placeholder={'Name'}
-                />
-                <input
-                    type="number"
-                    value={currency}
-                    onChange={(e) =>
-                        setCurrency(parseFloat(e.target.value))
-                    }
-                    className="mr-2 p-2 border text-white dark:text-black w-5/6"
-                />
-                <button
-                    onClick={handleAddButtonClick}
-                    className="p-2 bg-blue-500 text-white"
-                >
-                    Add
-                </button>
+        <div>
+            <div className="flex flex-wrap flex-row gap-3 p-fluid align-items-end">
+                <div className="flex-auto">
+                    <label
+                        htmlFor="currency-us"
+                        className="font-bold block mb-2"
+                    >
+                        Amount
+                    </label>
+                    <CurrencyInput {...currencyProps} />
+                </div>
+                <div className="flex-auto">
+                    <label
+                        htmlFor="text-input"
+                        className="font-bold block mb-2"
+                    >
+                        Text
+                    </label>
+                    <TextInput {...textProps} />
+                </div>
+                <div className="flex-auto">
+                    <SimpleButton label={'Add'} />
+                </div>
             </div>
 
             <TwoColumnDataTableTextAndCurrency

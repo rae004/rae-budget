@@ -1,6 +1,9 @@
 import { ReactNode } from 'react';
+import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
-import '@/app/globals.css';
+import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
+// import '@/app/globals.css';
 import { montserrat } from '@/app/fonts';
 
 export const metadata = {
