@@ -1,6 +1,7 @@
 import convertNumberToCurrencyString from '@/lib/convertNumberToCurrencyString';
 import MonthlyBills from '@/components/MonthlyBills';
 import AdditionalSpending from '@/components/AdditionalSpending';
+import TotalsOverview from '@/components/TotalsOverview';
 
 const Main = ({ ...props }) => {
     const { additionalSpending, monthlySpending } = props;
@@ -22,6 +23,7 @@ const Main = ({ ...props }) => {
 
             <MonthlyBills />
             <AdditionalSpending />
+            <TotalsOverview />
         </main>
     );
 };
