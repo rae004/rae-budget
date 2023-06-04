@@ -12,6 +12,7 @@ import {
 } from 'primereact/inputnumber';
 import CurrencyInput from '@/components/inputs/CurrencyInput';
 import TextInput from '@/components/inputs/TextInput';
+import convertNumberToCurrencyString from '@/lib/convertNumberToCurrencyString';
 
 interface ColumnMeta {
     field: string;
@@ -141,10 +142,10 @@ const TotalsOverview = ({ ...props }) => {
     };
 
     const priceBodyTemplate = (rowData: Product) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-        }).format(rowData.amount);
+        return convertNumberToCurrencyString({
+            number: rowData.amount,
+            locale: 'en-US',
+        });
     };
 
     return (

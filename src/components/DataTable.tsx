@@ -16,9 +16,11 @@ const RaeDataTable = ({ ...props }: RaeDataTableProps) => {
     const { dataTable, columns } = props;
     // Convert to currency string format $0.00
     const viewData = dataTable.map((item: any) => {
-        const stringCurrency = convertNumberToCurrencyString(
-            item.currency,
-        );
+        const stringCurrency = convertNumberToCurrencyString({
+            number: item.currency,
+            locale: 'en-US',
+            // formatOptions: { currency: 'BRA' },
+        });
         return { ...item, currency: stringCurrency };
     });
 
