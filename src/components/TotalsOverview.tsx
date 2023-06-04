@@ -25,46 +25,39 @@ interface Product {
 }
 
 const TotalsOverview = ({ ...props }) => {
-    const [products, setProducts] = useState<Product[] | []>(
-        [],
-    );
+    const [products, setProducts] = useState<Product[]>([
+        {
+            name: 'Pay Period Bill total:',
+            amount: 0,
+            note: '',
+        },
+        {
+            name: 'Running Pay Period Total:',
+            amount: 0,
+            note: '',
+        },
+        {
+            name: 'Additional Income (Bonus):',
+            amount: 0,
+            note: '',
+        },
+        {
+            name: 'Pay Check:',
+            amount: 0,
+            note: '',
+        },
+        {
+            name: 'Remaining for Pay Period:',
+            amount: 0,
+            note: '',
+        },
+    ]);
 
     const columns: ColumnMeta[] = [
         { field: 'name', header: 'Name' },
         { field: 'amount', header: 'Amount' },
         { field: 'note', header: 'Note' },
     ];
-
-    useEffect(() => {
-        const products: Product[] = [
-            {
-                name: 'Pay Period Bill total:',
-                amount: 0,
-                note: '',
-            },
-            {
-                name: 'Running Pay Period Total:',
-                amount: 0,
-                note: '',
-            },
-            {
-                name: 'Additional Income (Bonus):',
-                amount: 0,
-                note: '',
-            },
-            {
-                name: 'Pay Check:',
-                amount: 0,
-                note: '',
-            },
-            {
-                name: 'Remaining for Pay Period:',
-                amount: 0,
-                note: '',
-            },
-        ];
-        setProducts(products);
-    }, []);
 
     const isPositiveInteger = (val: any) => {
         let str = String(val);
