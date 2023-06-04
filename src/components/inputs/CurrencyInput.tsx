@@ -6,7 +6,7 @@ import { montserrat } from '@/app/fonts';
 
 export interface CurrencyInputProps {
     value: number;
-    setCurrency: (value: number) => void;
+    setCurrency: any;
     inputClasses: string;
     currency: string;
     locale: string;

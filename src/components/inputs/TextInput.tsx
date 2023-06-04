@@ -3,7 +3,7 @@ import { ChangeEvent } from 'react';
 
 export interface TextInputProps {
     value: string;
-    setText: (value: string) => void;
+    setText: any;
 }
 
 const TextInput = ({ ...props }: TextInputProps) => {

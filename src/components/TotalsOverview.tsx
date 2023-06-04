@@ -10,6 +10,8 @@ import {
     InputNumber,
     InputNumberValueChangeEvent,
 } from 'primereact/inputnumber';
+import CurrencyInput from '@/components/inputs/CurrencyInput';
+import TextInput from '@/components/inputs/TextInput';
 
 interface ColumnMeta {
     field: string;
@@ -116,33 +118,26 @@ const TotalsOverview = ({ ...props }) => {
 
     const textEditor = (options: ColumnEditorOptions) => {
         const { editorCallback } = options;
+
         return (
-            <InputText
-                type="text"
+            <TextInput
                 value={options.value}
-                onChange={(
-                    e: React.ChangeEvent<HTMLInputElement>,
-                ) =>
-                    editorCallback &&
-                    editorCallback(e.target.value)
-                }
+                setText={editorCallback}
             />
         );
     };
 
     const priceEditor = (options: ColumnEditorOptions) => {
         const { editorCallback } = options;
-        return (
-            <InputNumber
-                value={options.value}
-                onValueChange={(
-                    e: InputNumberValueChangeEvent,
-                ) => editorCallback && editorCallback(e.value)}
-                mode="currency"
-                currency="USD"
-                locale="en-US"
-            />
-        );
+        const numberInputProps = {
+            value: options.value,
+            setCurrency: editorCallback,
+            inputClasses: '',
+            currency: 'USD',
+            locale: 'en-US',
+        };
+
+        return <CurrencyInput {...numberInputProps} />;
     };
 
     const priceBodyTemplate = (rowData: Product) => {
