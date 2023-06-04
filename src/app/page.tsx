@@ -1,41 +1,20 @@
 'use client';
-import { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 import {
     AdditionalSpendingContext,
     MonthlySpendingContext,
-    GlobalAdditionalSpendingProps,
-    GlobalAdditionalSpendingState,
-    GlobalMonthlySpendingState,
-    GlobalMonthlySpendingProps,
+    useGlobalContext,
 } from '@/lib/globalContext';
-import AdditionalSpending from '@/components/additionalSpending';
-import convertNumberToCurrencyString from '@/lib/convertNumberToCurrencyString';
-import MonthlyBills from '@/components/monthlyBills';
+import Main from '@/components/Main';
 
 export default function Home(): ReactElement {
-    // additional spending context
-    const [
+    const {
+        globalAdditionalSpendingStateProps,
+        globalMonthlySpendingStateProps,
         additionalSpending,
-        setGlobalAdditionalSpendingState,
-    ] = useState<GlobalAdditionalSpendingState>({
-        totalAdditionalSpending: 0,
-    });
-    const globalAdditionalSpendingStateProps: GlobalAdditionalSpendingProps =
-        {
-            ...additionalSpending,
-            setGlobalAdditionalSpendingState,
-        };
-
-    // monthly spending context
-    const [monthlySpending, setGlobalMonthlySpendingState] =
-        useState<GlobalMonthlySpendingState>({
-            totalMonthlySpending: 0,
-        });
-    const globalMonthlySpendingStateProps: GlobalMonthlySpendingProps =
-        {
-            ...monthlySpending,
-            setGlobalMonthlySpendingState,
-        };
+        monthlySpending,
+    } = useGlobalContext();
+    const mainProps = { additionalSpending, monthlySpending };
 
     return (
         <MonthlySpendingContext.Provider
@@ -44,32 +23,7 @@ export default function Home(): ReactElement {
             <AdditionalSpendingContext.Provider
                 value={globalAdditionalSpendingStateProps}
             >
-                {/*<main className="flex min-h-screen flex-col items-center justify-center p-24">*/}
-                <main>
-                    <div>
-                        Additional Spending:{' '}
-                        {convertNumberToCurrencyString(
-                            additionalSpending.totalAdditionalSpending,
-                        )}
-                    </div>
-                    <div>
-                        Monthly Spending:{' '}
-                        {convertNumberToCurrencyString(
-                            monthlySpending.totalMonthlySpending,
-                        )}
-                    </div>
-                    {/*<div className={'w-2/3 flex flex-row m-2'}>*/}
-                    <div>
-                        {/*<span className={'w-1/2 mr-4'}>*/}
-                        <span>
-                            <MonthlyBills />
-                        </span>
-                        {/*<span className={'w-1/2 mr-2'}>*/}
-                        <span>
-                            {/*<AdditionalSpending />*/}
-                        </span>
-                    </div>
-                </main>
+                <Main {...mainProps} />
             </AdditionalSpendingContext.Provider>
         </MonthlySpendingContext.Provider>
     );

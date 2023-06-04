@@ -1,6 +1,5 @@
 import { InputText } from 'primereact/inputtext';
-import React from 'react';
-import { InputNumberValueChangeEvent } from 'primereact/inputnumber';
+import { ChangeEvent } from 'react';
 
 export interface TextInputProps {
     value: string;
@@ -9,7 +8,7 @@ export interface TextInputProps {
 
 const TextInput = ({ ...props }: TextInputProps) => {
     const handleOnChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
+        e: ChangeEvent<HTMLInputElement>,
     ) => {
         const value = e.target.value ? e.target.value : '';
         props.setText(value);
@@ -18,9 +17,9 @@ const TextInput = ({ ...props }: TextInputProps) => {
     return (
         <InputText
             value={props.value}
-            onChange={(
-                e: React.ChangeEvent<HTMLInputElement>,
-            ) => handleOnChange(e)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleOnChange(e)
+            }
         />
     );
 };

@@ -1,28 +1,27 @@
-import TwoColumnDataTableTextAndCurrency from '@/components/twoColumnDataTableTextAndCurrency';
-import { useContext, useEffect, useState } from 'react';
-import { DataTableItem } from '@/components/additionalSpending';
-import TextInput, {
-    TextInputProps,
-} from '@/components/inputs/TextInput';
+import { FC, useContext, useEffect } from 'react';
+import { AdditionalSpendingContext } from '@/lib/globalContext';
 import CurrencyInput, {
     CurrencyInputProps,
 } from '@/components/inputs/CurrencyInput';
-import 'primereact/resources/primereact.min.css';
+import TextInput, {
+    TextInputProps,
+} from '@/components/inputs/TextInput';
 import SimpleButton from '@/components/buttons/SimpleButton';
-import { MonthlySpendingContext } from '@/lib/globalContext';
 import RaeDataTable, {
     ColumnMeta,
     RaeDataTableProps,
 } from '@/components/DataTable';
+import getTotal from '@/lib/getTotalSpending';
+import useBudgetState from '@/components/hooks/UseBudgetState';
 
-const MonthlyBills = () => {
-    const { setGlobalMonthlySpendingState } = useContext(
-        MonthlySpendingContext,
-    );
-    const [text, setText] = useState<string>('');
-    const [currency, setCurrency] = useState(0);
-    const [dataTable, setDataTable] = useState<DataTableItem[]>(
-        [],
+export interface DataTableItem {
+    text: string;
+    currency: number;
+}
+
+const AdditionalSpending: FC = () => {
+    const { setGlobalAdditionalSpendingState } = useContext(
+        AdditionalSpendingContext,
     );
 
     const columns: ColumnMeta[] = [
@@ -36,26 +35,20 @@ const MonthlyBills = () => {
         },
     ];
 
-    const getTotalMonthlyBillsSpending = () => {
-        return dataTable.reduce((total, item) => {
-            total += item.currency;
-            return total;
-        }, 0);
-    };
+    const {
+        text,
+        setText,
+        currency,
+        setCurrency,
+        dataTable,
+        handleAddButtonClick,
+    } = useBudgetState();
 
-    const handleAddButtonClick = () => {
-        const newItem: DataTableItem = { text, currency };
-        setDataTable([...dataTable, newItem]);
-        setText('');
-        setCurrency(0);
-    };
-
-    // update global state total monthly spending when dataTable changes
+    // update global state total additional spending when dataTable changes
     useEffect(() => {
-        const totalMonthlySpending =
-            getTotalMonthlyBillsSpending();
-        setGlobalMonthlySpendingState({
-            totalMonthlySpending,
+        const totalAdditionalSpending = getTotal(dataTable);
+        setGlobalAdditionalSpendingState({
+            totalAdditionalSpending,
         });
     }, [dataTable]);
 
@@ -78,7 +71,7 @@ const MonthlyBills = () => {
 
     return (
         <div>
-            <h2>Monthly Bills</h2>
+            <h2>Additional Spending</h2>
             <div className="flex flex-wrap flex-row gap-3 p-fluid align-items-end">
                 <div className="flex-auto">
                     <label
@@ -110,4 +103,4 @@ const MonthlyBills = () => {
     );
 };
 
-export default MonthlyBills;
+export default AdditionalSpending;
