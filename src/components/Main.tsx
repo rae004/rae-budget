@@ -10,15 +10,17 @@ const Main = ({ ...props }) => {
         <main>
             <div>
                 Additional Spending:{' '}
-                {convertNumberToCurrencyString(
-                    additionalSpending.totalAdditionalSpending,
-                )}
+                {convertNumberToCurrencyString({
+                    number: additionalSpending.totalAdditionalSpending,
+                    locale: 'en-US',
+                })}
             </div>
             <div>
                 Monthly Spending:{' '}
-                {convertNumberToCurrencyString(
-                    monthlySpending.totalMonthlySpending,
-                )}
+                {convertNumberToCurrencyString({
+                    number: monthlySpending.totalMonthlySpending,
+                    locale: 'en-US',
+                })}
             </div>
 
             <MonthlyBills />
