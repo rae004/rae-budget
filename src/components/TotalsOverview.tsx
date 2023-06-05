@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NewDataTable, {
     ColumnMeta,
     NewDataTableProps,
@@ -6,39 +6,61 @@ import NewDataTable, {
 
 interface Product {
     name: string;
+    parameter: string;
     amount: number;
     note: string;
 }
 
 const TotalsOverview = ({ ...props }) => {
-    console.log('our props: ', props);
     const [products, setProducts] = useState<Product[]>([
         {
             name: 'Pay Period Bill total:',
-            amount: 0,
+            parameter: 'monthlySpending',
+            amount: props.monthlySpending.totalMonthlySpending,
             note: '',
         },
         {
             name: 'Running Pay Period Total:',
+            parameter: 'runningTotal',
             amount: 0,
             note: '',
         },
         {
             name: 'Additional Income (Bonus):',
+            parameter: 'additionalIncome',
             amount: 0,
             note: '',
         },
         {
             name: 'Pay Check:',
+            parameter: 'payCheck',
             amount: 0,
             note: '',
         },
         {
             name: 'Remaining for Pay Period:',
+            parameter: 'remainingPayPeriodAmount',
             amount: 0,
             note: '',
         },
     ]);
+
+    // update monthly bills total when updated in the parent component
+    useEffect(() => {
+        if (props.monthlySpending.totalMonthlySpending) {
+            setProducts(
+                products.map((product) => {
+                    if (
+                        product.parameter === 'monthlySpending'
+                    ) {
+                        product.amount =
+                            props.monthlySpending.totalMonthlySpending;
+                    }
+                    return product;
+                }),
+            );
+        }
+    }, [props.monthlySpending.totalMonthlySpending]);
 
     const columns: ColumnMeta[] = [
         { field: 'name', header: 'Name' },

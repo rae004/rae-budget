@@ -26,8 +26,6 @@ export interface ColumnMeta {
 }
 
 const NewDataTable = ({ ...props }: NewDataTableProps) => {
-    console.log('our props in new table: ', props);
-
     return (
         <div className={props.styles.parentDiv}>
             <h2 className={props.styles.tableHeader}>
