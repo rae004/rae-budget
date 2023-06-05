@@ -19,7 +19,6 @@ const RaeDataTable = ({ ...props }: RaeDataTableProps) => {
         const stringCurrency = convertNumberToCurrencyString({
             number: item.currency,
             locale: 'en-US',
-            // formatOptions: { currency: 'BRA' },
         });
         return { ...item, currency: stringCurrency };
     });
