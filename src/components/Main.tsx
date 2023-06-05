@@ -5,6 +5,10 @@ import TotalsOverview from '@/components/TotalsOverview';
 
 const Main = ({ ...props }) => {
     const { additionalSpending, monthlySpending } = props;
+    const totalsOverviewProps = {
+        additionalSpending,
+        monthlySpending,
+    };
 
     return (
         <main>
@@ -25,7 +29,7 @@ const Main = ({ ...props }) => {
 
             <MonthlyBills />
             <AdditionalSpending />
-            <TotalsOverview />
+            <TotalsOverview {...totalsOverviewProps} />
         </main>
     );
 };

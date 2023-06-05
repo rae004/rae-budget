@@ -13,6 +13,7 @@ import {
 import CurrencyInput from '@/components/inputs/CurrencyInput';
 import TextInput from '@/components/inputs/TextInput';
 import convertNumberToCurrencyString from '@/lib/convertNumberToCurrencyString';
+import { useGlobalContext } from '@/lib/globalContext';
 
 interface ColumnMeta {
     field: string;
@@ -25,6 +26,13 @@ interface Product {
 }
 
 const TotalsOverview = ({ ...props }) => {
+    console.log('our props: ', props);
+    const disableInputList = [
+        'Pay Period Bill total:',
+        'Running Pay Period Total:',
+        'Remaining for Pay Period:',
+    ];
+
     const [products, setProducts] = useState<Product[]>([
         {
             name: 'Pay Period Bill total:',
