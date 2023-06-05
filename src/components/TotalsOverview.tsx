@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { DataTable } from 'primereact/datatable';
+import {
+    DataTable,
+    DataTableDataSelectableEvent,
+} from 'primereact/datatable';
 import {
     Column,
     ColumnEvent,
@@ -110,7 +113,6 @@ const TotalsOverview = ({ ...props }) => {
     };
 
     const cellEditor = (options: ColumnEditorOptions) => {
-        console.log('our options: ', options);
         if (options.field === 'amount') {
             return priceEditor(options);
         } else {
@@ -149,6 +151,16 @@ const TotalsOverview = ({ ...props }) => {
         });
     };
 
+    const isSelectable = (data: Product) =>
+        !disableInputList.includes(data.name);
+
+    const isRowSelectable = (
+        event: DataTableDataSelectableEvent,
+    ) =>
+        event.data ? isSelectable(event.data as Product) : true;
+    const rowClassName = (data: Product) =>
+        isSelectable(data) ? '' : 'p-disabled';
+
     return (
         <div className="card p-fluid">
             <h2>TotalsOverview</h2>
@@ -156,6 +168,8 @@ const TotalsOverview = ({ ...props }) => {
                 value={products}
                 editMode="cell"
                 tableStyle={{ minWidth: '50rem' }}
+                isDataSelectable={isRowSelectable}
+                rowClassName={rowClassName}
             >
                 {columns.map(({ field, header }) => {
                     return (
