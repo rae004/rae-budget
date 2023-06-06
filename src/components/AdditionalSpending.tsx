@@ -7,14 +7,11 @@ import TextInput, {
     TextInputProps,
 } from '@/components/inputs/TextInput';
 import SimpleButton from '@/components/buttons/SimpleButton';
-import RaeDataTable, {
-    ColumnMeta,
-    RaeDataTableProps,
-} from '@/components/DataTable';
 import getTotal from '@/lib/getTotalSpending';
 import useBudgetState from '@/components/hooks/UseBudgetState';
 import NewDataTable, {
     NewDataTableProps,
+    ColumnMeta,
 } from '@/components/NewDataTable';
 
 export interface DataTableItem {
@@ -67,11 +64,6 @@ const AdditionalSpending: FC = () => {
         locale: 'en-US',
     };
 
-    const dataTableProps: RaeDataTableProps = {
-        dataTable,
-        columns,
-    };
-
     const tableProps: NewDataTableProps = {
         columns,
         tableData: dataTable,
@@ -82,7 +74,6 @@ const AdditionalSpending: FC = () => {
             columnStyle: { width: '25%' },
         },
     };
-    console.log('our table props: ', tableProps.tableData);
 
     return (
         <div>
@@ -113,7 +104,6 @@ const AdditionalSpending: FC = () => {
                     />
                 </div>
             </div>
-            <RaeDataTable {...dataTableProps} />
             <NewDataTable {...tableProps} />
         </div>
     );

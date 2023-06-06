@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { FC, useContext, useEffect } from 'react';
 import TextInput, {
     TextInputProps,
 } from '@/components/inputs/TextInput';
@@ -8,14 +8,14 @@ import CurrencyInput, {
 import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
 import { MonthlySpendingContext } from '@/lib/globalContext';
-import RaeDataTable, {
-    ColumnMeta,
-    RaeDataTableProps,
-} from '@/components/DataTable';
 import getTotal from '@/lib/getTotalSpending';
 import useBudgetState from '@/components/hooks/UseBudgetState';
+import NewDataTable, {
+    NewDataTableProps,
+    ColumnMeta,
+} from '@/components/NewDataTable';
 
-const MonthlyBills = () => {
+const MonthlyBills: FC = () => {
     const { setGlobalMonthlySpendingState } = useContext(
         MonthlySpendingContext,
     );
@@ -60,9 +60,15 @@ const MonthlyBills = () => {
         locale: 'en-US',
     };
 
-    const dataTableProps: RaeDataTableProps = {
-        dataTable,
+    const tableProps: NewDataTableProps = {
         columns,
+        tableData: dataTable,
+        styles: {
+            parentDiv: 'card',
+            tableHeader: '',
+            tableBody: { minWidth: '50rem' },
+            columnStyle: { width: '25%' },
+        },
     };
 
     return (
@@ -94,7 +100,7 @@ const MonthlyBills = () => {
                     />
                 </div>
             </div>
-            <RaeDataTable {...dataTableProps} />
+            <NewDataTable {...tableProps} />
         </div>
     );
 };
