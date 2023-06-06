@@ -5,13 +5,14 @@ import {
     isRowSelectable,
     onCellEditComplete,
     priceBodyTemplate,
+    priceFields,
     rowClassName,
 } from '@/lib/dataTableHelpers';
 
 export interface NewDataTableProps {
     columns: any[];
     tableData: any;
-    tableHeader: string;
+    tableHeader?: string;
     styles: {
         parentDiv: string;
         tableHeader: string;
@@ -28,9 +29,11 @@ export interface ColumnMeta {
 const NewDataTable = ({ ...props }: NewDataTableProps) => {
     return (
         <div className={props.styles.parentDiv}>
-            <h2 className={props.styles.tableHeader}>
-                props.tableHeader
-            </h2>
+            {props.tableHeader && (
+                <h2 className={props.styles.tableHeader}>
+                    {props.tableHeader}
+                </h2>
+            )}
             <DataTable
                 value={props.tableData}
                 editMode="cell"
@@ -57,8 +60,9 @@ const NewDataTable = ({ ...props }: NewDataTableProps) => {
                                               .columnStyle
                                 }
                                 body={
-                                    field === 'amount' &&
-                                    priceBodyTemplate
+                                    priceFields.includes(
+                                        field,
+                                    ) && priceBodyTemplate
                                 }
                                 editor={(options) =>
                                     cellEditor(options)

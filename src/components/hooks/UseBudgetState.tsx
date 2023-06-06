@@ -5,7 +5,7 @@ const useBudgetState = () => {
     const [text, setText] = useState<string>('');
     const [currency, setCurrency] = useState(0);
     const [dataTable, setDataTable] = useState<DataTableItem[]>(
-        [],
+        [{ text: '', currency: 0 }],
     );
 
     const handleAddButtonClick = () => {

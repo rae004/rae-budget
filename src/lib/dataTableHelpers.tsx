@@ -13,6 +13,8 @@ export const disableInputList = [
     'Remaining for Pay Period:',
 ];
 
+export const priceFields = ['amount', 'price', 'currency'];
+
 export const isPositiveInteger = (val: any) => {
     let str = String(val);
 
@@ -31,31 +33,23 @@ export const isPositiveInteger = (val: any) => {
 export const onCellEditComplete = (e: ColumnEvent) => {
     let { rowData, newValue, field, originalEvent: event } = e;
 
-    switch (field) {
-        case 'amount':
-            if (isPositiveInteger(newValue)) {
-                rowData[field] = newValue;
-            } else {
-                event.preventDefault();
-            }
-            break;
-
-        default:
-            if (newValue.trim().length > 0) {
-                rowData[field] = newValue;
-            } else {
-                event.preventDefault();
-            }
-            break;
+    if (priceFields.includes(field)) {
+        return isPositiveInteger(newValue)
+            ? (rowData[field] = newValue)
+            : event.preventDefault();
     }
+
+    return newValue.trim().length > 0
+        ? (rowData[field] = newValue)
+        : event.preventDefault();
 };
 
 export const cellEditor = (options: ColumnEditorOptions) => {
-    if (options.field === 'amount') {
-        return priceEditor(options);
-    } else {
-        return textEditor(options);
-    }
+    const { field } = options;
+
+    return priceFields.includes(field)
+        ? priceEditor(options)
+        : textEditor(options);
 };
 
 export const textEditor = (options: ColumnEditorOptions) => {
@@ -83,10 +77,15 @@ export const priceEditor = (options: ColumnEditorOptions) => {
 };
 
 export const priceBodyTemplate = (rowData: any) => {
-    return convertNumberToCurrencyString({
-        number: rowData.amount,
-        locale: 'en-US',
-    });
+    const keys = Object.keys(rowData);
+    const match = keys.find((key) => priceFields.includes(key));
+
+    return match
+        ? convertNumberToCurrencyString({
+              number: rowData[match],
+              locale: 'en-US',
+          })
+        : 0;
 };
 
 export const isSelectable = (data: any) =>

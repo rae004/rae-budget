@@ -13,6 +13,9 @@ import RaeDataTable, {
 } from '@/components/DataTable';
 import getTotal from '@/lib/getTotalSpending';
 import useBudgetState from '@/components/hooks/UseBudgetState';
+import NewDataTable, {
+    NewDataTableProps,
+} from '@/components/NewDataTable';
 
 export interface DataTableItem {
     text: string;
@@ -69,6 +72,18 @@ const AdditionalSpending: FC = () => {
         columns,
     };
 
+    const tableProps: NewDataTableProps = {
+        columns,
+        tableData: dataTable,
+        styles: {
+            parentDiv: 'card',
+            tableHeader: '',
+            tableBody: { minWidth: '50rem' },
+            columnStyle: { width: '25%' },
+        },
+    };
+    console.log('our table props: ', tableProps.tableData);
+
     return (
         <div>
             <h2>Additional Spending</h2>
@@ -99,6 +114,7 @@ const AdditionalSpending: FC = () => {
                 </div>
             </div>
             <RaeDataTable {...dataTableProps} />
+            <NewDataTable {...tableProps} />
         </div>
     );
 };
