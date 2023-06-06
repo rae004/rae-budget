@@ -7,9 +7,9 @@ import CurrencyInput, {
 } from '@/components/inputs/CurrencyInput';
 import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
-import { MonthlySpendingContext } from '@/lib/globalContext';
+import { MonthlySpendingContext } from '@/lib/hooks/globalContext';
 import getTotal from '@/lib/getTotalSpending';
-import useBudgetState from '@/components/hooks/UseBudgetState';
+import useBudgetState from '@/lib/hooks/useBudgetState';
 import NewDataTable, {
     NewDataTableProps,
     ColumnMeta,

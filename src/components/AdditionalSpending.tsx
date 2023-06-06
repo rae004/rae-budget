@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect } from 'react';
-import { AdditionalSpendingContext } from '@/lib/globalContext';
+import { AdditionalSpendingContext } from '@/lib/hooks/globalContext';
 import CurrencyInput, {
     CurrencyInputProps,
 } from '@/components/inputs/CurrencyInput';
@@ -8,7 +8,7 @@ import TextInput, {
 } from '@/components/inputs/TextInput';
 import SimpleButton from '@/components/buttons/SimpleButton';
 import getTotal from '@/lib/getTotalSpending';
-import useBudgetState from '@/components/hooks/UseBudgetState';
+import useBudgetState from '@/lib/hooks/useBudgetState';
 import NewDataTable, {
     NewDataTableProps,
     ColumnMeta,

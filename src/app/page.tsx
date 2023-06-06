@@ -4,7 +4,7 @@ import {
     AdditionalSpendingContext,
     MonthlySpendingContext,
     useGlobalContext,
-} from '@/lib/globalContext';
+} from '@/lib/hooks/globalContext';
 import Main from '@/components/Main';
 
 export default function Home(): ReactElement {
