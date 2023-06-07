@@ -1,4 +1,4 @@
-import { Column } from 'primereact/column';
+import { Column, ColumnEvent } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import {
     cellEditor,
@@ -9,6 +9,7 @@ import {
     rowClassName,
 } from '@/lib/dataTableHelpers';
 
+export type OnCellEditComplete = (event: ColumnEvent) => void;
 export interface NewDataTableProps {
     columns: any[];
     tableData: any;
@@ -19,6 +20,7 @@ export interface NewDataTableProps {
         tableBody: Record<string, any>;
         columnStyle: Record<string, any>;
     };
+    ourOnCellEditComplete?: OnCellEditComplete;
 }
 
 export interface ColumnMeta {
@@ -27,6 +29,8 @@ export interface ColumnMeta {
 }
 
 const NewDataTable = ({ ...props }: NewDataTableProps) => {
+    const ourOnCellEditComplete =
+        props.ourOnCellEditComplete || onCellEditComplete;
     return (
         <div className={props.styles.parentDiv}>
             {props.tableHeader && (
@@ -68,7 +72,7 @@ const NewDataTable = ({ ...props }: NewDataTableProps) => {
                                     cellEditor(options)
                                 }
                                 onCellEditComplete={
-                                    onCellEditComplete
+                                    ourOnCellEditComplete
                                 }
                             />
                         );

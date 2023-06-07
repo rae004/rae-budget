@@ -2,65 +2,83 @@ import { useEffect, useState } from 'react';
 import NewDataTable, {
     ColumnMeta,
     NewDataTableProps,
+    OnCellEditComplete,
 } from '@/components/NewDataTable';
-
-interface Product {
-    name: string;
-    parameter: string;
-    amount: number;
-    note: string;
-}
+import { ColumnEvent } from 'primereact/column';
+import {
+    isPositiveInteger,
+    priceFields,
+} from '@/lib/dataTableHelpers';
 
 const TotalsOverview = ({ ...props }) => {
-    const [products, setProducts] = useState<Product[]>([
+    const [payPeriodBillTotal, setPayPeriodBillTotal] =
+        useState<number>(
+            props.monthlySpending.totalMonthlySpending,
+        );
+    const [runningTotal, setRunningTotal] = useState<number>(0);
+    const [additionalIncome, setAdditionalIncome] =
+        useState<number>(0);
+    const [
+        remainingPayPeriodAmount,
+        setRemainingPayPeriodAmount,
+    ] = useState<number>(0);
+
+    const [payCheck, setPayCheck] = useState<number>(0);
+
+    const tableData = [
         {
             name: 'Pay Period Bill total:',
             parameter: 'monthlySpending',
-            amount: props.monthlySpending.totalMonthlySpending,
+            amount: payPeriodBillTotal,
             note: '',
         },
         {
             name: 'Running Pay Period Total:',
             parameter: 'runningTotal',
-            amount: 0,
+            amount: runningTotal,
             note: '',
         },
         {
             name: 'Additional Income (Bonus):',
             parameter: 'additionalIncome',
-            amount: 0,
+            amount: additionalIncome,
             note: '',
         },
         {
             name: 'Pay Check:',
             parameter: 'payCheck',
-            amount: 0,
+            amount: payCheck,
             note: '',
         },
         {
             name: 'Remaining for Pay Period:',
             parameter: 'remainingPayPeriodAmount',
-            amount: 0,
+            amount: remainingPayPeriodAmount,
             note: '',
         },
-    ]);
+    ];
 
-    // update monthly bills total when updated in the parent component
+    // update totals on dependency changes.
     useEffect(() => {
-        if (props.monthlySpending.totalMonthlySpending) {
-            setProducts(
-                products.map((product) => {
-                    if (
-                        product.parameter === 'monthlySpending'
-                    ) {
-                        product.amount =
-                            props.monthlySpending.totalMonthlySpending;
-                    }
-                    return product;
-                }),
-            );
-        }
-    }, [props.monthlySpending.totalMonthlySpending]);
+        setPayPeriodBillTotal(
+            props.monthlySpending.totalMonthlySpending,
+        );
+        setRunningTotal(
+            props.monthlySpending.totalMonthlySpending +
+                props.additionalSpending
+                    .totalAdditionalSpending,
+        );
+        setRemainingPayPeriodAmount(
+            payCheck -
+                (props.monthlySpending.totalMonthlySpending +
+                    props.additionalSpending
+                        .totalAdditionalSpending),
+        );
+    }, [
+        props.monthlySpending.totalMonthlySpending,
+        props.additionalSpending.totalAdditionalSpending,
+        payCheck,
+    ]);
 
     const columns: ColumnMeta[] = [
         { field: 'name', header: 'Name' },
@@ -68,9 +86,32 @@ const TotalsOverview = ({ ...props }) => {
         { field: 'note', header: 'Note' },
     ];
 
+    const onCellEditComplete: OnCellEditComplete = (
+        e: ColumnEvent,
+    ) => {
+        let {
+            rowData,
+            newValue,
+            field,
+            originalEvent: event,
+        } = e;
+
+        let result;
+
+        if (priceFields.includes(field)) {
+            result = isPositiveInteger(newValue)
+                ? (rowData[field] = newValue)
+                : event.preventDefault();
+        }
+
+        setPayCheck(result);
+
+        return result;
+    };
+
     const tableProps: NewDataTableProps = {
         columns,
-        tableData: products,
+        tableData,
         tableHeader: 'Totals Overview',
         styles: {
             parentDiv: 'card p-fluid',
@@ -78,6 +119,7 @@ const TotalsOverview = ({ ...props }) => {
             tableBody: { minWidth: '50rem' },
             columnStyle: { width: '25%' },
         },
+        ourOnCellEditComplete: onCellEditComplete,
     };
 
     return <NewDataTable {...tableProps} />;
