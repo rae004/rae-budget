@@ -69,7 +69,8 @@ const TotalsOverview = ({ ...props }) => {
                     .totalAdditionalSpending,
         );
         setRemainingPayPeriodAmount(
-            payCheck -
+            payCheck +
+                additionalIncome -
                 (props.monthlySpending.totalMonthlySpending +
                     props.additionalSpending
                         .totalAdditionalSpending),
@@ -78,6 +79,7 @@ const TotalsOverview = ({ ...props }) => {
         props.monthlySpending.totalMonthlySpending,
         props.additionalSpending.totalAdditionalSpending,
         payCheck,
+        additionalIncome,
     ]);
 
     const columns: ColumnMeta[] = [
@@ -104,7 +106,13 @@ const TotalsOverview = ({ ...props }) => {
                 : event.preventDefault();
         }
 
-        setPayCheck(result);
+        if (rowData.parameter === 'payCheck') {
+            setPayCheck(result);
+        }
+
+        if (rowData.parameter === 'additionalIncome') {
+            setAdditionalIncome(result);
+        }
 
         return result;
     };
