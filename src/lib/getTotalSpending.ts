@@ -1,8 +1,13 @@
+import { BudgetItem } from '@/lib/hooks/globalContext';
+
 const getTotal = (dataTable: any) => {
-    return dataTable.reduce((total: number, item: any) => {
-        total += item.currency;
-        return total;
-    }, 0);
+    return dataTable.reduce(
+        (total: number, item: BudgetItem) => {
+            total += item.amount;
+            return total;
+        },
+        0,
+    );
 };
 
 export default getTotal;

@@ -1,69 +1,51 @@
-import { createContext, useState } from 'react';
+import { createContext, Dispatch, SetStateAction } from 'react';
 
-// custom hook to manage global context
-export const useGlobalContext = () => {
-    // additional spending context
-    const [
-        additionalSpending,
-        setGlobalAdditionalSpendingState,
-    ] = useState<GlobalAdditionalSpendingState>({
-        totalAdditionalSpending: 0,
-    });
-    const globalAdditionalSpendingStateProps: GlobalAdditionalSpendingProps =
-        {
-            ...additionalSpending,
-            setGlobalAdditionalSpendingState,
-        };
+type SingleSpendingItemType = {
+    name: string;
+    amount: number;
+};
 
-    // monthly spending context
-    const [monthlySpending, setGlobalMonthlySpendingState] =
-        useState<GlobalMonthlySpendingState>({
-            totalMonthlySpending: 0,
-        });
-    const globalMonthlySpendingStateProps: GlobalMonthlySpendingProps =
-        {
-            ...monthlySpending,
-            setGlobalMonthlySpendingState,
-        };
-
-    return {
-        globalAdditionalSpendingStateProps,
-        globalMonthlySpendingStateProps,
-        additionalSpending,
-        monthlySpending,
+type PayPeriodPropsType = {
+    tabIndex: number;
+    additionalSpendingTotal: number;
+    additionalSpendingItems: SingleSpendingItemType[];
+    monthlyBillsTotal: number;
+    monthlyBillsItems: SingleSpendingItemType[];
+    totalsOverview: {
+        monthlySpending: number;
+        runningTotal: number;
+        additionalIncome: number;
+        payCheck: number;
+        remainingPayPeriodAmount: number;
     };
 };
 
-// global additional spending context
-export type GlobalAdditionalSpendingState = {
+type GlobalPayPeriodType = {
+    tabTitle: string;
+    tabDescription: string;
+    payPeriodProps: PayPeriodPropsType;
+};
+
+type GlobalContextType = {
+    totalIncome: number;
+    totalBills: number;
     totalAdditionalSpending: number;
+    payPeriods: GlobalPayPeriodType[];
 };
 
-export type GlobalAdditionalSpendingProps = {
-    setGlobalAdditionalSpendingState: (
-        state: GlobalAdditionalSpendingState,
-    ) => void;
-} & GlobalAdditionalSpendingState;
+type ContextType = [
+    GlobalContextType,
+    Dispatch<SetStateAction<{ type: string; payload: any }>>,
+];
 
-export const AdditionalSpendingContext =
-    createContext<GlobalAdditionalSpendingProps>({
-        totalAdditionalSpending: 0,
-        setGlobalAdditionalSpendingState: () => {},
-    });
-
-// global monthly spending context
-export type GlobalMonthlySpendingState = {
-    totalMonthlySpending: number;
+export const initialState = {
+    totalIncome: 0,
+    totalBills: 0,
+    totalAdditionalSpending: 0,
+    payPeriods: [],
 };
 
-export type GlobalMonthlySpendingProps = {
-    setGlobalMonthlySpendingState: (
-        state: GlobalMonthlySpendingState,
-    ) => void;
-} & GlobalMonthlySpendingState;
-
-export const MonthlySpendingContext =
-    createContext<GlobalMonthlySpendingProps>({
-        totalMonthlySpending: 0,
-        setGlobalMonthlySpendingState: () => {},
-    });
+export const GlobalContext = createContext<ContextType>([
+    initialState,
+    () => null,
+]);

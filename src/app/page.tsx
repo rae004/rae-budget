@@ -1,30 +1,32 @@
 'use client';
-import { ReactElement } from 'react';
+import { ReactElement, useReducer } from 'react';
 import {
-    AdditionalSpendingContext,
-    MonthlySpendingContext,
-    useGlobalContext,
+    GlobalContext,
+    initialState,
 } from '@/lib/hooks/globalContext';
-import Main from '@/components/Main';
+import PayPeriodTabs from '@/components/PayPeriodTabs';
+
+const reducer = (state: any, action: any) => {
+    // console.log('our state in reducer', state);
+    console.log('our action in reducer', action);
+    switch (action.type) {
+        case 'ADD_PAY_PERIOD':
+            return {
+                ...state,
+                payPeriods: [
+                    ...state.payPeriods,
+                    action.payload,
+                ],
+            };
+    }
+};
 
 export default function Home(): ReactElement {
-    const {
-        globalAdditionalSpendingStateProps,
-        globalMonthlySpendingStateProps,
-        additionalSpending,
-        monthlySpending,
-    } = useGlobalContext();
-    const mainProps = { additionalSpending, monthlySpending };
+    const [state, dispatch] = useReducer(reducer, initialState);
 
     return (
-        <MonthlySpendingContext.Provider
-            value={globalMonthlySpendingStateProps}
-        >
-            <AdditionalSpendingContext.Provider
-                value={globalAdditionalSpendingStateProps}
-            >
-                <Main {...mainProps} />
-            </AdditionalSpendingContext.Provider>
-        </MonthlySpendingContext.Provider>
+        <GlobalContext.Provider value={[state, dispatch]}>
+            <PayPeriodTabs />
+        </GlobalContext.Provider>
     );
 }

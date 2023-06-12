@@ -1,4 +1,11 @@
-import { FC, useContext, useEffect } from 'react';
+import {
+    Dispatch,
+    FC,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 import TextInput, {
     TextInputProps,
 } from '@/components/inputs/TextInput';
@@ -7,54 +14,82 @@ import CurrencyInput, {
 } from '@/components/inputs/CurrencyInput';
 import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
-import { MonthlySpendingContext } from '@/lib/hooks/globalContext';
+// import { MonthlySpendingContext } from '@/lib/hooks/globalContext';
 import getTotal from '@/lib/getTotalSpending';
 import useBudgetState from '@/lib/hooks/useBudgetState';
 import NewDataTable, {
     NewDataTableProps,
     ColumnMeta,
 } from '@/components/NewDataTable';
+import {
+    BudgetItem,
+    useGlobalBudgetContext,
+} from '@/lib/hooks/globalContext';
+import { DataTableItem } from '@/components/AdditionalSpending';
 
-const MonthlyBills: FC = () => {
-    const { setGlobalMonthlySpendingState } = useContext(
-        MonthlySpendingContext,
-    );
+export interface MonthlyBillsProps {
+    monthlySpendingTotal: number;
+    setMonthlySpendingTotal: Dispatch<SetStateAction<number>>;
+    monthlySpendingItems: {
+        name: string;
+        amount: number;
+    }[];
+    setMonthlySpendingItems: Dispatch<
+        SetStateAction<BudgetItem[]>
+    >;
+}
+
+const MonthlyBills = ({ ...props }: MonthlyBillsProps) => {
+    // console.log('our monthly bills props: ', props);
+    const { setMonthlySpendingItems } = props;
 
     const columns: ColumnMeta[] = [
         {
-            field: 'text',
+            field: 'name',
             header: 'Text',
         },
         {
-            field: 'currency',
+            field: 'amount',
             header: 'Amount',
         },
     ];
 
-    const {
-        text,
-        setText,
-        currency,
-        setCurrency,
-        dataTable,
-        handleAddButtonClick,
-    } = useBudgetState();
+    const [name, setName] = useState<string>('');
+    const [amount, setAmount] = useState(0);
+    const [dataTable, setDataTable] = useState<BudgetItem[]>(
+        [],
+    );
+
+    const handleAddButtonClick = () => {
+        const newItem: BudgetItem = { name, amount };
+        setDataTable([...dataTable, newItem]);
+        setMonthlySpendingItems([
+            ...props.monthlySpendingItems,
+            newItem,
+        ]);
+        setName('');
+        setAmount(0);
+    };
 
     // update global state total monthly spending when dataTable changes
     useEffect(() => {
         const totalMonthlySpending = getTotal(dataTable);
-        setGlobalMonthlySpendingState({
+        console.log(
+            'our total monthly spending is',
             totalMonthlySpending,
-        });
+        );
+        // setGlobalMonthlySpendingState({
+        //     totalMonthlySpending,
+        // });
     }, [dataTable]);
 
     const textProps: TextInputProps = {
-        value: text,
-        setText,
+        value: name,
+        setText: setName,
     };
     const currencyProps: CurrencyInputProps = {
-        value: currency,
-        setCurrency,
+        value: amount,
+        setCurrency: setAmount,
         inputClasses: '',
         currency: 'USD',
         locale: 'en-US',

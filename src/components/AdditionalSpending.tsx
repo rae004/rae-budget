@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect } from 'react';
-import { AdditionalSpendingContext } from '@/lib/hooks/globalContext';
+// import { AdditionalSpendingContext } from '@/lib/hooks/globalContext';
 import CurrencyInput, {
     CurrencyInputProps,
 } from '@/components/inputs/CurrencyInput';
@@ -20,9 +20,9 @@ export interface DataTableItem {
 }
 
 const AdditionalSpending: FC = () => {
-    const { setGlobalAdditionalSpendingState } = useContext(
-        AdditionalSpendingContext,
-    );
+    // const { setGlobalAdditionalSpendingState } = useContext(
+    //     AdditionalSpendingContext,
+    // );
 
     const columns: ColumnMeta[] = [
         {
@@ -47,9 +47,13 @@ const AdditionalSpending: FC = () => {
     // update global state total additional spending when dataTable changes
     useEffect(() => {
         const totalAdditionalSpending = getTotal(dataTable);
-        setGlobalAdditionalSpendingState({
+        console.log(
+            'our total additional spending is',
             totalAdditionalSpending,
-        });
+        );
+        // setGlobalAdditionalSpendingState({
+        //     totalAdditionalSpending,
+        // });
     }, [dataTable]);
 
     const textProps: TextInputProps = {

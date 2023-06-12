@@ -13,7 +13,7 @@ import {
 const TotalsOverview = ({ ...props }) => {
     const [payPeriodBillTotal, setPayPeriodBillTotal] =
         useState<number>(
-            props.monthlySpending.totalMonthlySpending,
+            props.monthlySpendingTotal.totalMonthlySpending,
         );
     const [runningTotal, setRunningTotal] = useState<number>(0);
     const [additionalIncome, setAdditionalIncome] =
@@ -65,19 +65,19 @@ const TotalsOverview = ({ ...props }) => {
         );
         setRunningTotal(
             props.monthlySpending.totalMonthlySpending +
-                props.additionalSpending
+                props.additionalSpendingTotal
                     .totalAdditionalSpending,
         );
         setRemainingPayPeriodAmount(
             payCheck +
                 additionalIncome -
                 (props.monthlySpending.totalMonthlySpending +
-                    props.additionalSpending
+                    props.additionalSpendingTotal
                         .totalAdditionalSpending),
         );
     }, [
-        props.monthlySpending.totalMonthlySpending,
-        props.additionalSpending.totalAdditionalSpending,
+        props.monthlySpendingTotal.totalMonthlySpending,
+        props.additionalSpendingTotal.totalAdditionalSpending,
         payCheck,
         additionalIncome,
     ]);
