@@ -21,27 +21,11 @@ import NewDataTable, {
     NewDataTableProps,
     ColumnMeta,
 } from '@/components/NewDataTable';
-import {
-    BudgetItem,
-    useGlobalBudgetContext,
-} from '@/lib/hooks/globalContext';
+
 import { DataTableItem } from '@/components/AdditionalSpending';
 
-export interface MonthlyBillsProps {
-    monthlySpendingTotal: number;
-    setMonthlySpendingTotal: Dispatch<SetStateAction<number>>;
-    monthlySpendingItems: {
-        name: string;
-        amount: number;
-    }[];
-    setMonthlySpendingItems: Dispatch<
-        SetStateAction<BudgetItem[]>
-    >;
-}
-
-const MonthlyBills = ({ ...props }: MonthlyBillsProps) => {
+const MonthlyBills = () => {
     // console.log('our monthly bills props: ', props);
-    const { setMonthlySpendingItems } = props;
 
     const columns: ColumnMeta[] = [
         {
@@ -56,17 +40,15 @@ const MonthlyBills = ({ ...props }: MonthlyBillsProps) => {
 
     const [name, setName] = useState<string>('');
     const [amount, setAmount] = useState(0);
-    const [dataTable, setDataTable] = useState<BudgetItem[]>(
-        [],
-    );
+    const [dataTable, setDataTable] = useState<any[]>([]);
 
     const handleAddButtonClick = () => {
-        const newItem: BudgetItem = { name, amount };
-        setDataTable([...dataTable, newItem]);
-        setMonthlySpendingItems([
-            ...props.monthlySpendingItems,
-            newItem,
-        ]);
+        // const newItem: BudgetItem = { name, amount };
+        // setDataTable([...dataTable, newItem]);
+        // setMonthlySpendingItems([
+        //     ...props.monthlySpendingItems,
+        //     newItem,
+        // ]);
         setName('');
         setAmount(0);
     };

@@ -1,39 +1,9 @@
-import MonthlyBills, {
-    MonthlyBillsProps,
-} from '@/components/MonthlyBills';
-import { useContext, useEffect, useState } from 'react';
-import {
-    GlobalBudgetContext,
-    PayPeriodProps,
-    useGlobalBudgetContext,
-} from '@/lib/hooks/globalContext';
+import MonthlyBills from '@/components/MonthlyBills';
 
-const PayPeriod = ({ ...props }: PayPeriodProps) => {
-    const context = useContext(GlobalBudgetContext);
-    console.log('context in pay period: ', context);
-
-    // monthly bills state
-    const [monthlySpendingTotal, setMonthlySpendingTotal] =
-        useState(props.monthlyBillsTotal);
-    const [monthlySpendingItems, setMonthlySpendingItems] =
-        useState(props.monthlyBillsItems);
-    const monthlyBillsProps: MonthlyBillsProps = {
-        monthlySpendingTotal,
-        setMonthlySpendingTotal,
-        monthlySpendingItems,
-        setMonthlySpendingItems,
-    };
-    //
-    // useEffect(() => {
-    //     setGlobalBudgetState({
-    //         ...globalProps,
-    //     });
-    // }, [monthlySpendingItems]);
-    // console.log('global props in pay period: ', globalProps);
-
+const PayPeriod = () => {
     return (
         <main>
-            <MonthlyBills {...monthlyBillsProps} />
+            <MonthlyBills />
             {/*<AdditionalSpending />*/}
             {/*<TotalsOverview {...totalsOverviewProps} />*/}
         </main>

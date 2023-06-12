@@ -46,33 +46,27 @@ const PayPeriodTabs = ({ ...props }) => {
                 icon="pi pi-check"
                 size="small"
             />
-            <TabView
-                scrollable
-                // onTabChange={(e) => setActiveIndex(e.index)}
-                // activeIndex={activeIndex}
-                onBeforeTabChange={(e) =>
-                    ourBeforeTabChangeMethod(e.index)
-                }
-            >
-                {/*{tabs.map(*/}
-                {/*    (tab: PayPeriodTabProps, index: number) => {*/}
-                {/*        const { payPeriodProps } = tab;*/}
-                {/*        return (*/}
-                {/*            <TabPanel*/}
-                {/*                key={index}*/}
-                {/*                header={tab.tabTitle}*/}
-                {/*            >*/}
-                {/*                <p className="m-0">*/}
-                {/*                    {tab.tabDescription}*/}
-                {/*                </p>*/}
+            <TabView scrollable>
+                {state.payPeriods.map(
+                    (tab: any, index: number) => {
+                        console.log('our tab: ', tab);
+                        const { payPeriodProps } = tab;
+                        return (
+                            <TabPanel
+                                key={index}
+                                header={tab.tabTitle}
+                            >
+                                <p className="m-0">
+                                    {tab.tabDescription}
+                                </p>
 
-                {/*                <PayPeriod*/}
-                {/*                    {...payPeriodProps}*/}
-                {/*                />*/}
-                {/*            </TabPanel>*/}
-                {/*        );*/}
-                {/*    },*/}
-                {/*)}*/}
+                                <PayPeriod
+                                    {...payPeriodProps}
+                                />
+                            </TabPanel>
+                        );
+                    },
+                )}
             </TabView>
         </div>
     );
