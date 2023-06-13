@@ -7,8 +7,6 @@ import {
 import PayPeriodTabs from '@/components/PayPeriodTabs';
 
 const reducer = (state: any, action: any) => {
-    // console.log('our state in reducer', state);
-    console.log('our action in reducer', action);
     switch (action.type) {
         case 'ADD_PAY_PERIOD':
             return {

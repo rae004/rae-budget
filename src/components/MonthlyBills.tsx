@@ -1,11 +1,4 @@
-import {
-    Dispatch,
-    FC,
-    SetStateAction,
-    useContext,
-    useEffect,
-    useState,
-} from 'react';
+import { useContext, useState } from 'react';
 import TextInput, {
     TextInputProps,
 } from '@/components/inputs/TextInput';
@@ -14,15 +7,10 @@ import CurrencyInput, {
 } from '@/components/inputs/CurrencyInput';
 import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
-// import { MonthlySpendingContext } from '@/lib/hooks/globalContext';
-import getTotal from '@/lib/getTotalSpending';
-import useBudgetState from '@/lib/hooks/useBudgetState';
 import NewDataTable, {
     NewDataTableProps,
     ColumnMeta,
 } from '@/components/NewDataTable';
-
-import { DataTableItem } from '@/components/AdditionalSpending';
 import {
     GlobalContext,
     SingleSpendingItemType,
