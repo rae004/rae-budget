@@ -1,9 +1,9 @@
 import MonthlyBills from '@/components/MonthlyBills';
 
-const PayPeriod = () => {
+const PayPeriod = ({ ...props }) => {
     return (
         <main>
-            <MonthlyBills />
+            <MonthlyBills tabIndex={props.tabIndex} />
             {/*<AdditionalSpending />*/}
             {/*<TotalsOverview {...totalsOverviewProps} />*/}
         </main>

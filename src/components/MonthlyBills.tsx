@@ -23,9 +23,18 @@ import NewDataTable, {
 } from '@/components/NewDataTable';
 
 import { DataTableItem } from '@/components/AdditionalSpending';
+import {
+    GlobalContext,
+    SingleSpendingItemType,
+} from '@/lib/hooks/globalContext';
 
-const MonthlyBills = () => {
-    // console.log('our monthly bills props: ', props);
+const MonthlyBills = ({ ...props }) => {
+    const { tabIndex } = props;
+    const payPeriodIndex = tabIndex - 1;
+    const [state, dispatch] = useContext(GlobalContext);
+    const tableData =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .monthlyBillsItems;
 
     const columns: ColumnMeta[] = [
         {
@@ -40,30 +49,24 @@ const MonthlyBills = () => {
 
     const [name, setName] = useState<string>('');
     const [amount, setAmount] = useState(0);
-    const [dataTable, setDataTable] = useState<any[]>([]);
 
     const handleAddButtonClick = () => {
-        // const newItem: BudgetItem = { name, amount };
-        // setDataTable([...dataTable, newItem]);
-        // setMonthlySpendingItems([
-        //     ...props.monthlySpendingItems,
-        //     newItem,
-        // ]);
+        const newItem: SingleSpendingItemType = {
+            name,
+            amount,
+        };
+
+        const addItemPayload = {
+            tabIndex,
+            newItem,
+        };
+        dispatch({
+            type: 'ADD_MONTHLY_BILL',
+            payload: addItemPayload,
+        });
         setName('');
         setAmount(0);
     };
-
-    // update global state total monthly spending when dataTable changes
-    useEffect(() => {
-        const totalMonthlySpending = getTotal(dataTable);
-        console.log(
-            'our total monthly spending is',
-            totalMonthlySpending,
-        );
-        // setGlobalMonthlySpendingState({
-        //     totalMonthlySpending,
-        // });
-    }, [dataTable]);
 
     const textProps: TextInputProps = {
         value: name,
@@ -79,7 +82,7 @@ const MonthlyBills = () => {
 
     const tableProps: NewDataTableProps = {
         columns,
-        tableData: dataTable,
+        tableData,
         styles: {
             parentDiv: 'card',
             tableHeader: '',

@@ -18,6 +18,24 @@ const reducer = (state: any, action: any) => {
                     action.payload,
                 ],
             };
+        case 'ADD_MONTHLY_BILL':
+            const { tabIndex, newItem } = action.payload;
+            const payPeriodIndex = tabIndex - 1;
+            const payPeriodMonthlyBillsItems =
+                state.payPeriods[payPeriodIndex].payPeriodProps
+                    .monthlyBillsItems;
+
+            // add new item to the monthly bills.
+            state.payPeriods[
+                payPeriodIndex
+            ].payPeriodProps.monthlyBillsItems = [
+                ...payPeriodMonthlyBillsItems,
+                newItem,
+            ];
+
+            return {
+                ...state,
+            };
     }
 };
 

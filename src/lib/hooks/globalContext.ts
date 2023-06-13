@@ -1,6 +1,6 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 
-type SingleSpendingItemType = {
+export type SingleSpendingItemType = {
     name: string;
     amount: number;
 };

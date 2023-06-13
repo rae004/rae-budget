@@ -6,7 +6,7 @@ import { GlobalContext } from '@/lib/hooks/globalContext';
 
 const PayPeriodTabs = ({ ...props }) => {
     const [state, dispatch] = useContext(GlobalContext);
-    console.log('our state: ', state);
+
     const addTab = () => {
         const tabIndex = state.payPeriods.length + 1;
         const newPayPeriodTabProps = {
@@ -34,10 +34,6 @@ const PayPeriodTabs = ({ ...props }) => {
         });
     };
 
-    const ourBeforeTabChangeMethod = (tabIndex: number) => {
-        console.log('before our change!', tabIndex);
-    };
-
     return (
         <div className="card">
             <Button
@@ -49,7 +45,6 @@ const PayPeriodTabs = ({ ...props }) => {
             <TabView scrollable>
                 {state.payPeriods.map(
                     (tab: any, index: number) => {
-                        console.log('our tab: ', tab);
                         const { payPeriodProps } = tab;
                         return (
                             <TabPanel
