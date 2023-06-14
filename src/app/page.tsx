@@ -22,6 +22,10 @@ const reducer = (state: any, action: any) => {
             const payPeriodMonthlyBillsItems =
                 state.payPeriods[payPeriodIndex].payPeriodProps
                     .monthlyBillsItems;
+            const newMonthlyBillsTotal =
+                newItem.amount +
+                state.payPeriods[payPeriodIndex].payPeriodProps
+                    .monthlyBillsTotal;
 
             // add new item to the monthly bills.
             state.payPeriods[
@@ -31,6 +35,12 @@ const reducer = (state: any, action: any) => {
                 newItem,
             ];
 
+            // update the total of the monthly bills.
+            state.payPeriods[
+                payPeriodIndex
+            ].payPeriodProps.monthlyBillsTotal =
+                newMonthlyBillsTotal;
+
             return {
                 ...state,
             };
@@ -38,6 +48,10 @@ const reducer = (state: any, action: any) => {
             const payPeriodAdditionalSpendingItems =
                 state.payPeriods[payPeriodIndex].payPeriodProps
                     .additionalSpendingItems;
+            const newAdditionalSpendingTotal =
+                newItem.amount +
+                state.payPeriods[payPeriodIndex].payPeriodProps
+                    .additionalSpendingTotal;
 
             // add new item to the monthly bills.
             state.payPeriods[
@@ -46,6 +60,12 @@ const reducer = (state: any, action: any) => {
                 ...payPeriodAdditionalSpendingItems,
                 newItem,
             ];
+
+            // update the total of the additional spending.
+            state.payPeriods[
+                payPeriodIndex
+            ].payPeriodProps.additionalSpendingTotal =
+                newAdditionalSpendingTotal;
 
             return {
                 ...state,

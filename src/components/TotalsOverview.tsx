@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import NewDataTable, {
     ColumnMeta,
     NewDataTableProps,
@@ -9,33 +9,29 @@ import {
     isPositiveInteger,
     priceFields,
 } from '@/lib/dataTableHelpers';
+import { GlobalContext } from '@/lib/hooks/globalContext';
 
 const TotalsOverview = ({ ...props }) => {
-    const [payPeriodBillTotal, setPayPeriodBillTotal] =
-        useState<number>(
-            props.monthlySpendingTotal.totalMonthlySpending,
-        );
-    const [runningTotal, setRunningTotal] = useState<number>(0);
+    const { tabIndex, action } = props;
+    const payPeriodIndex = tabIndex - 1;
+    const [state, dispatch] = useContext(GlobalContext);
+    console.log('our state in totals: ', state);
+
     const [additionalIncome, setAdditionalIncome] =
         useState<number>(0);
-    const [
-        remainingPayPeriodAmount,
-        setRemainingPayPeriodAmount,
-    ] = useState<number>(0);
-
     const [payCheck, setPayCheck] = useState<number>(0);
 
     const tableData = [
         {
             name: 'Pay Period Bill total:',
             parameter: 'monthlySpending',
-            amount: payPeriodBillTotal,
+            amount: 0,
             note: '',
         },
         {
             name: 'Running Pay Period Total:',
             parameter: 'runningTotal',
-            amount: runningTotal,
+            amount: 0,
             note: '',
         },
         {
@@ -53,34 +49,10 @@ const TotalsOverview = ({ ...props }) => {
         {
             name: 'Remaining for Pay Period:',
             parameter: 'remainingPayPeriodAmount',
-            amount: remainingPayPeriodAmount,
+            amount: 0,
             note: '',
         },
     ];
-
-    // update totals on dependency changes.
-    useEffect(() => {
-        setPayPeriodBillTotal(
-            props.monthlySpending.totalMonthlySpending,
-        );
-        setRunningTotal(
-            props.monthlySpending.totalMonthlySpending +
-                props.additionalSpendingTotal
-                    .totalAdditionalSpending,
-        );
-        setRemainingPayPeriodAmount(
-            payCheck +
-                additionalIncome -
-                (props.monthlySpending.totalMonthlySpending +
-                    props.additionalSpendingTotal
-                        .totalAdditionalSpending),
-        );
-    }, [
-        props.monthlySpendingTotal.totalMonthlySpending,
-        props.additionalSpendingTotal.totalAdditionalSpending,
-        payCheck,
-        additionalIncome,
-    ]);
 
     const columns: ColumnMeta[] = [
         { field: 'name', header: 'Name' },
