@@ -7,6 +7,8 @@ import {
 import PayPeriodTabs from '@/components/PayPeriodTabs';
 
 const reducer = (state: any, action: any) => {
+    const { tabIndex, newItem } = action.payload;
+    const payPeriodIndex = tabIndex - 1;
     switch (action.type) {
         case 'ADD_PAY_PERIOD':
             return {
@@ -16,9 +18,7 @@ const reducer = (state: any, action: any) => {
                     action.payload,
                 ],
             };
-        case 'ADD_MONTHLY_BILL':
-            const { tabIndex, newItem } = action.payload;
-            const payPeriodIndex = tabIndex - 1;
+        case 'ADD_MONTHLY_BILL_ITEM':
             const payPeriodMonthlyBillsItems =
                 state.payPeriods[payPeriodIndex].payPeriodProps
                     .monthlyBillsItems;
@@ -28,6 +28,22 @@ const reducer = (state: any, action: any) => {
                 payPeriodIndex
             ].payPeriodProps.monthlyBillsItems = [
                 ...payPeriodMonthlyBillsItems,
+                newItem,
+            ];
+
+            return {
+                ...state,
+            };
+        case 'ADD_ADDITIONAL_SPENDING_ITEM':
+            const payPeriodAdditionalSpendingItems =
+                state.payPeriods[payPeriodIndex].payPeriodProps
+                    .additionalSpendingItems;
+
+            // add new item to the monthly bills.
+            state.payPeriods[
+                payPeriodIndex
+            ].payPeriodProps.additionalSpendingItems = [
+                ...payPeriodAdditionalSpendingItems,
                 newItem,
             ];
 

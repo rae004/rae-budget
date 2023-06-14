@@ -1,72 +1,28 @@
-import { useContext, useState } from 'react';
-import TextInput, {
-    TextInputProps,
-} from '@/components/inputs/TextInput';
-import CurrencyInput, {
-    CurrencyInputProps,
-} from '@/components/inputs/CurrencyInput';
+import TextInput from '@/components/inputs/TextInput';
+import CurrencyInput from '@/components/inputs/CurrencyInput';
 import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
 import NewDataTable, {
     NewDataTableProps,
-    ColumnMeta,
 } from '@/components/NewDataTable';
-import {
-    GlobalContext,
-    SingleSpendingItemType,
-} from '@/lib/hooks/globalContext';
+import usePayPeriod from '@/lib/hooks/usePayPeriod';
 
 const MonthlyBills = ({ ...props }) => {
-    const { tabIndex } = props;
-    const payPeriodIndex = tabIndex - 1;
-    const [state, dispatch] = useContext(GlobalContext);
+    const {
+        state,
+        payPeriodIndex,
+        columns,
+        handleAddButtonClick,
+        textProps,
+        currencyProps,
+    } = usePayPeriod({
+        ...props,
+        action: 'ADD_MONTHLY_BILL_ITEM',
+    });
+
     const tableData =
         state.payPeriods[payPeriodIndex].payPeriodProps
             .monthlyBillsItems;
-
-    const columns: ColumnMeta[] = [
-        {
-            field: 'name',
-            header: 'Text',
-        },
-        {
-            field: 'amount',
-            header: 'Amount',
-        },
-    ];
-
-    const [name, setName] = useState<string>('');
-    const [amount, setAmount] = useState(0);
-
-    const handleAddButtonClick = () => {
-        const newItem: SingleSpendingItemType = {
-            name,
-            amount,
-        };
-
-        const addItemPayload = {
-            tabIndex,
-            newItem,
-        };
-        dispatch({
-            type: 'ADD_MONTHLY_BILL',
-            payload: addItemPayload,
-        });
-        setName('');
-        setAmount(0);
-    };
-
-    const textProps: TextInputProps = {
-        value: name,
-        setText: setName,
-    };
-    const currencyProps: CurrencyInputProps = {
-        value: amount,
-        setCurrency: setAmount,
-        inputClasses: '',
-        currency: 'USD',
-        locale: 'en-US',
-    };
 
     const tableProps: NewDataTableProps = {
         columns,

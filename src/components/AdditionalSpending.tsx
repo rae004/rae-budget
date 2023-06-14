@@ -1,76 +1,31 @@
-import { FC, useContext, useEffect } from 'react';
-// import { AdditionalSpendingContext } from '@/lib/hooks/globalContext';
-import CurrencyInput, {
-    CurrencyInputProps,
-} from '@/components/inputs/CurrencyInput';
-import TextInput, {
-    TextInputProps,
-} from '@/components/inputs/TextInput';
+import CurrencyInput from '@/components/inputs/CurrencyInput';
+import TextInput from '@/components/inputs/TextInput';
 import SimpleButton from '@/components/buttons/SimpleButton';
-import getTotal from '@/lib/getTotalSpending';
-import useBudgetState from '@/lib/hooks/useBudgetState';
 import NewDataTable, {
     NewDataTableProps,
-    ColumnMeta,
 } from '@/components/NewDataTable';
+import usePayPeriod from '@/lib/hooks/usePayPeriod';
 
-export interface DataTableItem {
-    text: string;
-    currency: number;
-}
-
-const AdditionalSpending: FC = () => {
-    // const { setGlobalAdditionalSpendingState } = useContext(
-    //     AdditionalSpendingContext,
-    // );
-
-    const columns: ColumnMeta[] = [
-        {
-            field: 'text',
-            header: 'Text',
-        },
-        {
-            field: 'currency',
-            header: 'Amount',
-        },
-    ];
-
+const AdditionalSpending = ({ ...props }) => {
     const {
-        text,
-        setText,
-        currency,
-        setCurrency,
-        dataTable,
+        state,
+        payPeriodIndex,
+        columns,
         handleAddButtonClick,
-    } = useBudgetState();
+        textProps,
+        currencyProps,
+    } = usePayPeriod({
+        ...props,
+        action: 'ADD_ADDITIONAL_SPENDING_ITEM',
+    });
 
-    // update global state total additional spending when dataTable changes
-    useEffect(() => {
-        const totalAdditionalSpending = getTotal(dataTable);
-        console.log(
-            'our total additional spending is',
-            totalAdditionalSpending,
-        );
-        // setGlobalAdditionalSpendingState({
-        //     totalAdditionalSpending,
-        // });
-    }, [dataTable]);
-
-    const textProps: TextInputProps = {
-        value: text,
-        setText,
-    };
-    const currencyProps: CurrencyInputProps = {
-        value: currency,
-        setCurrency,
-        inputClasses: '',
-        currency: 'USD',
-        locale: 'en-US',
-    };
+    const tableData =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .additionalSpendingItems;
 
     const tableProps: NewDataTableProps = {
         columns,
-        tableData: dataTable,
+        tableData,
         styles: {
             parentDiv: 'card',
             tableHeader: '',
