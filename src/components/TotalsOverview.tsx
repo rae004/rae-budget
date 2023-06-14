@@ -16,22 +16,34 @@ const TotalsOverview = ({ ...props }) => {
     const payPeriodIndex = tabIndex - 1;
     const [state, dispatch] = useContext(GlobalContext);
     console.log('our state in totals: ', state);
+    const payPeriodBillsTotal =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .monthlyBillsTotal;
+    const additionalSpendingTotal =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .additionalSpendingTotal;
+    const payPeriodRunningTotal =
+        additionalSpendingTotal + payPeriodBillsTotal;
 
     const [additionalIncome, setAdditionalIncome] =
         useState<number>(0);
     const [payCheck, setPayCheck] = useState<number>(0);
+    const remainingPayPeriodAmount =
+        payCheck +
+        additionalIncome -
+        (payPeriodBillsTotal + additionalSpendingTotal);
 
     const tableData = [
         {
             name: 'Pay Period Bill total:',
             parameter: 'monthlySpending',
-            amount: 0,
+            amount: payPeriodBillsTotal,
             note: '',
         },
         {
             name: 'Running Pay Period Total:',
             parameter: 'runningTotal',
-            amount: 0,
+            amount: payPeriodRunningTotal,
             note: '',
         },
         {
@@ -49,7 +61,7 @@ const TotalsOverview = ({ ...props }) => {
         {
             name: 'Remaining for Pay Period:',
             parameter: 'remainingPayPeriodAmount',
-            amount: 0,
+            amount: remainingPayPeriodAmount,
             note: '',
         },
     ];
