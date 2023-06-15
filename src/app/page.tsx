@@ -1,10 +1,11 @@
 'use client';
-import { ReactElement, useReducer } from 'react';
+import { ReactElement, useEffect, useReducer } from 'react';
 import {
     GlobalContext,
     initialState,
 } from '@/lib/hooks/globalContext';
 import PayPeriodTabs from '@/components/PayPeriodTabs';
+import { useLocalStorage } from 'primereact/hooks';
 
 const reducer = (state: any, action: any) => {
     const { tabIndex, newItem } = action.payload;
@@ -93,7 +94,21 @@ const reducer = (state: any, action: any) => {
 };
 
 export default function Home(): ReactElement {
-    const [state, dispatch] = useReducer(reducer, initialState);
+    const localStorageName = 'globalRaeBudget';
+    const storedState = localStorage.getItem(localStorageName);
+    const ourInitialState = storedState
+        ? JSON.parse(storedState)
+        : initialState;
+
+    const [globalState, storeGlobalState] = useLocalStorage(
+        ourInitialState,
+        localStorageName,
+    );
+    const [state, dispatch] = useReducer(reducer, globalState);
+
+    useEffect(() => {
+        storeGlobalState(state);
+    }, [state]);
 
     return (
         <GlobalContext.Provider value={[state, dispatch]}>
