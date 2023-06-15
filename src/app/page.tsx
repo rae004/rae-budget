@@ -70,6 +70,25 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
             };
+        case 'UPDATE_PAY_PERIOD_PAY_CHECK_AMOUNT':
+            // update pay check amount in the pay period.
+            state.payPeriods[
+                payPeriodIndex
+            ].payPeriodProps.totalsOverview.payCheck = newItem;
+
+            return {
+                ...state,
+            };
+        case 'UPDATE_PAY_PERIOD_BONUS_AMOUNT':
+            // update bonus amount in the pay period.
+            state.payPeriods[
+                payPeriodIndex
+            ].payPeriodProps.totalsOverview.additionalIncome =
+                newItem;
+
+            return {
+                ...state,
+            };
     }
 };
 

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import NewDataTable, {
     ColumnMeta,
     NewDataTableProps,
@@ -24,10 +24,12 @@ const TotalsOverview = ({ ...props }) => {
             .additionalSpendingTotal;
     const payPeriodRunningTotal =
         additionalSpendingTotal + payPeriodBillsTotal;
-
-    const [additionalIncome, setAdditionalIncome] =
-        useState<number>(0);
-    const [payCheck, setPayCheck] = useState<number>(0);
+    const payCheck =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .totalsOverview.payCheck;
+    const additionalIncome =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .totalsOverview.additionalIncome;
     const remainingPayPeriodAmount =
         payCheck +
         additionalIncome -
@@ -91,11 +93,17 @@ const TotalsOverview = ({ ...props }) => {
         }
 
         if (rowData.parameter === 'payCheck') {
-            setPayCheck(result);
+            dispatch({
+                type: 'UPDATE_PAY_PERIOD_PAY_CHECK_AMOUNT',
+                payload: { newItem: result, tabIndex },
+            });
         }
 
         if (rowData.parameter === 'additionalIncome') {
-            setAdditionalIncome(result);
+            dispatch({
+                type: 'UPDATE_PAY_PERIOD_BONUS_AMOUNT',
+                payload: { newItem: result, tabIndex },
+            });
         }
 
         return result;
