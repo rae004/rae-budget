@@ -1,68 +1,32 @@
-import { FC, useContext, useEffect } from 'react';
-import TextInput, {
-    TextInputProps,
-} from '@/components/inputs/TextInput';
-import CurrencyInput, {
-    CurrencyInputProps,
-} from '@/components/inputs/CurrencyInput';
+import TextInput from '@/components/inputs/TextInput';
+import CurrencyInput from '@/components/inputs/CurrencyInput';
 import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
-import { MonthlySpendingContext } from '@/lib/hooks/globalContext';
-import getTotal from '@/lib/getTotalSpending';
-import useBudgetState from '@/lib/hooks/useBudgetState';
 import NewDataTable, {
     NewDataTableProps,
-    ColumnMeta,
 } from '@/components/NewDataTable';
+import usePayPeriod from '@/lib/hooks/usePayPeriod';
 
-const MonthlyBills: FC = () => {
-    const { setGlobalMonthlySpendingState } = useContext(
-        MonthlySpendingContext,
-    );
-
-    const columns: ColumnMeta[] = [
-        {
-            field: 'text',
-            header: 'Text',
-        },
-        {
-            field: 'currency',
-            header: 'Amount',
-        },
-    ];
-
+const MonthlyBills = ({ ...props }) => {
     const {
-        text,
-        setText,
-        currency,
-        setCurrency,
-        dataTable,
+        state,
+        payPeriodIndex,
+        columns,
         handleAddButtonClick,
-    } = useBudgetState();
+        textProps,
+        currencyProps,
+    } = usePayPeriod({
+        ...props,
+        action: 'ADD_MONTHLY_BILL_ITEM',
+    });
 
-    // update global state total monthly spending when dataTable changes
-    useEffect(() => {
-        const totalMonthlySpending = getTotal(dataTable);
-        setGlobalMonthlySpendingState({
-            totalMonthlySpending,
-        });
-    }, [dataTable]);
-
-    const textProps: TextInputProps = {
-        value: text,
-        setText,
-    };
-    const currencyProps: CurrencyInputProps = {
-        value: currency,
-        setCurrency,
-        inputClasses: '',
-        currency: 'USD',
-        locale: 'en-US',
-    };
+    const tableData =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .monthlyBillsItems;
 
     const tableProps: NewDataTableProps = {
         columns,
-        tableData: dataTable,
+        tableData,
         styles: {
             parentDiv: 'card',
             tableHeader: '',

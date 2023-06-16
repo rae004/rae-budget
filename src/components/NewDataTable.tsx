@@ -52,17 +52,7 @@ const NewDataTable = ({ ...props }: NewDataTableProps) => {
                                 key={field}
                                 field={field}
                                 header={header}
-                                style={
-                                    field === 'name'
-                                        ? {
-                                              ...props.styles
-                                                  .columnStyle,
-                                              textAlign:
-                                                  'right',
-                                          }
-                                        : props.styles
-                                              .columnStyle
-                                }
+                                style={props.styles.columnStyle}
                                 body={
                                     priceFields.includes(
                                         field,
