@@ -5,7 +5,6 @@ import {
     initialState,
 } from '@/lib/hooks/globalContext';
 import PayPeriodTabs from '@/components/PayPeriodTabs';
-import { useLocalStorage } from 'primereact/hooks';
 
 const reducer = (state: any, action: any) => {
     const { tabIndex, newItem } = action.payload;
@@ -90,24 +89,42 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
             };
+        case 'GET_FROM_LOCAL_STORAGE_ON_INIT':
+            return {
+                ...action.payload,
+            };
     }
 };
 
 export default function Home(): ReactElement {
     const localStorageName = 'globalRaeBudget';
-    const storedState = localStorage.getItem(localStorageName);
-    const ourInitialState = storedState
-        ? JSON.parse(storedState)
-        : initialState;
+    const [state, dispatch] = useReducer(reducer, initialState);
 
-    const [globalState, storeGlobalState] = useLocalStorage(
-        ourInitialState,
-        localStorageName,
-    );
-    const [state, dispatch] = useReducer(reducer, globalState);
-
+    // get budget data from local storage on init.
     useEffect(() => {
-        storeGlobalState(state);
+        if (state.payPeriods.length === 0) {
+            const storedStateString =
+                localStorage.getItem(localStorageName);
+
+            if (storedStateString) {
+                const storedState = JSON.parse(
+                    storedStateString,
+                );
+                if (storedState.payPeriods.length > 0) {
+                    dispatch({
+                        type: 'GET_FROM_LOCAL_STORAGE_ON_INIT',
+                        payload: storedState,
+                    });
+                }
+            }
+        }
+    }, []);
+    // update budget data to local storage on state change.
+    useEffect(() => {
+        localStorage.setItem(
+            localStorageName,
+            JSON.stringify(state),
+        );
     }, [state]);
 
     return (
