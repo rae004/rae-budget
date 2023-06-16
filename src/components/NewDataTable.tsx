@@ -26,6 +26,7 @@ export interface NewDataTableProps {
 export interface ColumnMeta {
     field: string;
     header: string;
+    useCheckbox?: boolean;
 }
 
 const NewDataTable = ({ ...props }: NewDataTableProps) => {
@@ -46,8 +47,19 @@ const NewDataTable = ({ ...props }: NewDataTableProps) => {
                 rowClassName={rowClassName}
             >
                 {props.columns.map(
-                    ({ field, header }: ColumnMeta) => {
-                        return (
+                    ({
+                        field,
+                        header,
+                        useCheckbox,
+                    }: ColumnMeta) => {
+                        return useCheckbox ? (
+                            <Column
+                                key={field}
+                                field={field}
+                                header={header}
+                                selectionMode="multiple"
+                            />
+                        ) : (
                             <Column
                                 key={field}
                                 field={field}

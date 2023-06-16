@@ -20,6 +20,13 @@ const MonthlyBills = ({ ...props }) => {
         action: 'ADD_MONTHLY_BILL_ITEM',
     });
 
+    // add checkbox column
+    columns.push({
+        field: 'paid',
+        header: 'Paid',
+        useCheckbox: true,
+    });
+
     const tableData =
         state.payPeriods[payPeriodIndex].payPeriodProps
             .monthlyBillsItems;
