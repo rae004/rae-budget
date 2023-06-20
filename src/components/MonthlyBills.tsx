@@ -20,18 +20,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import styles from './component.module.css';
 
-interface Product {
-    id: string;
-    code: string;
-    name: string;
-    description: string;
-    image: string;
-    price: number;
-    category: string;
-    quantity: number;
-    inventoryStatus: string;
-    rating: number;
-}
 const MonthlyBills = ({ ...props }) => {
     // const {
     //     state,
@@ -67,7 +55,11 @@ const MonthlyBills = ({ ...props }) => {
     const [amount, setAmount] = useState(0);
 
     const handleAddButtonClick = () => {
+        const id =
+            state.payPeriods[payPeriodIndex].payPeriodProps
+                .monthlyBillsItems.length + 1;
         const newItem: SingleSpendingItemType = {
+            id,
             name,
             amount,
         };
@@ -76,6 +68,7 @@ const MonthlyBills = ({ ...props }) => {
             tabIndex,
             newItem,
         };
+        console.log('our new item: ', newItem);
         dispatch({
             type: 'ADD_MONTHLY_BILL_ITEM',
             payload: addItemPayload,
@@ -111,60 +104,13 @@ const MonthlyBills = ({ ...props }) => {
         },
     };
 
-    const [products, setProducts] = useState<Product[]>([
-        {
-            id: '1',
-            code: 'prod-1',
-            name: 'Test Product 1',
-            description: 'A product for testing purposes',
-            image: './prod-image.jpg',
-            price: 100,
-            category: 'Category 1',
-            quantity: 10,
-            inventoryStatus: 'INSTOCK',
-            rating: 5,
-        },
-        {
-            id: '3',
-            code: 'prod-3',
-            name: 'Test Product 3',
-            description: 'A product for testing purposes',
-            image: './prod-image.jpg',
-            price: 100,
-            category: 'Category 2',
-            quantity: 10,
-            inventoryStatus: 'INSTOCK',
-            rating: 5,
-        },
-        {
-            id: '2',
-            code: 'prod-2',
-            name: 'Test Product 2',
-            description: 'A product for testing purposes',
-            image: './prod-image.jpg',
-            price: 100,
-            category: 'Category 1',
-            quantity: 10,
-            inventoryStatus: 'INSTOCK',
-            rating: 5,
-        },
-        {
-            id: '4',
-            code: 'prod-4',
-            name: 'Test Product 4',
-            description: 'A product for testing purposes',
-            image: './prod-image.jpg',
-            price: 100,
-            category: 'Category 2',
-            quantity: 10,
-            inventoryStatus: 'INSTOCK',
-            rating: 5,
-        },
-    ]);
+    const selectedProdInitialState =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .monthlyBillsItems || null;
     const [selectedProducts, setSelectedProducts] = useState<
         any[] | null
-    >(null);
-    const [rowClick, setRowClick] = useState<boolean>(true);
+    >(selectedProdInitialState);
+    // const rowClick = false;
 
     return (
         <div>
@@ -195,31 +141,23 @@ const MonthlyBills = ({ ...props }) => {
                     />
                 </div>
             </div>
-            {/*<NewDataTable {...tableProps} />*/}
-            {/*<Column field="code" header="Code"></Column>*/}
-            {/*<Column field="name" header="Name"></Column>*/}
-            {/*<Column*/}
-            {/*    field="category"*/}
-            {/*    header="Category"*/}
-            {/*></Column>*/}
-            {/*<Column*/}
-            {/*    field="quantity"*/}
-            {/*    header="Quantity"*/}
-            {/*></Column>*/}
             <div className="card">
                 <DataTable
                     value={tableData}
-                    selectionMode={
-                        rowClick ? undefined : 'multiple'
-                    }
+                    selectionMode={'multiple'}
                     selection={selectedProducts!}
                     onSelectionChange={(e) => {
                         const value = e.value as any;
                         const amount = value.amount;
                         const ourProduct =
                             selectedProducts?.map((prod) => {
-                                if (prod.amount === amount) {
-                                }
+                                // if (prod.amount === amount) {
+                                console.log(
+                                    'our product: ',
+                                    prod,
+                                    value,
+                                );
+                                // }
                             });
 
                         console.log('our value: ', value);
@@ -228,12 +166,6 @@ const MonthlyBills = ({ ...props }) => {
                     dataKey="id"
                     tableStyle={{ minWidth: '50rem' }}
                 >
-                    {/*<Column*/}
-                    {/*    key={'checkboxPaid'}*/}
-                    {/*    selectionMode="multiple"*/}
-                    {/*    headerStyle={{ width: '3rem' }}*/}
-                    {/*></Column>*/}
-
                     {columns.map((column, index) =>
                         column.field === 'checkbox' ? (
                             <Column

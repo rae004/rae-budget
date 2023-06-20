@@ -1,6 +1,7 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 
 export type SingleSpendingItemType = {
+    id: number;
     name: string;
     amount: number;
 };
