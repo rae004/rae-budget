@@ -58,10 +58,13 @@ const MonthlyBills = ({ ...props }) => {
         const id =
             state.payPeriods[payPeriodIndex].payPeriodProps
                 .monthlyBillsItems.length + 1;
+        const isSelected = false;
+
         const newItem: SingleSpendingItemType = {
             id,
             name,
             amount,
+            isSelected,
         };
 
         const addItemPayload = {

@@ -4,6 +4,7 @@ export type SingleSpendingItemType = {
     id: number;
     name: string;
     amount: number;
+    isSelected?: boolean;
 };
 
 type PayPeriodPropsType = {
