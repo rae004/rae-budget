@@ -89,6 +89,21 @@ const reducer = (state: any, action: any) => {
             return {
                 ...state,
             };
+        case 'UPDATE_MONTHLY_BILL_ITEM_IS_PAID':
+            console.log(
+                'our action payload is: ',
+                action.payload,
+            );
+            console.log('our state is: ', state);
+
+            const newState =
+                state.payPeriods[payPeriodIndex].payPeriodProps;
+            console.log('our new state is: ', newState);
+
+            return {
+                ...state,
+            };
+        // update is paid status of the monthly bill item.
         case 'GET_FROM_LOCAL_STORAGE_ON_INIT':
             return {
                 ...action.payload,

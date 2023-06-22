@@ -11,7 +11,7 @@ import NewDataTable, {
     NewDataTableProps,
 } from '@/components/NewDataTable';
 import usePayPeriod from '@/lib/hooks/usePayPeriod';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
     GlobalContext,
     SingleSpendingItemType,
@@ -113,7 +113,19 @@ const MonthlyBills = ({ ...props }) => {
     const [selectedProducts, setSelectedProducts] = useState<
         any[] | null
     >(selectedProdInitialState);
-    // const rowClick = false;
+
+    useEffect(() => {
+        console.log('our checkbox change!!!', selectedProducts);
+
+        const payload = {
+            tabIndex,
+            selectedProducts,
+        };
+        dispatch({
+            type: 'UPDATE_MONTHLY_BILL_ITEM_IS_PAID',
+            payload: payload,
+        });
+    }, [selectedProducts]);
 
     return (
         <div>
@@ -150,20 +162,8 @@ const MonthlyBills = ({ ...props }) => {
                     selectionMode={'multiple'}
                     selection={selectedProducts!}
                     onSelectionChange={(e) => {
-                        const value = e.value as any;
-                        const amount = value.amount;
-                        const ourProduct =
-                            selectedProducts?.map((prod) => {
-                                // if (prod.amount === amount) {
-                                console.log(
-                                    'our product: ',
-                                    prod,
-                                    value,
-                                );
-                                // }
-                            });
-
-                        console.log('our value: ', value);
+                        const value =
+                            e.value as SingleSpendingItemType[];
                         setSelectedProducts(value);
                     }}
                     dataKey="id"
