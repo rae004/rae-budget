@@ -110,6 +110,10 @@ const MonthlyBills = ({ ...props }) => {
     const selectedProdInitialState =
         state.payPeriods[payPeriodIndex].payPeriodProps
             .monthlyBillsItems || null;
+    console.log(
+        'our selected prod initial state: ',
+        selectedProdInitialState,
+    );
     const [selectedProducts, setSelectedProducts] = useState<
         any[] | null
     >(selectedProdInitialState);

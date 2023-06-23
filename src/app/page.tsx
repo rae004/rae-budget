@@ -96,8 +96,34 @@ const reducer = (state: any, action: any) => {
             );
             console.log('our state is: ', state);
 
-            const newState =
-                state.payPeriods[payPeriodIndex].payPeriodProps;
+            const newState = state.payPeriods[
+                payPeriodIndex
+            ].payPeriodProps.monthlyBillsItems.map(
+                (item: any) => {
+                    console.log('our item: ', item);
+
+                    const isItemPaid =
+                        action.payload.selectedProducts.some(
+                            (selected: any) => {
+                                return selected.id === item.id;
+                            },
+                        );
+                    console.log(
+                        'is our item paid: ',
+                        isItemPaid,
+                    );
+                    if (isItemPaid) {
+                        return {
+                            ...item,
+                            isSelected: true,
+                        };
+                    }
+                    return { ...item, isSelected: false };
+                },
+            );
+            state.payPeriods[
+                payPeriodIndex
+            ].payPeriodProps.monthlyBillsItems = newState;
             console.log('our new state is: ', newState);
 
             return {
