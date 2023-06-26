@@ -32,6 +32,7 @@ const AdditionalSpending = ({ ...props }) => {
             tableBody: { minWidth: '50rem' },
             columnStyle: { width: '25%' },
         },
+        disableCellEditing: true,
     };
 
     return (

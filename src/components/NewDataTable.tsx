@@ -27,6 +27,7 @@ export interface NewDataTableProps {
     setSelectedProducts?: (
         value: SingleSpendingItemType[],
     ) => void;
+    disableCellEditing?: boolean;
 }
 
 export interface ColumnMeta {
@@ -37,6 +38,7 @@ export interface ColumnMeta {
 const NewDataTable = ({ ...props }: NewDataTableProps) => {
     const ourOnCellEditComplete =
         props.ourOnCellEditComplete || onCellEditComplete;
+
     return (
         <div className={props.styles.parentDiv}>
             {props.tableHeader && (
@@ -62,6 +64,11 @@ const NewDataTable = ({ ...props }: NewDataTableProps) => {
             >
                 {props.columns.map(
                     ({ field, header }: ColumnMeta) => {
+                        const cellEditingDisabled =
+                            props.disableCellEditing
+                                ? 'p-disabled'
+                                : '';
+
                         return field !== 'checkbox' ? (
                             <Column
                                 key={field}
@@ -79,6 +86,7 @@ const NewDataTable = ({ ...props }: NewDataTableProps) => {
                                 onCellEditComplete={
                                     ourOnCellEditComplete
                                 }
+                                className={cellEditingDisabled}
                             />
                         ) : (
                             <Column

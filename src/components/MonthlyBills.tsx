@@ -8,6 +8,7 @@ import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
 import NewDataTable, {
     ColumnMeta,
+    NewDataTableProps,
 } from '@/components/NewDataTable';
 import { useContext, useEffect, useState } from 'react';
 import {
@@ -98,7 +99,7 @@ const MonthlyBills = ({ ...props }) => {
         locale: 'en-US',
     };
 
-    const tableProps = {
+    const tableProps: NewDataTableProps = {
         columns,
         tableData: monthlyBillsItems,
         styles: {
@@ -109,6 +110,7 @@ const MonthlyBills = ({ ...props }) => {
         },
         selectedProducts,
         setSelectedProducts,
+        disableCellEditing: true,
     };
 
     useEffect(() => {
