@@ -16,18 +16,11 @@ export const disableInputList = [
 export const priceFields = ['amount', 'price', 'currency'];
 
 export const isPositiveInteger = (val: any) => {
-    let str = String(val);
-
-    str = str.trim();
-
-    if (!str) {
+    if (typeof val !== 'number') {
         return false;
     }
 
-    str = str.replace(/^0+/, '') || '0';
-    let n = Math.floor(Number(str));
-
-    return n !== Infinity && String(n) === str && n >= 0;
+    return val > 0 && Number.isFinite(val);
 };
 
 export const onCellEditComplete = (e: ColumnEvent) => {
