@@ -1,7 +1,7 @@
 import { createContext, Dispatch, SetStateAction } from 'react';
 
 export type SingleSpendingItemType = {
-    id: number;
+    id?: number;
     name: string;
     amount: number;
     isSelected?: boolean;
