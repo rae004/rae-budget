@@ -50,9 +50,20 @@ const MonthlyBills = ({ ...props }) => {
             header: 'Paid',
         },
     ];
+    const monthlyBillsItems =
+        state.payPeriods[payPeriodIndex].payPeriodProps
+            .monthlyBillsItems;
+    const selectedProdInitialState = monthlyBillsItems
+        ? monthlyBillsItems.filter(
+              (item) => item.isSelected === true,
+          )
+        : null;
 
     const [name, setName] = useState<string>('');
     const [amount, setAmount] = useState(0);
+    const [selectedProducts, setSelectedProducts] = useState<
+        SingleSpendingItemType[] | null
+    >(selectedProdInitialState);
 
     const handleAddButtonClick = () => {
         const id =
@@ -92,29 +103,18 @@ const MonthlyBills = ({ ...props }) => {
         locale: 'en-US',
     };
 
-    const monthlyBillsItems =
-        state.payPeriods[payPeriodIndex].payPeriodProps
-            .monthlyBillsItems;
-    const selectedProdInitialState = monthlyBillsItems
-        ? monthlyBillsItems.filter(
-              (item) => item.isSelected === true,
-          )
-        : null;
-
     const tableProps = {
         columns,
-        monthlyBillsItems,
+        tableData: monthlyBillsItems,
         styles: {
             parentDiv: 'card',
             tableHeader: '',
             tableBody: { minWidth: '50rem' },
-            columnStyle: { width: '25%' },
+            columnStyle: {},
         },
+        selectedProducts,
+        setSelectedProducts,
     };
-
-    const [selectedProducts, setSelectedProducts] = useState<
-        any[] | null
-    >(selectedProdInitialState);
 
     useEffect(() => {
         console.log('our checkbox change!!!', selectedProducts);
@@ -158,42 +158,8 @@ const MonthlyBills = ({ ...props }) => {
                     />
                 </div>
             </div>
-            <div className="card">
-                <DataTable
-                    value={monthlyBillsItems}
-                    selectionMode={'multiple'}
-                    selection={selectedProducts!}
-                    onSelectionChange={(e) => {
-                        const value =
-                            e.value as SingleSpendingItemType[];
-                        setSelectedProducts(value);
-                    }}
-                    dataKey="id"
-                    tableStyle={{ minWidth: '50rem' }}
-                >
-                    {columns.map((column, index) =>
-                        column.field === 'checkbox' ? (
-                            <Column
-                                key={index}
-                                selectionMode="multiple"
-                                header={column.header}
-                                headerStyle={{
-                                    width: '3rem',
-                                }}
-                                headerClassName={
-                                    styles.paidHeader
-                                }
-                            ></Column>
-                        ) : (
-                            <Column
-                                key={index}
-                                field={column.field}
-                                header={column.header}
-                            ></Column>
-                        ),
-                    )}
-                </DataTable>
-            </div>
+
+            <NewDataTable {...tableProps} />
         </div>
     );
 };

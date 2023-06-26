@@ -8,6 +8,8 @@ import {
     priceFields,
     rowClassName,
 } from '@/lib/dataTableHelpers';
+import styles from '@/components/component.module.css';
+import { SingleSpendingItemType } from '@/lib/hooks/globalContext';
 
 export type OnCellEditComplete = (event: ColumnEvent) => void;
 export interface NewDataTableProps {
@@ -21,6 +23,10 @@ export interface NewDataTableProps {
         columnStyle: Record<string, any>;
     };
     ourOnCellEditComplete?: OnCellEditComplete;
+    selectedProducts?: SingleSpendingItemType[] | null;
+    setSelectedProducts?: (
+        value: SingleSpendingItemType[],
+    ) => void;
 }
 
 export interface ColumnMeta {
@@ -44,10 +50,19 @@ const NewDataTable = ({ ...props }: NewDataTableProps) => {
                 tableStyle={props.styles.tableBody}
                 isDataSelectable={isRowSelectable}
                 rowClassName={rowClassName}
+                selection={props.selectedProducts!}
+                selectionMode="single"
+                onSelectionChange={(e) => {
+                    if (props.setSelectedProducts) {
+                        const value =
+                            e.value as SingleSpendingItemType[];
+                        props.setSelectedProducts(value);
+                    }
+                }}
             >
                 {props.columns.map(
                     ({ field, header }: ColumnMeta) => {
-                        return (
+                        return field !== 'checkbox' ? (
                             <Column
                                 key={field}
                                 field={field}
@@ -65,6 +80,18 @@ const NewDataTable = ({ ...props }: NewDataTableProps) => {
                                     ourOnCellEditComplete
                                 }
                             />
+                        ) : (
+                            <Column
+                                key={field}
+                                selectionMode="multiple"
+                                header={header}
+                                headerStyle={{
+                                    width: '3rem',
+                                }}
+                                headerClassName={
+                                    styles.paidHeader
+                                }
+                            ></Column>
                         );
                     },
                 )}
