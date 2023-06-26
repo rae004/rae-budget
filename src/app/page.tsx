@@ -90,28 +90,17 @@ const reducer = (state: any, action: any) => {
                 ...state,
             };
         case 'UPDATE_MONTHLY_BILL_ITEM_IS_PAID':
-            console.log(
-                'our action payload is: ',
-                action.payload,
-            );
-            console.log('our state is: ', state);
-
             const newState = state.payPeriods[
                 payPeriodIndex
             ].payPeriodProps.monthlyBillsItems.map(
                 (item: any) => {
-                    console.log('our item: ', item);
-
                     const isItemPaid =
+                        action.payload.selectedProducts &&
                         action.payload.selectedProducts.some(
-                            (selected: any) => {
-                                return selected.id === item.id;
-                            },
+                            (selected: any) =>
+                                selected.id === item.id,
                         );
-                    console.log(
-                        'is our item paid: ',
-                        isItemPaid,
-                    );
+
                     if (isItemPaid) {
                         return {
                             ...item,
@@ -121,15 +110,14 @@ const reducer = (state: any, action: any) => {
                     return { ...item, isSelected: false };
                 },
             );
+
             state.payPeriods[
                 payPeriodIndex
             ].payPeriodProps.monthlyBillsItems = newState;
-            console.log('our new state is: ', newState);
 
             return {
                 ...state,
             };
-        // update is paid status of the monthly bill item.
         case 'GET_FROM_LOCAL_STORAGE_ON_INIT':
             return {
                 ...action.payload,

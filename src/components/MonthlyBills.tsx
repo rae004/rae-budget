@@ -92,13 +92,18 @@ const MonthlyBills = ({ ...props }) => {
         locale: 'en-US',
     };
 
-    const tableData =
+    const monthlyBillsItems =
         state.payPeriods[payPeriodIndex].payPeriodProps
             .monthlyBillsItems;
+    const selectedProdInitialState = monthlyBillsItems
+        ? monthlyBillsItems.filter(
+              (item) => item.isSelected === true,
+          )
+        : null;
 
-    const tableProps: NewDataTableProps = {
+    const tableProps = {
         columns,
-        tableData,
+        monthlyBillsItems,
         styles: {
             parentDiv: 'card',
             tableHeader: '',
@@ -107,13 +112,6 @@ const MonthlyBills = ({ ...props }) => {
         },
     };
 
-    const selectedProdInitialState =
-        state.payPeriods[payPeriodIndex].payPeriodProps
-            .monthlyBillsItems || null;
-    console.log(
-        'our selected prod initial state: ',
-        selectedProdInitialState,
-    );
     const [selectedProducts, setSelectedProducts] = useState<
         any[] | null
     >(selectedProdInitialState);
@@ -162,7 +160,7 @@ const MonthlyBills = ({ ...props }) => {
             </div>
             <div className="card">
                 <DataTable
-                    value={tableData}
+                    value={monthlyBillsItems}
                     selectionMode={'multiple'}
                     selection={selectedProducts!}
                     onSelectionChange={(e) => {
