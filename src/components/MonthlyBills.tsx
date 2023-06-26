@@ -8,17 +8,12 @@ import 'primereact/resources/primereact.min.css';
 import SimpleButton from '@/components/buttons/SimpleButton';
 import NewDataTable, {
     ColumnMeta,
-    NewDataTableProps,
 } from '@/components/NewDataTable';
-import usePayPeriod from '@/lib/hooks/usePayPeriod';
 import { useContext, useEffect, useState } from 'react';
 import {
     GlobalContext,
     SingleSpendingItemType,
 } from '@/lib/hooks/globalContext';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import styles from './component.module.css';
 
 const MonthlyBills = ({ ...props }) => {
     // const {
@@ -82,7 +77,7 @@ const MonthlyBills = ({ ...props }) => {
             tabIndex,
             newItem,
         };
-        console.log('our new item: ', newItem);
+
         dispatch({
             type: 'ADD_MONTHLY_BILL_ITEM',
             payload: addItemPayload,
@@ -117,12 +112,11 @@ const MonthlyBills = ({ ...props }) => {
     };
 
     useEffect(() => {
-        console.log('our checkbox change!!!', selectedProducts);
-
         const payload = {
             tabIndex,
             selectedProducts,
         };
+
         dispatch({
             type: 'UPDATE_MONTHLY_BILL_ITEM_IS_PAID',
             payload: payload,
