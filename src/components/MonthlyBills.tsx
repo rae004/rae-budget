@@ -111,6 +111,7 @@ const MonthlyBills = ({ ...props }) => {
         selectedProducts,
         setSelectedProducts,
         disableCellEditing: true,
+        tabIndex,
     };
 
     useEffect(() => {
