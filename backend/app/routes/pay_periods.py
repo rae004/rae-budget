@@ -5,7 +5,6 @@ from app.extensions import db
 from app.models import PayPeriod
 from app.schemas import (
     PayPeriodCreate,
-    PayPeriodDetailResponse,
     PayPeriodResponse,
     PayPeriodSummary,
     PayPeriodUpdate,
@@ -27,11 +26,11 @@ def list_pay_periods():
     session = db.get_session()
     try:
         pay_periods = (
-            session.query(PayPeriod)
-            .order_by(PayPeriod.start_date.desc())
-            .all()
+            session.query(PayPeriod).order_by(PayPeriod.start_date.desc()).all()
         )
-        result = [PayPeriodResponse.model_validate(pp).model_dump() for pp in pay_periods]
+        result = [
+            PayPeriodResponse.model_validate(pp).model_dump() for pp in pay_periods
+        ]
         return jsonify(result)
     finally:
         session.close()

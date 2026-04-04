@@ -1,8 +1,6 @@
 from datetime import date
 from decimal import Decimal
 
-import pytest
-
 from app.models import SpendingEntry
 
 
@@ -24,7 +22,9 @@ class TestSpendingEntryModel:
         assert entry.description == "Coffee at Starbucks"
         assert entry.amount == Decimal("5.50")
 
-    def test_spending_entry_with_category(self, session, sample_pay_period, sample_category):
+    def test_spending_entry_with_category(
+        self, session, sample_pay_period, sample_category
+    ):
         """Can create spending entry with category."""
         entry = SpendingEntry(
             pay_period_id=sample_pay_period.id,
@@ -53,7 +53,9 @@ class TestSpendingEntryModel:
 
         assert entry.notes == "Shell station"
 
-    def test_spending_entry_relationship(self, sample_spending, sample_pay_period, session):
+    def test_spending_entry_relationship(
+        self, sample_spending, sample_pay_period, session
+    ):
         """Spending entry has relationship to pay period."""
         session.refresh(sample_spending)
         assert sample_spending.pay_period.id == sample_pay_period.id

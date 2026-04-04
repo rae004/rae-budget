@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -21,9 +21,9 @@ class BillTemplate(Base):
     is_recurring: Mapped[bool] = mapped_column(Boolean, default=True)
     category_id: Mapped[int | None] = mapped_column()
     notes: Mapped[str | None] = mapped_column(String(500))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow, onupdate=datetime.utcnow
+        default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
     )
 
     pay_period_bills: Mapped[list["PayPeriodBill"]] = relationship(

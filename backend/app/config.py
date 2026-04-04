@@ -10,7 +10,8 @@ class Config:
 
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key")
     SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL", "postgresql+psycopg://rae_budget:localdev123@localhost:5432/rae_budget"
+        "DATABASE_URL",
+        "postgresql+psycopg://rae_budget:localdev123@localhost:5432/rae_budget",
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {

@@ -40,6 +40,7 @@ def session(app):
 
     db.get_session = original_get_session
     session.close()
+    engine.dispose()
 
 
 @pytest.fixture
