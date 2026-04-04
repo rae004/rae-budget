@@ -1,8 +1,6 @@
 from datetime import date
 from decimal import Decimal
 
-import pytest
-
 from app.models import BillTemplate, PayPeriodBill
 
 
@@ -82,7 +80,9 @@ class TestPayPeriodBillModel:
         assert sample_bill.is_paid is True
         assert sample_bill.paid_date == date(2026, 4, 1)
 
-    def test_pay_period_bill_relationship(self, sample_bill, sample_pay_period, session):
+    def test_pay_period_bill_relationship(
+        self, sample_bill, sample_pay_period, session
+    ):
         """Bill has relationship to pay period."""
         session.refresh(sample_bill)
         assert sample_bill.pay_period.id == sample_pay_period.id

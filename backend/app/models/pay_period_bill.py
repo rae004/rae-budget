@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -28,9 +28,9 @@ class PayPeriodBill(Base):
     is_paid: Mapped[bool] = mapped_column(Boolean, default=False)
     paid_date: Mapped[date | None] = mapped_column(Date)
     notes: Mapped[str | None] = mapped_column(String(500))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow, onupdate=datetime.utcnow
+        default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
     )
 
     pay_period: Mapped["PayPeriod"] = relationship(back_populates="bills")

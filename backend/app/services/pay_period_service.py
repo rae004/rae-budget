@@ -24,10 +24,7 @@ def get_next_pay_date(from_date: date) -> date:
         pay_date = date(year, month, 20)
     else:
         # Move to the 6th of next month
-        if month == 12:
-            pay_date = date(year + 1, 1, 6)
-        else:
-            pay_date = date(year, month + 1, 6)
+        pay_date = date(year + 1, 1, 6) if month == 12 else date(year, month + 1, 6)
 
     # Adjust for weekends (Saturday=5, Sunday=6)
     return adjust_for_weekend(pay_date)
@@ -59,16 +56,10 @@ def get_pay_period_end_date(start_date: date) -> date:
         next_pay = date(year, month, 20)
     elif day <= 20:
         # Current is around 20th, next is 6th of next month
-        if month == 12:
-            next_pay = date(year + 1, 1, 6)
-        else:
-            next_pay = date(year, month + 1, 6)
+        next_pay = date(year + 1, 1, 6) if month == 12 else date(year, month + 1, 6)
     else:
         # After 20th, shouldn't happen but handle it
-        if month == 12:
-            next_pay = date(year + 1, 1, 6)
-        else:
-            next_pay = date(year, month + 1, 6)
+        next_pay = date(year + 1, 1, 6) if month == 12 else date(year, month + 1, 6)
 
     # Adjust for weekend
     next_pay = adjust_for_weekend(next_pay)
@@ -106,9 +97,13 @@ def create_bills_from_templates(
 
     Returns list of created PayPeriodBill objects.
     """
-    templates = session.query(BillTemplate).filter(
-        BillTemplate.is_recurring == True  # noqa: E712
-    ).all()
+    templates = (
+        session.query(BillTemplate)
+        .filter(
+            BillTemplate.is_recurring == True  # noqa: E712
+        )
+        .all()
+    )
 
     bills = []
     for template in templates:

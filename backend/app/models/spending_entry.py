@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
@@ -26,13 +26,15 @@ class SpendingEntry(Base):
     amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
     spent_date: Mapped[date] = mapped_column(Date, nullable=False)
     notes: Mapped[str | None] = mapped_column(String(500))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
-        default=datetime.utcnow, onupdate=datetime.utcnow
+        default=lambda: datetime.now(UTC), onupdate=lambda: datetime.now(UTC)
     )
 
     pay_period: Mapped["PayPeriod"] = relationship(back_populates="spending_entries")
-    category: Mapped["Category | None"] = relationship(back_populates="spending_entries")
+    category: Mapped["Category | None"] = relationship(
+        back_populates="spending_entries"
+    )
 
     def __repr__(self) -> str:
         return f"<SpendingEntry {self.description} ${self.amount}>"

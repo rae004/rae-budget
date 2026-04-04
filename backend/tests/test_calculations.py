@@ -1,8 +1,6 @@
 from datetime import date
 from decimal import Decimal
 
-import pytest
-
 from app.services import (
     adjust_for_weekend,
     get_next_pay_date,
@@ -84,18 +82,24 @@ class TestPayPeriodCalculations:
         session.refresh(sample_pay_period)
         assert sample_pay_period.spending_total == Decimal("150.00")
 
-    def test_running_total(self, sample_pay_period, sample_bill, sample_spending, session):
+    def test_running_total(
+        self, sample_pay_period, sample_bill, sample_spending, session
+    ):
         """Running total is bills + spending."""
         session.refresh(sample_pay_period)
         assert sample_pay_period.running_total == Decimal("1650.00")
 
-    def test_remaining_with_expected_income(self, sample_pay_period, sample_bill, sample_spending, session):
+    def test_remaining_with_expected_income(
+        self, sample_pay_period, sample_bill, sample_spending, session
+    ):
         """Remaining uses expected income if no actual income."""
         session.refresh(sample_pay_period)
         # 2500 - 1650 = 850
         assert sample_pay_period.remaining == Decimal("850.00")
 
-    def test_remaining_with_actual_income(self, sample_pay_period, sample_bill, sample_spending, session):
+    def test_remaining_with_actual_income(
+        self, sample_pay_period, sample_bill, sample_spending, session
+    ):
         """Remaining uses actual income when set."""
         sample_pay_period.actual_income = Decimal("2600.00")
         session.commit()
