@@ -15,6 +15,8 @@ from app.services import (
     calculate_running_total,
     calculate_spending_total,
     create_bills_from_templates,
+    get_next_pay_date,
+    get_pay_period_end_date,
 )
 
 pay_periods_bp = Blueprint("pay_periods", __name__)
@@ -34,6 +36,32 @@ def list_pay_periods():
         return jsonify(result)
     finally:
         session.close()
+
+
+@pay_periods_bp.route("/pay-periods/suggest", methods=["GET"])
+def suggest_pay_period():
+    """Suggest dates for the next pay period based on the 6th/20th schedule."""
+    from datetime import date
+
+    # Get reference date from query param or use today
+    ref_date_str = request.args.get("from_date")
+    if ref_date_str:
+        try:
+            ref_date = date.fromisoformat(ref_date_str)
+        except ValueError:
+            return jsonify({"error": "Invalid date format. Use YYYY-MM-DD"}), 400
+    else:
+        ref_date = date.today()
+
+    start_date = get_next_pay_date(ref_date)
+    end_date = get_pay_period_end_date(start_date)
+
+    return jsonify(
+        {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat(),
+        }
+    )
 
 
 @pay_periods_bp.route("/pay-periods/<int:pay_period_id>", methods=["GET"])

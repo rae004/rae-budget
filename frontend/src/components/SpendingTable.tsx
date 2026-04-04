@@ -1,5 +1,6 @@
 import { useDeleteSpending } from '../hooks/useSpending';
 import { useCategories } from '../hooks/useCategories';
+import { useToast } from '../contexts/ToastContext';
 import type { SpendingEntry } from '../types';
 
 interface SpendingTableProps {
@@ -25,6 +26,7 @@ function formatDate(dateString: string): string {
 export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
   const deleteSpending = useDeleteSpending();
   const { data: categories } = useCategories();
+  const { showToast } = useToast();
 
   const getCategoryName = (categoryId: number | null): string => {
     if (!categoryId || !categories) return '-';
@@ -40,7 +42,17 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
 
   const handleDelete = (spendingId: number) => {
     if (confirm('Are you sure you want to delete this entry?')) {
-      deleteSpending.mutate({ spendingId, payPeriodId });
+      deleteSpending.mutate(
+        { spendingId, payPeriodId },
+        {
+          onSuccess: () => {
+            showToast('Spending entry deleted', 'success');
+          },
+          onError: (error) => {
+            showToast(error instanceof Error ? error.message : 'Failed to delete entry', 'error');
+          },
+        }
+      );
     }
   };
 

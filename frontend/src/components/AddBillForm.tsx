@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCreateBill } from '../hooks/useBills';
 import { useBillTemplates } from '../hooks/useBillTemplates';
+import { useToast } from '../contexts/ToastContext';
 
 interface AddBillFormProps {
   payPeriodId: number;
@@ -14,6 +15,7 @@ export function AddBillForm({ payPeriodId }: AddBillFormProps) {
 
   const createBill = useCreateBill();
   const { data: templates } = useBillTemplates();
+  const { showToast } = useToast();
 
   const handleTemplateChange = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -47,6 +49,10 @@ export function AddBillForm({ payPeriodId }: AddBillFormProps) {
           setAmount('');
           setDueDate('');
           setSelectedTemplate('');
+          showToast('Bill added successfully', 'success');
+        },
+        onError: (error) => {
+          showToast(error instanceof Error ? error.message : 'Failed to add bill', 'error');
         },
       }
     );

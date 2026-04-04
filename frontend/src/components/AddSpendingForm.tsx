@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCreateSpending } from '../hooks/useSpending';
 import { useCategories } from '../hooks/useCategories';
+import { useToast } from '../contexts/ToastContext';
 
 interface AddSpendingFormProps {
   payPeriodId: number;
@@ -17,6 +18,7 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
 
   const createSpending = useCreateSpending();
   const { data: categories } = useCategories();
+  const { showToast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +43,10 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
           setSpentDate(new Date().toISOString().split('T')[0]);
           setCategoryId('');
           setNotes('');
+          showToast('Spending entry added', 'success');
+        },
+        onError: (error) => {
+          showToast(error instanceof Error ? error.message : 'Failed to add spending', 'error');
         },
       }
     );

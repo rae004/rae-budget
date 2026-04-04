@@ -1,4 +1,5 @@
 import { useDeleteBill, useUpdateBill } from '../hooks/useBills';
+import { useToast } from '../contexts/ToastContext';
 import type { PayPeriodBill } from '../types';
 
 interface BillsTableProps {
@@ -24,22 +25,44 @@ function formatDate(dateString: string | null): string {
 export function BillsTable({ bills, payPeriodId }: BillsTableProps) {
   const updateBill = useUpdateBill();
   const deleteBill = useDeleteBill();
+  const { showToast } = useToast();
 
   const handleTogglePaid = (bill: PayPeriodBill) => {
     const today = new Date().toISOString().split('T')[0];
-    updateBill.mutate({
-      billId: bill.id,
-      payPeriodId,
-      data: {
-        is_paid: !bill.is_paid,
-        paid_date: !bill.is_paid ? today : null,
+    const newPaidStatus = !bill.is_paid;
+    updateBill.mutate(
+      {
+        billId: bill.id,
+        payPeriodId,
+        data: {
+          is_paid: newPaidStatus,
+          paid_date: newPaidStatus ? today : null,
+        },
       },
-    });
+      {
+        onSuccess: () => {
+          showToast(newPaidStatus ? 'Bill marked as paid' : 'Bill marked as unpaid', 'success');
+        },
+        onError: (error) => {
+          showToast(error instanceof Error ? error.message : 'Failed to update bill', 'error');
+        },
+      }
+    );
   };
 
   const handleDelete = (billId: number) => {
     if (confirm('Are you sure you want to delete this bill?')) {
-      deleteBill.mutate({ billId, payPeriodId });
+      deleteBill.mutate(
+        { billId, payPeriodId },
+        {
+          onSuccess: () => {
+            showToast('Bill deleted', 'success');
+          },
+          onError: (error) => {
+            showToast(error instanceof Error ? error.message : 'Failed to delete bill', 'error');
+          },
+        }
+      );
     }
   };
 
