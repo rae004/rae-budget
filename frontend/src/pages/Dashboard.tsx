@@ -105,9 +105,9 @@ export function Dashboard() {
                   </div>
                 ) : (
                   <>
-                    <SpendingTable entries={spending ?? []} payPeriodId={selectedPayPeriodId} />
-                    <div className="divider"></div>
                     <AddSpendingForm payPeriodId={selectedPayPeriodId} />
+                    <div className="divider"></div>
+                    <SpendingTable entries={spending ?? []} payPeriodId={selectedPayPeriodId} />
                   </>
                 )}
               </div>
