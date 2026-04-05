@@ -34,6 +34,11 @@ export function SummaryCard({ payPeriod }: SummaryCardProps) {
                 Actual: {formatCurrency(payPeriod.actual_income)}
               </div>
             )}
+            {payPeriod.additional_income && (
+              <div className="stat-desc">
+                + Additional: {formatCurrency(payPeriod.additional_income)}
+              </div>
+            )}
           </div>
 
           <div className="stat">

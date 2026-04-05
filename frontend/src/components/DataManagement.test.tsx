@@ -49,6 +49,7 @@ const mockExportData: DataExport = {
         end_date: "2026-04-19",
         expected_income: "2500.00",
         actual_income: null,
+        additional_income: null,
         notes: null,
         bills: [
           {
