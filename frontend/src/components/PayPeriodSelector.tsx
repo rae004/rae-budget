@@ -1,22 +1,10 @@
 import type { PayPeriod } from '../types';
+import { formatDateRange } from '../utils/date';
 
 interface PayPeriodSelectorProps {
   payPeriods: PayPeriod[];
   selectedId: number | undefined;
   onSelect: (id: number) => void;
-}
-
-function formatDateRange(startDate: string, endDate: string): string {
-  const start = new Date(startDate).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
-  const end = new Date(endDate).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-  return `${start} - ${end}`;
 }
 
 export function PayPeriodSelector({

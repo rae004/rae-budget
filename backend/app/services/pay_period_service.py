@@ -1,3 +1,4 @@
+from calendar import monthrange
 from datetime import date, timedelta
 from decimal import Decimal
 
@@ -89,11 +90,80 @@ def calculate_remaining(pay_period: PayPeriod) -> Decimal:
     return income - calculate_running_total(pay_period)
 
 
+def calculate_bill_due_date(
+    due_day: int,
+    period_start: date,
+    period_end: date,
+) -> date | None:
+    """
+    Calculate the actual due date for a bill within a pay period.
+
+    Handles:
+    - Pay periods spanning month boundaries (e.g., Dec 20 - Jan 5)
+    - Months with fewer days than due_day (e.g., due_day=31 in February)
+
+    Returns the due date if it falls within the pay period, None otherwise.
+    """
+    # Check start month
+    year, month = period_start.year, period_start.month
+    max_day = monthrange(year, month)[1]
+    actual_day = min(due_day, max_day)
+    candidate = date(year, month, actual_day)
+
+    if period_start <= candidate <= period_end:
+        return candidate
+
+    # Check end month (if different from start month)
+    if period_end.month != period_start.month or period_end.year != period_start.year:
+        year, month = period_end.year, period_end.month
+        max_day = monthrange(year, month)[1]
+        actual_day = min(due_day, max_day)
+        candidate = date(year, month, actual_day)
+
+        if period_start <= candidate <= period_end:
+            return candidate
+
+    return None
+
+
+def repopulate_bills_from_templates(session: Session, pay_period: PayPeriod) -> dict:
+    """
+    Re-populate bills for a pay period from templates.
+
+    Deletes existing template-based bills and re-creates them using the
+    current due date filtering logic. Preserves manually-added bills
+    (those without a bill_template_id).
+
+    Returns a dict with counts of deleted and created bills.
+    """
+    # Delete existing template-based bills (preserve manual bills)
+    template_bills = [b for b in pay_period.bills if b.bill_template_id is not None]
+    deleted_count = len(template_bills)
+    for bill in template_bills:
+        session.delete(bill)
+
+    # Flush to ensure deletes are processed before re-creating
+    session.flush()
+
+    # Re-create bills from templates using new logic
+    new_bills = create_bills_from_templates(session, pay_period)
+    for bill in new_bills:
+        session.add(bill)
+
+    return {
+        "deleted": deleted_count,
+        "created": len(new_bills),
+    }
+
+
 def create_bills_from_templates(
     session: Session, pay_period: PayPeriod
 ) -> list[PayPeriodBill]:
     """
-    Create bills for a pay period from active bill templates.
+    Create bills from recurring templates that fall within this pay period.
+
+    Only bills whose due_day_of_month falls within the pay period's date range
+    are created. Templates without a due_day_of_month are skipped.
 
     Returns list of created PayPeriodBill objects.
     """
@@ -107,34 +177,27 @@ def create_bills_from_templates(
 
     bills = []
     for template in templates:
-        # Calculate due date if template has a due day
-        due_date = None
-        if template.due_day_of_month:
-            try:
-                due_date = date(
-                    pay_period.start_date.year,
-                    pay_period.start_date.month,
-                    template.due_day_of_month,
-                )
-                # If due date is before pay period, try next month
-                if due_date < pay_period.start_date:
-                    month = pay_period.start_date.month + 1
-                    year = pay_period.start_date.year
-                    if month > 12:
-                        month = 1
-                        year += 1
-                    due_date = date(year, month, template.due_day_of_month)
-            except ValueError:
-                # Invalid day for month (e.g., Feb 30)
-                due_date = None
+        # Skip templates without a due day
+        if not template.due_day_of_month:
+            continue
 
-        bill = PayPeriodBill(
-            pay_period_id=pay_period.id,
-            bill_template_id=template.id,
-            name=template.name,
-            amount=template.default_amount,
-            due_date=due_date,
+        # Calculate actual due date for this pay period
+        due_date = calculate_bill_due_date(
+            template.due_day_of_month,
+            pay_period.start_date,
+            pay_period.end_date,
         )
-        bills.append(bill)
+
+        # Only create bill if due date falls within pay period
+        if due_date:
+            bill = PayPeriodBill(
+                pay_period_id=pay_period.id,
+                bill_template_id=template.id,
+                name=template.name,
+                amount=template.default_amount,
+                due_date=due_date,
+                is_paid=False,
+            )
+            bills.append(bill)
 
     return bills

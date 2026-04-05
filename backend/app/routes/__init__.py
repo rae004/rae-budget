@@ -3,6 +3,7 @@ from flask import Flask
 from app.routes.bill_templates import bill_templates_bp
 from app.routes.bills import bills_bp
 from app.routes.categories import categories_bp
+from app.routes.data_management import data_management_bp
 from app.routes.health import health_bp
 from app.routes.pay_periods import pay_periods_bp
 from app.routes.spending import spending_bp
@@ -16,3 +17,4 @@ def register_blueprints(app: Flask) -> None:
     app.register_blueprint(spending_bp, url_prefix="/api")
     app.register_blueprint(bill_templates_bp, url_prefix="/api")
     app.register_blueprint(categories_bp, url_prefix="/api")
+    app.register_blueprint(data_management_bp, url_prefix="/api")

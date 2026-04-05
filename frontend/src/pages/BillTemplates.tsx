@@ -4,6 +4,7 @@ import {
   useCreateBillTemplate,
   useDeleteBillTemplate,
 } from '../hooks/useBillTemplates';
+import { useToast } from '../contexts/ToastContext';
 
 function formatCurrency(value: string): string {
   return new Intl.NumberFormat('en-US', {
@@ -20,6 +21,7 @@ export function BillTemplates() {
   const { data: templates, isLoading } = useBillTemplates();
   const createTemplate = useCreateBillTemplate();
   const deleteTemplate = useDeleteBillTemplate();
+  const { showToast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +40,10 @@ export function BillTemplates() {
           setName('');
           setAmount('');
           setDueDay('');
+          showToast('Bill template created', 'success');
+        },
+        onError: (error) => {
+          showToast(error instanceof Error ? error.message : 'Failed to create template', 'error');
         },
       }
     );
@@ -45,7 +51,14 @@ export function BillTemplates() {
 
   const handleDelete = (id: number) => {
     if (confirm('Are you sure you want to delete this template?')) {
-      deleteTemplate.mutate(id);
+      deleteTemplate.mutate(id, {
+        onSuccess: () => {
+          showToast('Template deleted', 'success');
+        },
+        onError: (error) => {
+          showToast(error instanceof Error ? error.message : 'Failed to delete template', 'error');
+        },
+      });
     }
   };
 

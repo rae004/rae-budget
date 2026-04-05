@@ -64,39 +64,42 @@ export function Dashboard() {
             <SummaryCard payPeriod={payPeriodDetail} />
           ) : null}
 
-          {/* Bills Section */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h2 className="card-title">Bills</h2>
-              {isLoadingBills ? (
-                <div className="flex justify-center py-4">
-                  <span className="loading loading-spinner"></span>
-                </div>
-              ) : (
-                <>
-                  <BillsTable bills={bills ?? []} payPeriodId={selectedPayPeriodId} />
-                  <div className="divider"></div>
-                  <AddBillForm payPeriodId={selectedPayPeriodId} />
-                </>
-              )}
+          {/* Bills and Spending Columns */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Bills Section - 1/3 width */}
+            <div className="lg:col-span-1 card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title">Bills</h2>
+                {isLoadingBills ? (
+                  <div className="flex justify-center py-4">
+                    <span className="loading loading-spinner"></span>
+                  </div>
+                ) : (
+                  <>
+                    <BillsTable bills={bills ?? []} payPeriodId={selectedPayPeriodId} />
+                    <div className="divider"></div>
+                    <AddBillForm payPeriodId={selectedPayPeriodId} />
+                  </>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Spending Section */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h2 className="card-title">Additional Spending</h2>
-              {isLoadingSpending ? (
-                <div className="flex justify-center py-4">
-                  <span className="loading loading-spinner"></span>
-                </div>
-              ) : (
-                <>
-                  <SpendingTable entries={spending ?? []} payPeriodId={selectedPayPeriodId} />
-                  <div className="divider"></div>
-                  <AddSpendingForm payPeriodId={selectedPayPeriodId} />
-                </>
-              )}
+            {/* Spending Section - 2/3 width */}
+            <div className="lg:col-span-2 card bg-base-100 shadow-xl">
+              <div className="card-body">
+                <h2 className="card-title">Additional Spending</h2>
+                {isLoadingSpending ? (
+                  <div className="flex justify-center py-4">
+                    <span className="loading loading-spinner"></span>
+                  </div>
+                ) : (
+                  <>
+                    <SpendingTable entries={spending ?? []} payPeriodId={selectedPayPeriodId} />
+                    <div className="divider"></div>
+                    <AddSpendingForm payPeriodId={selectedPayPeriodId} />
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </>

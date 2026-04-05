@@ -19,7 +19,8 @@ def list_bill_templates():
     try:
         templates = session.query(BillTemplate).order_by(BillTemplate.name).all()
         result = [
-            BillTemplateResponse.model_validate(t).model_dump() for t in templates
+            BillTemplateResponse.model_validate(t).model_dump(mode="json")
+            for t in templates
         ]
         return jsonify(result)
     finally:
@@ -35,7 +36,7 @@ def get_bill_template(template_id: int):
         if not template:
             return jsonify({"error": "Bill template not found"}), 404
 
-        result = BillTemplateResponse.model_validate(template).model_dump()
+        result = BillTemplateResponse.model_validate(template).model_dump(mode="json")
         return jsonify(result)
     finally:
         session.close()
@@ -63,7 +64,7 @@ def create_bill_template():
         session.commit()
         session.refresh(template)
 
-        result = BillTemplateResponse.model_validate(template).model_dump()
+        result = BillTemplateResponse.model_validate(template).model_dump(mode="json")
         return jsonify(result), 201
     except Exception as e:
         session.rollback()
@@ -93,7 +94,7 @@ def update_bill_template(template_id: int):
         session.commit()
         session.refresh(template)
 
-        result = BillTemplateResponse.model_validate(template).model_dump()
+        result = BillTemplateResponse.model_validate(template).model_dump(mode="json")
         return jsonify(result)
     except Exception as e:
         session.rollback()

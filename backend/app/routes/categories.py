@@ -18,7 +18,10 @@ def list_categories():
     session = db.get_session()
     try:
         categories = session.query(Category).order_by(Category.name).all()
-        result = [CategoryResponse.model_validate(c).model_dump() for c in categories]
+        result = [
+            CategoryResponse.model_validate(c).model_dump(mode="json")
+            for c in categories
+        ]
         return jsonify(result)
     finally:
         session.close()
@@ -33,7 +36,7 @@ def get_category(category_id: int):
         if not category:
             return jsonify({"error": "Category not found"}), 404
 
-        result = CategoryResponse.model_validate(category).model_dump()
+        result = CategoryResponse.model_validate(category).model_dump(mode="json")
         return jsonify(result)
     finally:
         session.close()
@@ -58,7 +61,7 @@ def create_category():
         session.commit()
         session.refresh(category)
 
-        result = CategoryResponse.model_validate(category).model_dump()
+        result = CategoryResponse.model_validate(category).model_dump(mode="json")
         return jsonify(result), 201
     except Exception as e:
         session.rollback()
@@ -88,7 +91,7 @@ def update_category(category_id: int):
         session.commit()
         session.refresh(category)
 
-        result = CategoryResponse.model_validate(category).model_dump()
+        result = CategoryResponse.model_validate(category).model_dump(mode="json")
         return jsonify(result)
     except Exception as e:
         session.rollback()

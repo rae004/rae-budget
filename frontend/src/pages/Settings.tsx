@@ -1,4 +1,5 @@
 import { useCategories } from '../hooks/useCategories';
+import { DataManagement } from '../components/DataManagement';
 
 export function Settings() {
   const { data: categories, isLoading } = useCategories();
@@ -34,6 +35,17 @@ export function Settings() {
           ) : (
             <div className="text-base-content/60">No categories found.</div>
           )}
+        </div>
+      </div>
+
+      {/* Data Management Section */}
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h2 className="card-title">Data Management</h2>
+          <p className="text-base-content/70 mb-4">
+            Export your data for backup, import previously exported data, or reset all data.
+          </p>
+          <DataManagement />
         </div>
       </div>
 

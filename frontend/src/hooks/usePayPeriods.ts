@@ -34,8 +34,18 @@ export function useCreatePayPeriod() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: PayPeriodCreate) =>
-      api.post<PayPeriod>('/pay-periods', data),
+    mutationFn: ({
+      data,
+      populateBills = false,
+    }: {
+      data: PayPeriodCreate;
+      populateBills?: boolean;
+    }) => {
+      const url = populateBills
+        ? '/pay-periods?populate_bills=true'
+        : '/pay-periods';
+      return api.post<PayPeriod>(url, data);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: payPeriodKeys.lists() });
     },
@@ -63,5 +73,17 @@ export function useDeletePayPeriod() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: payPeriodKeys.lists() });
     },
+  });
+}
+
+interface SuggestedDates {
+  start_date: string;
+  end_date: string;
+}
+
+export function useSuggestedPayPeriod() {
+  return useQuery({
+    queryKey: ['payPeriods', 'suggest'] as const,
+    queryFn: () => api.get<SuggestedDates>('/pay-periods/suggest'),
   });
 }
