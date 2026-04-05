@@ -50,6 +50,7 @@ const mockExportData: DataExport = {
         expected_income: "2500.00",
         actual_income: null,
         additional_income: null,
+        additional_income_description: null,
         notes: null,
         bills: [
           {

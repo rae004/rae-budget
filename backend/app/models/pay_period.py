@@ -23,6 +23,7 @@ class PayPeriod(Base):
     )
     actual_income: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
     additional_income: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
+    additional_income_description: Mapped[str | None] = mapped_column(String(200))
     notes: Mapped[str | None] = mapped_column(String(500))
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(

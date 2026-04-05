@@ -23,6 +23,7 @@ export interface PayPeriod {
   expected_income: string;
   actual_income: string | null;
   additional_income: string | null;
+  additional_income_description: string | null;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -46,6 +47,7 @@ export interface PayPeriodUpdate {
   expected_income?: number;
   actual_income?: number | null;
   additional_income?: number | null;
+  additional_income_description?: string | null;
   notes?: string | null;
 }
 
@@ -188,6 +190,7 @@ export interface PayPeriodExport {
   expected_income: string;
   actual_income: string | null;
   additional_income: string | null;
+  additional_income_description: string | null;
   notes: string | null;
   bills: PayPeriodBillExport[];
   spending_entries: SpendingEntryExport[];

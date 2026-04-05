@@ -73,6 +73,7 @@ export function Dashboard() {
               <AdditionalIncomeCard
                 payPeriodId={selectedPayPeriodId}
                 currentValue={payPeriodDetail?.additional_income ?? null}
+                currentDescription={payPeriodDetail?.additional_income_description ?? null}
               />
 
               {/* Bills Section */}
