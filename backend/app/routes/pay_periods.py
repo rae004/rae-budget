@@ -32,7 +32,7 @@ def list_pay_periods():
             session.query(PayPeriod).order_by(PayPeriod.start_date.desc()).all()
         )
         result = [
-            PayPeriodResponse.model_validate(pp).model_dump() for pp in pay_periods
+            PayPeriodResponse.model_validate(pp).model_dump(mode="json") for pp in pay_periods
         ]
         return jsonify(result)
     finally:
@@ -81,8 +81,8 @@ def get_pay_period(pay_period_id: int):
             remaining=calculate_remaining(pay_period),
         )
 
-        response = PayPeriodResponse.model_validate(pay_period).model_dump()
-        response["summary"] = summary.model_dump()
+        response = PayPeriodResponse.model_validate(pay_period).model_dump(mode="json")
+        response["summary"] = summary.model_dump(mode="json")
 
         return jsonify(response)
     finally:
@@ -117,7 +117,7 @@ def create_pay_period():
                 session.add(bill)
             session.commit()
 
-        result = PayPeriodResponse.model_validate(pay_period).model_dump()
+        result = PayPeriodResponse.model_validate(pay_period).model_dump(mode="json")
         return jsonify(result), 201
     except Exception as e:
         session.rollback()
@@ -147,7 +147,7 @@ def update_pay_period(pay_period_id: int):
         session.commit()
         session.refresh(pay_period)
 
-        result = PayPeriodResponse.model_validate(pay_period).model_dump()
+        result = PayPeriodResponse.model_validate(pay_period).model_dump(mode="json")
         return jsonify(result)
     except Exception as e:
         session.rollback()

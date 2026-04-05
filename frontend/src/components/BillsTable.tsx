@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDeleteBill, useUpdateBill } from '../hooks/useBills';
 import { useToast } from '../contexts/ToastContext';
+import { formatDate as formatLocalDate } from '../utils/date';
 import type { PayPeriodBill } from '../types';
 
 interface BillsTableProps {
@@ -24,10 +25,7 @@ function formatCurrency(value: string): string {
 
 function formatDate(dateString: string | null): string {
   if (!dateString) return '-';
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
+  return formatLocalDate(dateString, { month: 'short', day: 'numeric' });
 }
 
 export function BillsTable({ bills, payPeriodId }: BillsTableProps) {

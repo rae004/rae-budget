@@ -1,4 +1,5 @@
 import type { PayPeriodDetail } from '../types';
+import { formatDate } from '../utils/date';
 
 interface SummaryCardProps {
   payPeriod: PayPeriodDetail;
@@ -9,14 +10,6 @@ function formatCurrency(value: string): string {
     style: 'currency',
     currency: 'USD',
   }).format(parseFloat(value));
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 export function SummaryCard({ payPeriod }: SummaryCardProps) {

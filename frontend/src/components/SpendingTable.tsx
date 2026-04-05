@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useDeleteSpending, useUpdateSpending } from '../hooks/useSpending';
 import { useCategories } from '../hooks/useCategories';
 import { useToast } from '../contexts/ToastContext';
+import { formatDate } from '../utils/date';
 import type { SpendingEntry } from '../types';
 
 interface SpendingTableProps {
@@ -24,13 +25,6 @@ function formatCurrency(value: string | number): string {
     style: 'currency',
     currency: 'USD',
   }).format(num);
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-  });
 }
 
 export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
@@ -230,7 +224,7 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
 
             return (
               <tr key={entry.id}>
-                <td>{formatDate(entry.spent_date)}</td>
+                <td>{formatDate(entry.spent_date, { month: 'short', day: 'numeric' })}</td>
                 <td>
                   {entry.description}
                   {entry.notes && (

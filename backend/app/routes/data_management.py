@@ -268,7 +268,7 @@ def import_data():
             spending_entries_created=spending_entries_created,
         )
 
-        return jsonify(result.model_dump()), 200
+        return jsonify(result.model_dump(mode="json")), 200
     except Exception as e:
         session.rollback()
         return jsonify({"error": str(e)}), 500
@@ -319,7 +319,7 @@ def reset_data():
             spending_entries_deleted=spending_entries_count,
         )
 
-        return jsonify(result.model_dump()), 200
+        return jsonify(result.model_dump(mode="json")), 200
     except Exception as e:
         session.rollback()
         return jsonify({"error": str(e)}), 500

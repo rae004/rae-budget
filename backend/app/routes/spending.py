@@ -22,7 +22,7 @@ def list_spending(pay_period_id: int):
             return jsonify({"error": "Pay period not found"}), 404
 
         result = [
-            SpendingEntryResponse.model_validate(entry).model_dump()
+            SpendingEntryResponse.model_validate(entry).model_dump(mode="json")
             for entry in pay_period.spending_entries
         ]
         return jsonify(result)
@@ -56,7 +56,7 @@ def create_spending(pay_period_id: int):
         session.commit()
         session.refresh(entry)
 
-        result = SpendingEntryResponse.model_validate(entry).model_dump()
+        result = SpendingEntryResponse.model_validate(entry).model_dump(mode="json")
         return jsonify(result), 201
     except Exception as e:
         session.rollback()
@@ -86,7 +86,7 @@ def update_spending(spending_id: int):
         session.commit()
         session.refresh(entry)
 
-        result = SpendingEntryResponse.model_validate(entry).model_dump()
+        result = SpendingEntryResponse.model_validate(entry).model_dump(mode="json")
         return jsonify(result)
     except Exception as e:
         session.rollback()

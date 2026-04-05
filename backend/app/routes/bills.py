@@ -22,7 +22,7 @@ def list_bills(pay_period_id: int):
             return jsonify({"error": "Pay period not found"}), 404
 
         result = [
-            PayPeriodBillResponse.model_validate(bill).model_dump()
+            PayPeriodBillResponse.model_validate(bill).model_dump(mode="json")
             for bill in pay_period.bills
         ]
         return jsonify(result)
@@ -58,7 +58,7 @@ def create_bill(pay_period_id: int):
         session.commit()
         session.refresh(bill)
 
-        result = PayPeriodBillResponse.model_validate(bill).model_dump()
+        result = PayPeriodBillResponse.model_validate(bill).model_dump(mode="json")
         return jsonify(result), 201
     except Exception as e:
         session.rollback()
@@ -88,7 +88,7 @@ def update_bill(bill_id: int):
         session.commit()
         session.refresh(bill)
 
-        result = PayPeriodBillResponse.model_validate(bill).model_dump()
+        result = PayPeriodBillResponse.model_validate(bill).model_dump(mode="json")
         return jsonify(result)
     except Exception as e:
         session.rollback()
