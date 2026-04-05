@@ -22,6 +22,7 @@ class PayPeriod(Base):
         Numeric(10, 2), nullable=False, default=Decimal("0")
     )
     actual_income: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
+    additional_income: Mapped[Decimal | None] = mapped_column(Numeric(10, 2))
     notes: Mapped[str | None] = mapped_column(String(500))
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(UTC))
     updated_at: Mapped[datetime] = mapped_column(
@@ -54,7 +55,8 @@ class PayPeriod(Base):
     def remaining(self) -> Decimal:
         """Remaining balance (income - running total)."""
         income = self.actual_income or self.expected_income
-        return income - self.running_total
+        additional = self.additional_income or Decimal("0")
+        return income + additional - self.running_total
 
     def __repr__(self) -> str:
         return f"<PayPeriod {self.start_date} - {self.end_date}>"

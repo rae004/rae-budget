@@ -9,6 +9,7 @@ class PayPeriodBase(BaseModel):
     end_date: date
     expected_income: Decimal = Field(Decimal("0"), ge=0)
     actual_income: Decimal | None = Field(None, ge=0)
+    additional_income: Decimal | None = Field(None, ge=0)
     notes: str | None = Field(None, max_length=500)
 
     @model_validator(mode="after")
@@ -27,6 +28,7 @@ class PayPeriodUpdate(BaseModel):
     end_date: date | None = None
     expected_income: Decimal | None = Field(None, ge=0)
     actual_income: Decimal | None = Field(None, ge=0)
+    additional_income: Decimal | None = Field(None, ge=0)
     notes: str | None = Field(None, max_length=500)
 
 

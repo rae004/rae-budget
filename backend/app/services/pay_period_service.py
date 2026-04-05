@@ -85,9 +85,10 @@ def calculate_running_total(pay_period: PayPeriod) -> Decimal:
 
 
 def calculate_remaining(pay_period: PayPeriod) -> Decimal:
-    """Calculate remaining balance (income - running total)."""
+    """Calculate remaining balance (income + additional - running total)."""
     income = pay_period.actual_income or pay_period.expected_income
-    return income - calculate_running_total(pay_period)
+    additional = pay_period.additional_income or Decimal("0")
+    return income + additional - calculate_running_total(pay_period)
 
 
 def calculate_bill_due_date(
