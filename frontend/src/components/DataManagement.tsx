@@ -3,6 +3,7 @@ import { useToast } from '../contexts/ToastContext';
 import {
   useExportData,
   useImportData,
+  useRepopulateBills,
   useResetData,
   downloadExportFile,
   parseExportFile,
@@ -15,6 +16,8 @@ export function DataManagement() {
       <ExportSection />
       <div className="divider" />
       <ImportSection />
+      <div className="divider" />
+      <RepopulateBillsSection />
       <div className="divider" />
       <ResetSection />
     </div>
@@ -225,6 +228,113 @@ function ImportSection() {
           <div
             className="modal-backdrop"
             onClick={() => !importData.isPending && setShowConfirmModal(false)}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RepopulateBillsSection() {
+  const { showToast } = useToast();
+  const repopulateBills = useRepopulateBills();
+  const [showModal, setShowModal] = useState(false);
+
+  const handleRepopulateClick = () => {
+    setShowModal(true);
+  };
+
+  const handleConfirmRepopulate = () => {
+    repopulateBills.mutate(undefined, {
+      onSuccess: (result) => {
+        showToast(
+          `Updated ${result.pay_periods_updated} pay periods: removed ${result.total_bills_deleted} bills, created ${result.total_bills_created} bills`,
+          'success'
+        );
+        setShowModal(false);
+      },
+      onError: (error) => {
+        showToast(
+          error instanceof Error ? error.message : 'Failed to repopulate bills',
+          'error'
+        );
+      },
+    });
+  };
+
+  return (
+    <div>
+      <h3 className="text-lg font-semibold mb-2">Re-populate Bills</h3>
+      <p className="text-sm text-base-content/70 mb-4">
+        Re-assign bills to pay periods based on their due dates. This will remove
+        template-based bills that don't belong in each pay period and add ones that do.
+        Manually-added bills (not from templates) will be preserved.
+      </p>
+      <button className="btn btn-warning" onClick={handleRepopulateClick}>
+        Re-populate All Bills
+      </button>
+
+      {/* Repopulate Confirmation Modal */}
+      {showModal && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Confirm Re-populate Bills</h3>
+            <div className="py-4 space-y-4">
+              <div className="alert alert-warning">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+                <span>
+                  This will re-assign bills for ALL pay periods based on due dates.
+                </span>
+              </div>
+              <p className="text-sm">
+                For each pay period, this will:
+              </p>
+              <ul className="text-sm list-disc list-inside space-y-1 ml-2">
+                <li>Remove bills from templates whose due dates fall outside the pay period</li>
+                <li>Add bills from templates whose due dates fall within the pay period</li>
+                <li>Preserve any manually-added bills</li>
+                <li>Preserve payment status and notes will be reset for re-created bills</li>
+              </ul>
+            </div>
+            <div className="modal-action">
+              <button
+                className="btn"
+                onClick={() => setShowModal(false)}
+                disabled={repopulateBills.isPending}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-warning"
+                onClick={handleConfirmRepopulate}
+                disabled={repopulateBills.isPending}
+              >
+                {repopulateBills.isPending ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm"></span>
+                    Re-populating...
+                  </>
+                ) : (
+                  'Confirm Re-populate'
+                )}
+              </button>
+            </div>
+          </div>
+          <div
+            className="modal-backdrop"
+            onClick={() => !repopulateBills.isPending && setShowModal(false)}
           />
         </div>
       )}

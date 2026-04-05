@@ -219,3 +219,9 @@ export interface ResetResult {
   bills_deleted: number;
   spending_entries_deleted: number;
 }
+
+export interface RepopulateBillsResult {
+  pay_periods_updated: number;
+  total_bills_deleted: number;
+  total_bills_created: number;
+}

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
-import type { DataExport, ImportResult, ResetResult } from '../types';
+import type { DataExport, ImportResult, RepopulateBillsResult, ResetResult } from '../types';
 import { payPeriodKeys } from './usePayPeriods';
 import { categoryKeys } from './useCategories';
 import { billKeys } from './useBills';
@@ -111,4 +111,33 @@ export async function parseExportFile(file: File): Promise<DataExport> {
   }
 
   return data;
+}
+
+/**
+ * Hook for re-populating bills for all pay periods.
+ * This fixes bills that were incorrectly assigned based on due dates.
+ */
+export function useRepopulateBills() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (): Promise<RepopulateBillsResult> => {
+      const response = await fetch(`${API_BASE}/pay-periods/repopulate-all-bills`, {
+        method: 'POST',
+        headers: {
+          'X-Confirm-Repopulate': 'REPOPULATE-ALL',
+        },
+      });
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+        throw new Error(typeof error.error === 'string' ? error.error : 'Repopulate failed');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      // Invalidate pay period and bill queries to refresh UI
+      queryClient.invalidateQueries({ queryKey: payPeriodKeys.all });
+      queryClient.invalidateQueries({ queryKey: billKeys.all });
+    },
+  });
 }

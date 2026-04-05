@@ -17,6 +17,7 @@ from app.services import (
     create_bills_from_templates,
     get_next_pay_date,
     get_pay_period_end_date,
+    repopulate_bills_from_templates,
 )
 
 pay_periods_bp = Blueprint("pay_periods", __name__)
@@ -168,6 +169,89 @@ def delete_pay_period(pay_period_id: int):
         session.commit()
 
         return "", 204
+    except Exception as e:
+        session.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        session.close()
+
+
+@pay_periods_bp.route(
+    "/pay-periods/<int:pay_period_id>/repopulate-bills", methods=["POST"]
+)
+def repopulate_pay_period_bills(pay_period_id: int):
+    """
+    Re-populate bills for a single pay period from templates.
+
+    Deletes existing template-based bills and re-creates them using the
+    current due date filtering logic. Preserves manually-added bills.
+    """
+    session = db.get_session()
+    try:
+        pay_period = session.query(PayPeriod).filter_by(id=pay_period_id).first()
+        if not pay_period:
+            return jsonify({"error": "Pay period not found"}), 404
+
+        result = repopulate_bills_from_templates(session, pay_period)
+        session.commit()
+
+        return jsonify(
+            {
+                "pay_period_id": pay_period_id,
+                "bills_deleted": result["deleted"],
+                "bills_created": result["created"],
+            }
+        )
+    except Exception as e:
+        session.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        session.close()
+
+
+@pay_periods_bp.route("/pay-periods/repopulate-all-bills", methods=["POST"])
+def repopulate_all_pay_period_bills():
+    """
+    Re-populate bills for ALL pay periods from templates.
+
+    For each pay period, deletes existing template-based bills and re-creates
+    them using the current due date filtering logic. Preserves manually-added bills.
+
+    Requires X-Confirm-Repopulate header to be set to 'REPOPULATE-ALL'.
+    """
+    # Require confirmation header
+    confirm_header = request.headers.get("X-Confirm-Repopulate")
+    if confirm_header != "REPOPULATE-ALL":
+        return jsonify(
+            {
+                "error": "Missing or invalid confirmation header. "
+                "Set X-Confirm-Repopulate: REPOPULATE-ALL"
+            }
+        ), 400
+
+    session = db.get_session()
+    try:
+        pay_periods = session.query(PayPeriod).all()
+
+        total_deleted = 0
+        total_created = 0
+        pay_periods_updated = 0
+
+        for pay_period in pay_periods:
+            result = repopulate_bills_from_templates(session, pay_period)
+            total_deleted += result["deleted"]
+            total_created += result["created"]
+            pay_periods_updated += 1
+
+        session.commit()
+
+        return jsonify(
+            {
+                "pay_periods_updated": pay_periods_updated,
+                "total_bills_deleted": total_deleted,
+                "total_bills_created": total_created,
+            }
+        )
     except Exception as e:
         session.rollback()
         return jsonify({"error": str(e)}), 500
