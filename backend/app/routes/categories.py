@@ -18,7 +18,10 @@ def list_categories():
     session = db.get_session()
     try:
         categories = session.query(Category).order_by(Category.name).all()
-        result = [CategoryResponse.model_validate(c).model_dump(mode="json") for c in categories]
+        result = [
+            CategoryResponse.model_validate(c).model_dump(mode="json")
+            for c in categories
+        ]
         return jsonify(result)
     finally:
         session.close()

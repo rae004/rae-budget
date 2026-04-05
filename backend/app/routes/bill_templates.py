@@ -19,7 +19,8 @@ def list_bill_templates():
     try:
         templates = session.query(BillTemplate).order_by(BillTemplate.name).all()
         result = [
-            BillTemplateResponse.model_validate(t).model_dump(mode="json") for t in templates
+            BillTemplateResponse.model_validate(t).model_dump(mode="json")
+            for t in templates
         ]
         return jsonify(result)
     finally:

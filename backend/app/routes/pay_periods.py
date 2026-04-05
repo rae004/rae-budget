@@ -32,7 +32,8 @@ def list_pay_periods():
             session.query(PayPeriod).order_by(PayPeriod.start_date.desc()).all()
         )
         result = [
-            PayPeriodResponse.model_validate(pp).model_dump(mode="json") for pp in pay_periods
+            PayPeriodResponse.model_validate(pp).model_dump(mode="json")
+            for pp in pay_periods
         ]
         return jsonify(result)
     finally:
