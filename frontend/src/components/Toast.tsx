@@ -40,6 +40,7 @@ export function ToastContainer() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
+          role="alert"
           className={`alert ${alertClasses[toast.type]} cursor-pointer shadow-lg`}
           onClick={() => removeToast(toast.id)}
         >
