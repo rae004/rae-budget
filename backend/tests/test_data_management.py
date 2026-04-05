@@ -131,7 +131,11 @@ class TestDataImport:
             "export_date": "2026-04-05T10:00:00Z",
             "data": {
                 "categories": [
-                    {"name": "Utilities", "description": "Monthly utilities", "color": "#3b82f6"},
+                    {
+                        "name": "Utilities",
+                        "description": "Monthly utilities",
+                        "color": "#3b82f6",
+                    },
                     {"name": "Entertainment", "description": None, "color": "#8b5cf6"},
                 ],
                 "bill_templates": [],
@@ -160,7 +164,11 @@ class TestDataImport:
             "export_date": "2026-04-05T10:00:00Z",
             "data": {
                 "categories": [
-                    {"name": "Food", "description": "Different desc", "color": "#000000"},
+                    {
+                        "name": "Food",
+                        "description": "Different desc",
+                        "color": "#000000",
+                    },
                     {"name": "NewCategory", "description": None, "color": "#ffffff"},
                 ],
                 "bill_templates": [],
@@ -216,7 +224,9 @@ class TestDataImport:
         assert templates[0].name == "Internet"
         assert templates[0].default_amount == Decimal("79.99")
 
-    def test_import_bill_template_with_category_mapping(self, client, session, sample_category):
+    def test_import_bill_template_with_category_mapping(
+        self, client, session, sample_category
+    ):
         """Import maps category_name to existing category_id."""
         # Store the category id before the API call since session may be detached
         expected_category_id = sample_category.id

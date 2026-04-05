@@ -17,6 +17,17 @@ vi.stubGlobal("URL", {
   revokeObjectURL: vi.fn(),
 });
 
+// Mock anchor element click to prevent jsdom navigation error
+const mockClick = vi.fn();
+const originalCreateElement = document.createElement.bind(document);
+vi.spyOn(document, "createElement").mockImplementation((tagName: string) => {
+  const element = originalCreateElement(tagName);
+  if (tagName === "a") {
+    element.click = mockClick;
+  }
+  return element;
+});
+
 const mockExportData: DataExport = {
   export_version: "1.0",
   export_date: "2026-04-05T10:00:00Z",

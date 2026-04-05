@@ -126,9 +126,7 @@ def calculate_bill_due_date(
     return None
 
 
-def repopulate_bills_from_templates(
-    session: Session, pay_period: PayPeriod
-) -> dict:
+def repopulate_bills_from_templates(session: Session, pay_period: PayPeriod) -> dict:
     """
     Re-populate bills for a pay period from templates.
 

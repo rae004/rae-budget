@@ -3,8 +3,6 @@
 from datetime import date
 from decimal import Decimal
 
-import pytest
-
 from app.models import BillTemplate, PayPeriod
 from app.services import calculate_bill_due_date, create_bills_from_templates
 
