@@ -6,10 +6,14 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 
 - **Pay Period Management**: Track budgets per pay period (6th and 20th of each month)
 - **Automatic Date Calculation**: Pay dates adjust to Friday if they fall on a weekend
-- **Bill Tracking**: Add bills with due dates, mark as paid, use templates for recurring bills
-- **Spending Tracking**: Log daily spending with categories and running totals
+- **Additional Income**: Add one-time additional income per pay period (bonuses, side income, etc.)
+- **Bill Tracking**: Add bills with due dates, mark as paid, inline editing
+- **Auto-assign Bills**: Recurring bills are automatically assigned to pay periods based on due date
+- **Bill Templates**: Create reusable templates for recurring bills with due day of month
+- **Spending Tracking**: Log daily spending with categories, inline editing, and running totals
 - **Real-time Calculations**: Automatic totals for bills, spending, and remaining balance
-- **Bill Templates**: Create reusable templates for recurring bills
+- **Data Management**: Export all data to JSON, import from backup, or reset all data
+- **Settings Page**: View categories, manage data exports/imports
 
 ## Tech Stack
 
@@ -64,6 +68,8 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 | POST | `/api/pay-periods?populate_bills=true` | Create with bills from templates |
 | PUT | `/api/pay-periods/:id` | Update pay period |
 | DELETE | `/api/pay-periods/:id` | Delete pay period |
+| POST | `/api/pay-periods/:id/repopulate-bills` | Re-assign bills from templates |
+| POST | `/api/pay-periods/repopulate-all-bills` | Re-assign bills for all pay periods |
 
 ### Bills
 
@@ -101,6 +107,14 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 | PUT | `/api/categories/:id` | Update category |
 | DELETE | `/api/categories/:id` | Delete category |
 
+### Data Management
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/data/export` | Export all data as JSON |
+| POST | `/api/data/import` | Import data from JSON |
+| DELETE | `/api/data/reset` | Delete all data (requires confirmation header) |
+
 ## Development
 
 ### Backend
@@ -125,6 +139,7 @@ cd frontend
 npm run dev        # Start dev server
 npm run build      # Production build
 npm run lint       # Run ESLint
+npm test           # Run Vitest tests
 npx tsc --noEmit   # Type check
 ```
 
@@ -173,10 +188,10 @@ Example:
 
 ### Tables
 
-- `pay_periods` - Budget tracking periods with income
-- `bill_templates` - Reusable bill definitions
-- `pay_period_bills` - Bills assigned to pay periods
-- `spending_entries` - Individual spending transactions
+- `pay_periods` - Budget tracking periods with expected/actual/additional income
+- `bill_templates` - Reusable bill definitions with due day of month
+- `pay_period_bills` - Bills assigned to pay periods (auto-assigned or manual)
+- `spending_entries` - Individual spending transactions with categories
 - `categories` - Spending categories with colors
 
 ### Default Categories

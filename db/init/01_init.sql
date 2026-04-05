@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS pay_periods (
     end_date DATE NOT NULL,
     expected_income DECIMAL(10, 2) NOT NULL,
     actual_income DECIMAL(10, 2),
+    additional_income DECIMAL(10, 2),
+    additional_income_description VARCHAR(200),
     notes TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

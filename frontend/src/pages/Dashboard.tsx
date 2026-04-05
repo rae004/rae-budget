@@ -73,6 +73,7 @@ export function Dashboard() {
               <AdditionalIncomeCard
                 payPeriodId={selectedPayPeriodId}
                 currentValue={payPeriodDetail?.additional_income ?? null}
+                currentDescription={payPeriodDetail?.additional_income_description ?? null}
               />
 
               {/* Bills Section */}
@@ -104,9 +105,9 @@ export function Dashboard() {
                   </div>
                 ) : (
                   <>
-                    <SpendingTable entries={spending ?? []} payPeriodId={selectedPayPeriodId} />
-                    <div className="divider"></div>
                     <AddSpendingForm payPeriodId={selectedPayPeriodId} />
+                    <div className="divider"></div>
+                    <SpendingTable entries={spending ?? []} payPeriodId={selectedPayPeriodId} />
                   </>
                 )}
               </div>

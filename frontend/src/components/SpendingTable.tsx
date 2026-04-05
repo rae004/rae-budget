@@ -104,9 +104,14 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
     }
   };
 
-  // Calculate running total
+  // Sort entries by date descending (newest first)
+  const sortedEntries = [...entries].sort((a, b) => {
+    return new Date(b.spent_date).getTime() - new Date(a.spent_date).getTime();
+  });
+
+  // Calculate running total (accumulates top-to-bottom as displayed)
   let runningTotal = 0;
-  const entriesWithRunningTotal = entries.map((entry) => {
+  const entriesWithRunningTotal = sortedEntries.map((entry) => {
     runningTotal += parseFloat(entry.amount);
     return { ...entry, runningTotal };
   });
@@ -114,7 +119,7 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
   if (entries.length === 0) {
     return (
       <div className="text-center py-8 text-base-content/60">
-        No spending entries for this pay period. Add one below.
+        No spending entries for this pay period. Add one above.
       </div>
     );
   }
