@@ -145,3 +145,77 @@ export interface SpendingEntryUpdate {
 export interface ApiError {
   error: string | object[];
 }
+
+// Data Export/Import/Reset Types
+export interface CategoryExport {
+  name: string;
+  description: string | null;
+  color: string;
+}
+
+export interface BillTemplateExport {
+  name: string;
+  default_amount: string;
+  due_day_of_month: number | null;
+  is_recurring: boolean;
+  category_name: string | null;
+  notes: string | null;
+}
+
+export interface PayPeriodBillExport {
+  name: string;
+  amount: string;
+  due_date: string | null;
+  is_paid: boolean;
+  paid_date: string | null;
+  notes: string | null;
+  bill_template_name: string | null;
+}
+
+export interface SpendingEntryExport {
+  description: string;
+  amount: string;
+  spent_date: string;
+  category_name: string | null;
+  notes: string | null;
+}
+
+export interface PayPeriodExport {
+  start_date: string;
+  end_date: string;
+  expected_income: string;
+  actual_income: string | null;
+  notes: string | null;
+  bills: PayPeriodBillExport[];
+  spending_entries: SpendingEntryExport[];
+}
+
+export interface DataExportData {
+  categories: CategoryExport[];
+  bill_templates: BillTemplateExport[];
+  pay_periods: PayPeriodExport[];
+}
+
+export interface DataExport {
+  export_version: string;
+  export_date: string;
+  data: DataExportData;
+}
+
+export interface ImportResult {
+  categories_created: number;
+  categories_skipped: number;
+  bill_templates_created: number;
+  bill_templates_skipped: number;
+  pay_periods_created: number;
+  bills_created: number;
+  spending_entries_created: number;
+}
+
+export interface ResetResult {
+  categories_deleted: number;
+  bill_templates_deleted: number;
+  pay_periods_deleted: number;
+  bills_deleted: number;
+  spending_entries_deleted: number;
+}

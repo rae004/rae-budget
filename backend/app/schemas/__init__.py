@@ -13,6 +13,12 @@ from app.schemas.category import (
     CategoryResponse,
     CategoryUpdate,
 )
+from app.schemas.data_management import (
+    DataExport,
+    DataImport,
+    ImportResult,
+    ResetResult,
+)
 from app.schemas.pay_period import (
     PayPeriodCreate,
     PayPeriodDetailResponse,
@@ -33,6 +39,10 @@ __all__ = [
     "CategoryCreate",
     "CategoryResponse",
     "CategoryUpdate",
+    "DataExport",
+    "DataImport",
+    "ImportResult",
+    "ResetResult",
     "PayPeriodBillCreate",
     "PayPeriodBillResponse",
     "PayPeriodBillUpdate",
