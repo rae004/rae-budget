@@ -8,6 +8,24 @@ export interface Category {
   updated_at: string;
 }
 
+export interface CategoryCreate {
+  name: string;
+  description?: string | null;
+  color?: string;
+}
+
+export interface CategoryUpdate {
+  name?: string;
+  description?: string | null;
+  color?: string;
+}
+
+export interface CategoryInUseError {
+  error: 'in_use';
+  bill_templates: number;
+  spending_entries: number;
+}
+
 // Pay Period
 export interface PayPeriodSummary {
   bill_total: string;

@@ -1,9 +1,23 @@
 const API_BASE = '/api';
 
+export class ApiError extends Error {
+  status: number;
+  body: unknown;
+
+  constructor(status: number, body: unknown, message: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.body = body;
+  }
+}
+
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
-    throw new Error(typeof error.error === 'string' ? error.error : JSON.stringify(error.error));
+    const body = await response.json().catch(() => ({ error: 'Unknown error' }));
+    const message =
+      typeof body.error === 'string' ? body.error : JSON.stringify(body.error ?? body);
+    throw new ApiError(response.status, body, message);
   }
 
   // Handle 204 No Content

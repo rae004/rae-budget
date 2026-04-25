@@ -53,53 +53,57 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 items-end">
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text">Description</span>
-        </label>
-        <input
-          type="text"
-          className="input input-bordered input-sm"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="What did you buy?"
-          required
-        />
+    <form onSubmit={handleSubmit} className="space-y-3">
+      {/* Row 1: Description, Amount, Date */}
+      <div className="flex flex-wrap gap-2 items-end">
+        <div className="flex flex-col flex-1 min-w-48">
+          <label className="label py-1">
+            <span className="label-text">Description</span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered input-sm w-full"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="What did you buy?"
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="label py-1">
+            <span className="label-text">Amount</span>
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            className="input input-bordered input-sm w-28"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="0.00"
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="label py-1">
+            <span className="label-text">Date</span>
+          </label>
+          <input
+            type="date"
+            className="input input-bordered input-sm"
+            value={spentDate}
+            onChange={(e) => setSpentDate(e.target.value)}
+            required
+          />
+        </div>
       </div>
 
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text">Amount</span>
-        </label>
-        <input
-          type="number"
-          step="0.01"
-          min="0"
-          className="input input-bordered input-sm w-28"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="0.00"
-          required
-        />
-      </div>
-
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text">Date</span>
-        </label>
-        <input
-          type="date"
-          className="input input-bordered input-sm"
-          value={spentDate}
-          onChange={(e) => setSpentDate(e.target.value)}
-          required
-        />
-      </div>
-
-      {categories && categories.length > 0 && (
-        <div className="form-control">
-          <label className="label">
+      {/* Row 2: Category, Notes, Submit */}
+      <div className="flex flex-wrap gap-2 items-end">
+        <div className="flex flex-col">
+          <label className="label py-1">
             <span className="label-text">Category</span>
           </label>
           <select
@@ -108,35 +112,35 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
             onChange={(e) => setCategoryId(e.target.value)}
           >
             <option value="">None</option>
-            {categories.map((category) => (
+            {categories?.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
             ))}
           </select>
         </div>
-      )}
 
-      <div className="form-control">
-        <label className="label">
-          <span className="label-text">Notes</span>
-        </label>
-        <input
-          type="text"
-          className="input input-bordered input-sm"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Optional notes"
-        />
+        <div className="flex flex-col flex-1 min-w-48">
+          <label className="label py-1">
+            <span className="label-text">Notes</span>
+          </label>
+          <input
+            type="text"
+            className="input input-bordered input-sm w-full"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Optional notes"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="btn btn-primary btn-sm"
+          disabled={createSpending.isPending}
+        >
+          {createSpending.isPending ? 'Adding...' : 'Add Spending'}
+        </button>
       </div>
-
-      <button
-        type="submit"
-        className="btn btn-primary btn-sm"
-        disabled={createSpending.isPending}
-      >
-        {createSpending.isPending ? 'Adding...' : 'Add Spending'}
-      </button>
     </form>
   );
 }
