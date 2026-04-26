@@ -11,9 +11,10 @@ This handles both fresh installs and existing databases:
 import os
 import sys
 
-from alembic import command
 from alembic.config import Config
 from sqlalchemy import create_engine, inspect
+
+from alembic import command
 
 
 def main() -> None:
