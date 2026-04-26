@@ -66,3 +66,9 @@ frontend/dist/
 # Database
 *.db
 *.sqlite3
+
+# Test coverage output (generated each test run, uploaded to Codecov in CI)
+coverage/
+coverage.xml
+coverage.lcov
+lcov.info
