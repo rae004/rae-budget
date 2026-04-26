@@ -27,4 +27,9 @@ ENV FLASK_APP=app:create_app
 
 EXPOSE 5000
 
+# Entrypoint runs migrations (auto-stamping legacy DBs) before handing off to CMD
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
 CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
