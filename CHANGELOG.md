@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.6](https://github.com/rae004/rae-budget/compare/v0.1.5...v0.1.6) (2026-04-26)
+
+
+### Features
+
+* add Insights page scaffold with filter toolbar and aggregations hook ([1473c32](https://github.com/rae004/rae-budget/commit/1473c32c8b97b144f4263fb1b2b18dcd94342299))
+* add Insights page scaffold with filter toolbar and aggregations hook ([0e37092](https://github.com/rae004/rae-budget/commit/0e370929670b7ab201950425a6a173ad6f46f0b2))
+
 ## [0.1.5](https://github.com/rae004/rae-budget/compare/v0.1.4...v0.1.5) (2026-04-26)
 
 
