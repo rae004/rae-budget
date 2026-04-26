@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/rae004/rae-budget/compare/v0.1.1...v0.1.2) (2026-04-26)
+
+
+### Bug Fixes
+
+* isolate backend venv from host bind mount ([be1d86f](https://github.com/rae004/rae-budget/commit/be1d86f595ef505ece7183f352433d1a98b93914))
+* isolate backend venv from host bind mount ([e36e18d](https://github.com/rae004/rae-budget/commit/e36e18d87cd61800ec2bd2f27c220daa1984689b))
+
 ## [0.1.1](https://github.com/rae004/rae-budget/compare/v0.1.0...v0.1.1) (2026-04-26)
 
 
