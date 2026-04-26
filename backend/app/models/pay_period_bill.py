@@ -2,7 +2,7 @@ from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, Date, ForeignKey, Numeric, String
+from sqlalchemy import Boolean, Date, ForeignKey, Index, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import Base
@@ -14,6 +14,10 @@ if TYPE_CHECKING:
 
 class PayPeriodBill(Base):
     __tablename__ = "pay_period_bills"
+    __table_args__ = (
+        Index("idx_pay_period_bills_pay_period", "pay_period_id"),
+        Index("idx_pay_period_bills_due_date", "due_date"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     pay_period_id: Mapped[int] = mapped_column(

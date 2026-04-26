@@ -2,7 +2,7 @@ from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, ForeignKey, Numeric, String
+from sqlalchemy import Date, ForeignKey, Index, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import Base
@@ -14,6 +14,11 @@ if TYPE_CHECKING:
 
 class SpendingEntry(Base):
     __tablename__ = "spending_entries"
+    __table_args__ = (
+        Index("idx_spending_entries_pay_period", "pay_period_id"),
+        Index("idx_spending_entries_category", "category_id"),
+        Index("idx_spending_entries_date", "spent_date"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     pay_period_id: Mapped[int] = mapped_column(

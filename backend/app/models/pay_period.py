@@ -2,7 +2,7 @@ from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, Numeric, String
+from sqlalchemy import Date, Index, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.extensions import Base
@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 class PayPeriod(Base):
     __tablename__ = "pay_periods"
+    __table_args__ = (Index("idx_pay_periods_dates", "start_date", "end_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
