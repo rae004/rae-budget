@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
@@ -48,7 +50,7 @@ def create_category():
     try:
         data = CategoryCreate.model_validate(request.json)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"error": json.loads(e.json())}), 400
 
     session = db.get_session()
     try:
@@ -76,7 +78,7 @@ def update_category(category_id: int):
     try:
         data = CategoryUpdate.model_validate(request.json)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"error": json.loads(e.json())}), 400
 
     session = db.get_session()
     try:

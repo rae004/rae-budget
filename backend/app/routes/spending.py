@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
@@ -36,7 +38,7 @@ def create_spending(pay_period_id: int):
     try:
         data = SpendingEntryCreate.model_validate(request.json)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"error": json.loads(e.json())}), 400
 
     session = db.get_session()
     try:
@@ -71,7 +73,7 @@ def update_spending(spending_id: int):
     try:
         data = SpendingEntryUpdate.model_validate(request.json)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"error": json.loads(e.json())}), 400
 
     session = db.get_session()
     try:
