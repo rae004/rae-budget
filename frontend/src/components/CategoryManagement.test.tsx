@@ -15,6 +15,7 @@ const mockCategories: Category[] = [
     name: "Food",
     description: "Food and dining",
     color: "#f59e0b",
+    monthly_target: "500.00",
     created_at: "2026-04-01T00:00:00Z",
     updated_at: "2026-04-01T00:00:00Z",
   },
@@ -23,6 +24,7 @@ const mockCategories: Category[] = [
     name: "Travel",
     description: null,
     color: "#3b82f6",
+    monthly_target: null,
     created_at: "2026-04-01T00:00:00Z",
     updated_at: "2026-04-01T00:00:00Z",
   },
@@ -98,6 +100,16 @@ describe("CategoryManagement", () => {
       const foodSwatch = screen.getByTitle("#f59e0b");
       expect(foodSwatch).toHaveStyle({ backgroundColor: "#f59e0b" });
     });
+
+    it("formats monthly_target as currency when set, em-dash when null", async () => {
+      await renderWithCategories(mockCategories);
+
+      const foodRow = screen.getByText("Food").closest("tr")!;
+      expect(within(foodRow).getByText("$500.00")).toBeInTheDocument();
+
+      const travelRow = screen.getByText("Travel").closest("tr")!;
+      expect(within(travelRow).getByText("—")).toBeInTheDocument();
+    });
   });
 
   describe("create", () => {
@@ -126,6 +138,57 @@ describe("CategoryManagement", () => {
             body: expect.stringContaining('"name":"Groceries"'),
           })
         );
+      });
+    });
+
+    it("includes monthly_target in the POST body when filled", async () => {
+      await renderWithCategories([]);
+
+      mockFetch.mockResolvedValueOnce(
+        jsonResponse(201, { ...mockCategories[0], id: 99, name: "Groceries", monthly_target: "250.00" })
+      );
+      mockFetch.mockResolvedValueOnce(jsonResponse(200, mockCategories));
+
+      fireEvent.change(screen.getByPlaceholderText("e.g., Groceries"), {
+        target: { value: "Groceries" },
+      });
+      // The add form has two "Optional" placeholders (description + monthly target).
+      // Find the monthly target input by its number type.
+      const targetInput = screen
+        .getAllByRole("spinbutton")
+        .find((el) => (el as HTMLInputElement).closest("form") !== null)!;
+      fireEvent.change(targetInput, { target: { value: "250.00" } });
+
+      fireEvent.click(screen.getByRole("button", { name: /Add Category/i }));
+
+      await waitFor(() => {
+        const postCall = mockFetch.mock.calls.find(
+          ([, init]) => (init as RequestInit | undefined)?.method === "POST"
+        );
+        expect(postCall).toBeDefined();
+        expect(postCall![1].body).toContain('"monthly_target":"250.00"');
+      });
+    });
+
+    it("sends monthly_target as null when the input is empty", async () => {
+      await renderWithCategories([]);
+
+      mockFetch.mockResolvedValueOnce(
+        jsonResponse(201, { ...mockCategories[0], id: 99, name: "Groceries", monthly_target: null })
+      );
+      mockFetch.mockResolvedValueOnce(jsonResponse(200, mockCategories));
+
+      fireEvent.change(screen.getByPlaceholderText("e.g., Groceries"), {
+        target: { value: "Groceries" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: /Add Category/i }));
+
+      await waitFor(() => {
+        const postCall = mockFetch.mock.calls.find(
+          ([, init]) => (init as RequestInit | undefined)?.method === "POST"
+        );
+        expect(postCall).toBeDefined();
+        expect(postCall![1].body).toContain('"monthly_target":null');
       });
     });
 
@@ -180,6 +243,42 @@ describe("CategoryManagement", () => {
             body: expect.stringContaining('"name":"Dining Out"'),
           })
         );
+      });
+    });
+
+    it("pre-fills monthly_target input with the current value", async () => {
+      await renderWithCategories(mockCategories);
+
+      const foodRow = screen.getByText("Food").closest("tr")!;
+      fireEvent.click(within(foodRow).getByRole("button", { name: /Edit/i }));
+
+      // Editing row now has a number input populated with "500.00"
+      expect(screen.getByDisplayValue("500.00")).toBeInTheDocument();
+    });
+
+    it("submits new monthly_target on Save", async () => {
+      await renderWithCategories(mockCategories);
+
+      const foodRow = screen.getByText("Food").closest("tr")!;
+      fireEvent.click(within(foodRow).getByRole("button", { name: /Edit/i }));
+
+      const targetInput = screen.getByDisplayValue("500.00");
+      fireEvent.change(targetInput, { target: { value: "750.00" } });
+
+      mockFetch.mockResolvedValueOnce(
+        jsonResponse(200, { ...mockCategories[0], monthly_target: "750.00" })
+      );
+      mockFetch.mockResolvedValueOnce(jsonResponse(200, mockCategories));
+
+      const editingRow = targetInput.closest("tr")!;
+      fireEvent.click(within(editingRow).getByRole("button", { name: /Save/i }));
+
+      await waitFor(() => {
+        const putCall = mockFetch.mock.calls.find(
+          ([, init]) => (init as RequestInit | undefined)?.method === "PUT"
+        );
+        expect(putCall).toBeDefined();
+        expect(putCall![1].body).toContain('"monthly_target":"750.00"');
       });
     });
 

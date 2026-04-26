@@ -58,6 +58,7 @@ def create_category():
             name=data.name,
             description=data.description,
             color=data.color,
+            monthly_target=data.monthly_target,
         )
         session.add(category)
         session.commit()

@@ -27,12 +27,14 @@ export function CategoryManagement() {
   const [newName, setNewName] = useState('');
   const [newColor, setNewColor] = useState(DEFAULT_COLOR);
   const [newDescription, setNewDescription] = useState('');
+  const [newMonthlyTarget, setNewMonthlyTarget] = useState('');
 
   // Inline edit state
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
   const [editColor, setEditColor] = useState(DEFAULT_COLOR);
   const [editDescription, setEditDescription] = useState('');
+  const [editMonthlyTarget, setEditMonthlyTarget] = useState('');
 
   // Delete confirmation modal state
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget | null>(null);
@@ -46,12 +48,14 @@ export function CategoryManagement() {
         name: newName.trim(),
         color: newColor,
         description: newDescription.trim() || null,
+        monthly_target: newMonthlyTarget.trim() || null,
       },
       {
         onSuccess: () => {
           setNewName('');
           setNewColor(DEFAULT_COLOR);
           setNewDescription('');
+          setNewMonthlyTarget('');
           showToast('Category created', 'success');
         },
         onError: (error) => {
@@ -69,6 +73,7 @@ export function CategoryManagement() {
     setEditName(category.name);
     setEditColor(category.color);
     setEditDescription(category.description ?? '');
+    setEditMonthlyTarget(category.monthly_target ?? '');
   };
 
   const cancelEdit = () => {
@@ -85,6 +90,7 @@ export function CategoryManagement() {
           name: editName.trim(),
           color: editColor,
           description: editDescription.trim() || null,
+          monthly_target: editMonthlyTarget.trim() || null,
         },
       },
       {
@@ -151,6 +157,7 @@ export function CategoryManagement() {
                 <th className="w-16">Color</th>
                 <th>Name</th>
                 <th>Description</th>
+                <th className="w-32">Monthly Target</th>
                 <th className="w-40">Actions</th>
               </tr>
             </thead>
@@ -185,6 +192,17 @@ export function CategoryManagement() {
                       />
                     </td>
                     <td>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        className="input input-bordered input-sm w-full"
+                        value={editMonthlyTarget}
+                        onChange={(e) => setEditMonthlyTarget(e.target.value)}
+                        placeholder="—"
+                      />
+                    </td>
+                    <td>
                       <div className="flex gap-1">
                         <button
                           className="btn btn-primary btn-xs"
@@ -215,6 +233,9 @@ export function CategoryManagement() {
                     <td className="font-medium">{category.name}</td>
                     <td className="text-base-content/70">
                       {category.description || '-'}
+                    </td>
+                    <td className="text-base-content/70">
+                      {formatMonthlyTarget(category.monthly_target)}
                     </td>
                     <td>
                       <div className="flex gap-1">
@@ -288,6 +309,21 @@ export function CategoryManagement() {
             onChange={(e) => setNewDescription(e.target.value)}
             placeholder="Optional"
             maxLength={255}
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label className="label py-1">
+            <span className="label-text">Monthly Target</span>
+          </label>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            className="input input-bordered input-sm w-32"
+            value={newMonthlyTarget}
+            onChange={(e) => setNewMonthlyTarget(e.target.value)}
+            placeholder="Optional"
           />
         </div>
 
@@ -366,6 +402,13 @@ function DeleteConfirmModal({
       <div className="modal-backdrop" onClick={onCancel}></div>
     </div>
   );
+}
+
+function formatMonthlyTarget(value: string | null): string {
+  if (value === null || value === '') return '—';
+  const num = Number(value);
+  if (!Number.isFinite(num)) return '—';
+  return `$${num.toFixed(2)}`;
 }
 
 function isInUseError(body: unknown): body is CategoryInUseError {

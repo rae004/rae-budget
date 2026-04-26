@@ -4,6 +4,7 @@ export interface Category {
   name: string;
   description: string | null;
   color: string;
+  monthly_target: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -12,12 +13,14 @@ export interface CategoryCreate {
   name: string;
   description?: string | null;
   color?: string;
+  monthly_target?: string | null;
 }
 
 export interface CategoryUpdate {
   name?: string;
   description?: string | null;
   color?: string;
+  monthly_target?: string | null;
 }
 
 export interface CategoryInUseError {

@@ -79,6 +79,37 @@ class TestCreateCategory:
         assert body["description"] == "Flights and hotels"
         assert body["color"] == "#3b82f6"
 
+    def test_create_with_monthly_target(self, client, session):
+        """Can create with a monthly_target."""
+        response = client.post(
+            "/api/categories",
+            data=json.dumps({"name": "Groceries", "monthly_target": "500.00"}),
+            content_type="application/json",
+        )
+        assert response.status_code == 201
+        body = response.get_json()
+        assert body["monthly_target"] == "500.00"
+
+    def test_create_without_monthly_target_defaults_to_null(self, client, session):
+        """Omitting monthly_target leaves it null."""
+        response = client.post(
+            "/api/categories",
+            data=json.dumps({"name": "Groceries"}),
+            content_type="application/json",
+        )
+        assert response.status_code == 201
+        assert response.get_json()["monthly_target"] is None
+
+    def test_create_negative_monthly_target_rejected(self, client, session):
+        """Negative monthly_target returns 400."""
+        response = client.post(
+            "/api/categories",
+            data=json.dumps({"name": "Groceries", "monthly_target": "-1.00"}),
+            content_type="application/json",
+        )
+        assert response.status_code == 400
+        assert "error" in response.get_json()
+
     def test_create_validation_error(self, client, session):
         """Missing required name returns 400."""
         response = client.post(
@@ -122,6 +153,42 @@ class TestUpdateCategory:
             content_type="application/json",
         )
         assert response.status_code == 404
+
+    def test_set_monthly_target(self, client, sample_category):
+        """Can set monthly_target on an existing category."""
+        response = client.put(
+            f"/api/categories/{sample_category.id}",
+            data=json.dumps({"monthly_target": "250.50"}),
+            content_type="application/json",
+        )
+        assert response.status_code == 200
+        assert response.get_json()["monthly_target"] == "250.50"
+
+    def test_clear_monthly_target(self, client, session):
+        """Passing null clears an existing monthly_target."""
+        category = Category(
+            name="Dining", color="#f59e0b", monthly_target=Decimal("300.00")
+        )
+        session.add(category)
+        session.commit()
+        category_id = category.id
+
+        response = client.put(
+            f"/api/categories/{category_id}",
+            data=json.dumps({"monthly_target": None}),
+            content_type="application/json",
+        )
+        assert response.status_code == 200
+        assert response.get_json()["monthly_target"] is None
+
+    def test_update_negative_monthly_target_rejected(self, client, sample_category):
+        """Updating to a negative monthly_target returns 400."""
+        response = client.put(
+            f"/api/categories/{sample_category.id}",
+            data=json.dumps({"monthly_target": "-50.00"}),
+            content_type="application/json",
+        )
+        assert response.status_code == 400
 
 
 class TestDeleteCategory:
