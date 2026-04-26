@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.3](https://github.com/rae004/rae-budget/compare/v0.1.2...v0.1.3) (2026-04-26)
+
+
+### Features
+
+* codecov + comprehensive backend/frontend test coverage ([4d06011](https://github.com/rae004/rae-budget/commit/4d060119571c346c1f011b6ff71911ec89f67496))
+
+
+### Bug Fixes
+
+* return 400 instead of 500 for Pydantic validation errors ([485fe74](https://github.com/rae004/rae-budget/commit/485fe7444f1fe6433c0dcbf7614bc4154deb57bb))
+
 ## [0.1.2](https://github.com/rae004/rae-budget/compare/v0.1.1...v0.1.2) (2026-04-26)
 
 
