@@ -1,0 +1,22 @@
+# Never let a host-built venv leak into the image (and never get bind-mounted in either)
+.venv/
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+dist/
+build/
+
+# Editor/local
+.vscode/
+.idea/
+.env
+.env.local
