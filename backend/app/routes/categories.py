@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
 from app.extensions import db
-from app.models import Category
+from app.models import BillTemplate, Category, SpendingEntry
 from app.schemas import (
     CategoryCreate,
     CategoryResponse,
@@ -102,12 +102,35 @@ def update_category(category_id: int):
 
 @categories_bp.route("/categories/<int:category_id>", methods=["DELETE"])
 def delete_category(category_id: int):
-    """Delete a category."""
+    """Delete a category.
+
+    By default, returns 409 if the category is referenced by any bill templates
+    or spending entries. Pass ?force=true to delete anyway — the database FK is
+    ON DELETE SET NULL, so referencing rows become uncategorized.
+    """
+    force = request.args.get("force", "").lower() == "true"
+
     session = db.get_session()
     try:
         category = session.query(Category).filter_by(id=category_id).first()
         if not category:
             return jsonify({"error": "Category not found"}), 404
+
+        if not force:
+            bill_templates_count = (
+                session.query(BillTemplate).filter_by(category_id=category_id).count()
+            )
+            spending_entries_count = (
+                session.query(SpendingEntry).filter_by(category_id=category_id).count()
+            )
+            if bill_templates_count > 0 or spending_entries_count > 0:
+                return jsonify(
+                    {
+                        "error": "in_use",
+                        "bill_templates": bill_templates_count,
+                        "spending_entries": spending_entries_count,
+                    }
+                ), 409
 
         session.delete(category)
         session.commit()

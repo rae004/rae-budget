@@ -1,5 +1,16 @@
 # Rae Budget
 
+[![CI](https://github.com/rae004/rae-budget/actions/workflows/ci.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/ci.yml)
+[![Release](https://github.com/rae004/rae-budget/actions/workflows/release-please.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/release-please.yml)
+[![Version](https://img.shields.io/github/package-json/v/rae004/rae-budget?filename=frontend%2Fpackage.json&color=blue&label=version)](./CHANGELOG.md)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-3-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Node.js](https://img.shields.io/badge/Node-22-brightgreen?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+
 Personal budget tracking application for managing pay periods, bills, and spending.
 
 ## Features
