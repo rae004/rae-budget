@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.5](https://github.com/rae004/rae-budget/compare/v0.1.4...v0.1.5) (2026-04-26)
+
+
+### Features
+
+* add monthly_target to categories ([44ca6c0](https://github.com/rae004/rae-budget/commit/44ca6c0eff6999373e50ea96dba3ecf4e90d4f99))
+* add monthly_target to categories ([d09c013](https://github.com/rae004/rae-budget/commit/d09c0135fe6fbb1fe944a8952252597f444fb287))
+
 ## [0.1.4](https://github.com/rae004/rae-budget/compare/v0.1.3...v0.1.4) (2026-04-26)
 
 
