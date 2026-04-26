@@ -11,6 +11,7 @@ export const spendingKeys = {
   all: ['spending'] as const,
   lists: () => [...spendingKeys.all, 'list'] as const,
   list: (payPeriodId: number) => [...spendingKeys.lists(), payPeriodId] as const,
+  allEntries: () => [...spendingKeys.all, 'all'] as const,
 };
 
 export function useSpending(payPeriodId: number | undefined) {
@@ -18,6 +19,13 @@ export function useSpending(payPeriodId: number | undefined) {
     queryKey: spendingKeys.list(payPeriodId!),
     queryFn: () => api.get<SpendingEntry[]>(`/pay-periods/${payPeriodId}/spending`),
     enabled: !!payPeriodId,
+  });
+}
+
+export function useAllSpending() {
+  return useQuery({
+    queryKey: spendingKeys.allEntries(),
+    queryFn: () => api.get<SpendingEntry[]>('/spending'),
   });
 }
 

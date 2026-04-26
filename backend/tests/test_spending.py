@@ -88,6 +88,43 @@ class TestListSpending:
         assert response.status_code == 404
 
 
+class TestListAllSpending:
+    """GET /api/spending — unfiltered list across pay periods."""
+
+    def test_empty(self, client, session):
+        response = client.get("/api/spending")
+        assert response.status_code == 200
+        assert response.get_json() == []
+
+    def test_returns_entries_from_multiple_pay_periods(
+        self, client, session, sample_pay_period, sample_spending
+    ):
+        from app.models import PayPeriod, SpendingEntry
+
+        other_pp = PayPeriod(
+            start_date=date(2026, 4, 20),
+            end_date=date(2026, 5, 5),
+            expected_income=Decimal("2500.00"),
+        )
+        session.add(other_pp)
+        session.commit()
+        session.add(
+            SpendingEntry(
+                pay_period_id=other_pp.id,
+                description="Coffee",
+                amount=Decimal("5.00"),
+                spent_date=date(2026, 4, 22),
+            )
+        )
+        session.commit()
+
+        response = client.get("/api/spending")
+        body = response.get_json()
+        assert len(body) == 2
+        descriptions = sorted(e["description"] for e in body)
+        assert descriptions == ["Coffee", "Groceries at Publix"]
+
+
 class TestCreateSpending:
     """POST /api/pay-periods/:id/spending"""
 

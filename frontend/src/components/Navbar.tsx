@@ -24,6 +24,14 @@ export function Navbar() {
           </li>
           <li>
             <Link
+              to="/insights"
+              className={isActive('/insights') ? 'active' : ''}
+            >
+              Insights
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/bill-templates"
               className={isActive('/bill-templates') ? 'active' : ''}
             >

@@ -14,6 +14,21 @@ from app.schemas import (
 spending_bp = Blueprint("spending", __name__)
 
 
+@spending_bp.route("/spending", methods=["GET"])
+def list_all_spending():
+    """List all spending entries across every pay period (used by the Insights dashboard)."""
+    session = db.get_session()
+    try:
+        entries = session.query(SpendingEntry).all()
+        result = [
+            SpendingEntryResponse.model_validate(entry).model_dump(mode="json")
+            for entry in entries
+        ]
+        return jsonify(result)
+    finally:
+        session.close()
+
+
 @spending_bp.route("/pay-periods/<int:pay_period_id>/spending", methods=["GET"])
 def list_spending(pay_period_id: int):
     """List all spending entries for a pay period."""
