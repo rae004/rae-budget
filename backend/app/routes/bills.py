@@ -14,6 +14,21 @@ from app.schemas import (
 bills_bp = Blueprint("bills", __name__)
 
 
+@bills_bp.route("/bills", methods=["GET"])
+def list_all_bills():
+    """List all bills across every pay period (used by the Insights dashboard)."""
+    session = db.get_session()
+    try:
+        bills = session.query(PayPeriodBill).all()
+        result = [
+            PayPeriodBillResponse.model_validate(bill).model_dump(mode="json")
+            for bill in bills
+        ]
+        return jsonify(result)
+    finally:
+        session.close()
+
+
 @bills_bp.route("/pay-periods/<int:pay_period_id>/bills", methods=["GET"])
 def list_bills(pay_period_id: int):
     """List all bills for a pay period."""

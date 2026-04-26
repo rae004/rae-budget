@@ -11,6 +11,7 @@ export const billKeys = {
   all: ['bills'] as const,
   lists: () => [...billKeys.all, 'list'] as const,
   list: (payPeriodId: number) => [...billKeys.lists(), payPeriodId] as const,
+  allBills: () => [...billKeys.all, 'all'] as const,
 };
 
 export function useBills(payPeriodId: number | undefined) {
@@ -18,6 +19,13 @@ export function useBills(payPeriodId: number | undefined) {
     queryKey: billKeys.list(payPeriodId!),
     queryFn: () => api.get<PayPeriodBill[]>(`/pay-periods/${payPeriodId}/bills`),
     enabled: !!payPeriodId,
+  });
+}
+
+export function useAllBills() {
+  return useQuery({
+    queryKey: billKeys.allBills(),
+    queryFn: () => api.get<PayPeriodBill[]>('/bills'),
   });
 }
 

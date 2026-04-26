@@ -115,6 +115,44 @@ class TestListBills:
         assert response.status_code == 404
 
 
+class TestListAllBills:
+    """GET /api/bills — unfiltered list across pay periods."""
+
+    def test_empty(self, client, session):
+        response = client.get("/api/bills")
+        assert response.status_code == 200
+        assert response.get_json() == []
+
+    def test_returns_bills_from_multiple_pay_periods(
+        self, client, session, sample_pay_period, sample_bill
+    ):
+        # Add a second pay period with its own bill
+        from app.models import PayPeriod
+
+        other_pp = PayPeriod(
+            start_date=date(2026, 4, 20),
+            end_date=date(2026, 5, 5),
+            expected_income=Decimal("2500.00"),
+        )
+        session.add(other_pp)
+        session.commit()
+        session.add(
+            PayPeriodBill(
+                pay_period_id=other_pp.id,
+                name="Internet",
+                amount=Decimal("80.00"),
+                due_date=date(2026, 4, 22),
+            )
+        )
+        session.commit()
+
+        response = client.get("/api/bills")
+        body = response.get_json()
+        assert len(body) == 2
+        names = sorted(b["name"] for b in body)
+        assert names == ["Internet", "Rent"]
+
+
 class TestCreateBill:
     """POST /api/pay-periods/:id/bills"""
 
