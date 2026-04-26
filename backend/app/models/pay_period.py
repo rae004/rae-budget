@@ -14,9 +14,7 @@ if TYPE_CHECKING:
 
 class PayPeriod(Base):
     __tablename__ = "pay_periods"
-    __table_args__ = (
-        Index("idx_pay_periods_dates", "start_date", "end_date"),
-    )
+    __table_args__ = (Index("idx_pay_periods_dates", "start_date", "end_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
