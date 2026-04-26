@@ -1,3 +1,4 @@
+import json
 from datetime import date
 from decimal import Decimal
 
@@ -91,3 +92,135 @@ class TestPayPeriodBillModel:
         """Pay period bill has readable repr."""
         assert "Rent" in repr(sample_bill)
         assert "1500" in repr(sample_bill)
+
+
+class TestListBills:
+    """GET /api/pay-periods/:id/bills"""
+
+    def test_empty_for_new_pay_period(self, client, sample_pay_period):
+        pp_id = sample_pay_period.id
+        response = client.get(f"/api/pay-periods/{pp_id}/bills")
+        assert response.status_code == 200
+        assert response.get_json() == []
+
+    def test_returns_bills(self, client, sample_pay_period, sample_bill):
+        pp_id = sample_pay_period.id
+        response = client.get(f"/api/pay-periods/{pp_id}/bills")
+        body = response.get_json()
+        assert len(body) == 1
+        assert body[0]["name"] == "Rent"
+
+    def test_pay_period_not_found(self, client, session):
+        response = client.get("/api/pay-periods/9999/bills")
+        assert response.status_code == 404
+
+
+class TestCreateBill:
+    """POST /api/pay-periods/:id/bills"""
+
+    def test_create_minimal(self, client, sample_pay_period):
+        pp_id = sample_pay_period.id
+        response = client.post(
+            f"/api/pay-periods/{pp_id}/bills",
+            data=json.dumps({"name": "Internet", "amount": 75}),
+            content_type="application/json",
+        )
+        assert response.status_code == 201
+        body = response.get_json()
+        assert body["name"] == "Internet"
+        assert body["pay_period_id"] == pp_id
+        assert body["is_paid"] is False
+
+    def test_create_with_template_link(
+        self, client, sample_pay_period, sample_bill_template
+    ):
+        pp_id = sample_pay_period.id
+        template_id = sample_bill_template.id
+        response = client.post(
+            f"/api/pay-periods/{pp_id}/bills",
+            data=json.dumps(
+                {
+                    "name": "Rent",
+                    "amount": 1500,
+                    "bill_template_id": template_id,
+                    "due_date": "2026-04-01",
+                }
+            ),
+            content_type="application/json",
+        )
+        assert response.status_code == 201
+        assert response.get_json()["bill_template_id"] == template_id
+
+    def test_create_validation_error(self, client, sample_pay_period):
+        pp_id = sample_pay_period.id
+        response = client.post(
+            f"/api/pay-periods/{pp_id}/bills",
+            data=json.dumps({"amount": 100}),  # missing name
+            content_type="application/json",
+        )
+        assert response.status_code == 400
+
+    def test_create_pay_period_not_found(self, client, session):
+        response = client.post(
+            "/api/pay-periods/9999/bills",
+            data=json.dumps({"name": "x", "amount": 1}),
+            content_type="application/json",
+        )
+        assert response.status_code == 404
+
+
+class TestUpdateBill:
+    """PUT /api/bills/:id"""
+
+    def test_update_amount(self, client, sample_bill):
+        bill_id = sample_bill.id
+        response = client.put(
+            f"/api/bills/{bill_id}",
+            data=json.dumps({"amount": 1600}),
+            content_type="application/json",
+        )
+        assert response.status_code == 200
+        assert response.get_json()["amount"] == "1600.00"
+
+    def test_mark_paid(self, client, sample_bill):
+        bill_id = sample_bill.id
+        response = client.put(
+            f"/api/bills/{bill_id}",
+            data=json.dumps({"is_paid": True, "paid_date": "2026-04-02"}),
+            content_type="application/json",
+        )
+        assert response.status_code == 200
+        body = response.get_json()
+        assert body["is_paid"] is True
+        assert body["paid_date"] == "2026-04-02"
+
+    def test_validation_error(self, client, sample_bill):
+        bill_id = sample_bill.id
+        response = client.put(
+            f"/api/bills/{bill_id}",
+            data=json.dumps({"amount": -1}),
+            content_type="application/json",
+        )
+        assert response.status_code == 400
+
+    def test_not_found(self, client, session):
+        response = client.put(
+            "/api/bills/9999",
+            data=json.dumps({"name": "x"}),
+            content_type="application/json",
+        )
+        assert response.status_code == 404
+
+
+class TestDeleteBill:
+    """DELETE /api/bills/:id"""
+
+    def test_delete(self, client, session, sample_bill):
+        bill_id = sample_bill.id
+        response = client.delete(f"/api/bills/{bill_id}")
+        assert response.status_code == 204
+        assert session.query(PayPeriodBill).filter_by(id=bill_id).first() is None
+
+    def test_not_found(self, client, session):
+        response = client.delete("/api/bills/9999")
+        assert response.status_code == 404
