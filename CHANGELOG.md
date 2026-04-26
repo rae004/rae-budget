@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/rae004/rae-budget/compare/v0.1.3...v0.1.4) (2026-04-26)
+
+
+### Features
+
+* replace SQL init with Alembic schema migrations ([1dd8895](https://github.com/rae004/rae-budget/commit/1dd88952f5886d2b1b0dbf8c2bc3ed1baad4467d))
+* replace SQL init with Alembic schema migrations ([c536379](https://github.com/rae004/rae-budget/commit/c536379e4518f260a6755f1a75f0f067f4543343))
+
 ## [0.1.3](https://github.com/rae004/rae-budget/compare/v0.1.2...v0.1.3) (2026-04-26)
 
 
