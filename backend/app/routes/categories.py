@@ -124,11 +124,13 @@ def delete_category(category_id: int):
                 session.query(SpendingEntry).filter_by(category_id=category_id).count()
             )
             if bill_templates_count > 0 or spending_entries_count > 0:
-                return jsonify({
-                    "error": "in_use",
-                    "bill_templates": bill_templates_count,
-                    "spending_entries": spending_entries_count,
-                }), 409
+                return jsonify(
+                    {
+                        "error": "in_use",
+                        "bill_templates": bill_templates_count,
+                        "spending_entries": spending_entries_count,
+                    }
+                ), 409
 
         session.delete(category)
         session.commit()
