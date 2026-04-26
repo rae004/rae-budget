@@ -24,8 +24,9 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 - **Bill Templates**: Create reusable templates for recurring bills with due day of month
 - **Spending Tracking**: Log daily spending with categories, inline editing, and running totals
 - **Real-time Calculations**: Automatic totals for bills, spending, and remaining balance
+- **Categories**: Full CRUD on the Settings page with safe-delete (delete-in-use returns a confirmation modal showing affected bills/spending; force-delete uncategorizes them via DB cascade)
 - **Data Management**: Export all data to JSON, import from backup, or reset all data
-- **Settings Page**: View categories, manage data exports/imports
+- **Settings Page**: Manage categories, run data exports/imports/resets
 
 ## Tech Stack
 
@@ -115,9 +116,16 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/categories` | List all categories |
+| GET | `/api/categories/:id` | Get a single category |
 | POST | `/api/categories` | Create category |
 | PUT | `/api/categories/:id` | Update category |
-| DELETE | `/api/categories/:id` | Delete category |
+| DELETE | `/api/categories/:id` | Delete category. Returns **409** with usage counts if referenced by bills/spending. Pass `?force=true` to delete anyway (DB FK is `ON DELETE SET NULL`, so referencing rows become uncategorized). |
+
+### Health
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | Health check (status + database connectivity) |
 
 ### Data Management
 
@@ -148,11 +156,12 @@ uv run pytest -v
 
 ```bash
 cd frontend
-npm run dev        # Start dev server
-npm run build      # Production build
-npm run lint       # Run ESLint
-npm test           # Run Vitest tests
-npx tsc --noEmit   # Type check
+npm run dev             # Start dev server
+npm run build           # Production build
+npm run lint            # Run ESLint
+npm test                # Run Vitest tests
+npm run test:coverage   # Run Vitest with coverage report
+npx tsc --noEmit        # Type check
 ```
 
 ## Project Structure
@@ -165,25 +174,44 @@ rae-budget/
 │   │   ├── routes/       # API endpoints
 │   │   ├── schemas/      # Pydantic schemas
 │   │   └── services/     # Business logic
-│   ├── tests/            # Pytest tests
+│   ├── tests/            # Pytest tests (~94% coverage)
 │   ├── Dockerfile
 │   └── pyproject.toml
 ├── frontend/
 │   ├── src/
-│   │   ├── components/   # React components
+│   │   ├── components/   # React components (each with co-located *.test.tsx)
 │   │   ├── contexts/     # React contexts
 │   │   ├── hooks/        # TanStack Query hooks
 │   │   ├── pages/        # Page components
-│   │   ├── services/     # API client
-│   │   └── types/        # TypeScript types
+│   │   ├── services/     # API client (ApiError-aware)
+│   │   ├── test/         # Vitest setup + shared render helpers
+│   │   ├── types/        # TypeScript types
+│   │   └── utils/        # Date helpers, etc.
 │   └── package.json
 ├── db/
-│   └── init/             # Database initialization
+│   └── init/             # Database initialization (raw SQL)
+├── docs/                 # Historical implementation plans
+├── scripts/              # Local CI helpers
 ├── .github/
-│   └── workflows/        # CI/CD workflows
+│   └── workflows/        # ci.yml + release-please.yml
 ├── docker-compose.yml
-└── .env
+├── release-please-config.json
+├── .release-please-manifest.json
+├── CHANGELOG.md
+├── LICENSE
+└── .env.example
 ```
+
+## Releases & Versioning
+
+Versions are managed automatically by [release-please](https://github.com/googleapis/release-please) based on [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` → minor bump
+- `fix:` → patch bump
+- `feat!:` or `BREAKING CHANGE:` → major bump
+- `chore:`, `docs:`, `test:`, `ci:`, `style:`, `refactor:`, `build:`, `perf:` → no bump
+
+When commits land on `main`, release-please opens a release PR that bumps both `frontend/package.json` and `backend/pyproject.toml` (kept in lockstep) and prepends a CHANGELOG section. Merging that PR creates the git tag (`vX.Y.Z`) and a GitHub Release.
 
 ## Pay Period Logic
 
@@ -200,7 +228,7 @@ Example:
 
 ### Tables
 
-- `pay_periods` - Budget tracking periods with expected/actual/additional income
+- `pay_periods` - Budget tracking periods with expected/actual/additional income (and optional description for additional income)
 - `bill_templates` - Reusable bill definitions with due day of month
 - `pay_period_bills` - Bills assigned to pay periods (auto-assigned or manual)
 - `spending_entries` - Individual spending transactions with categories
@@ -209,6 +237,8 @@ Example:
 ### Default Categories
 
 The database is seeded with common spending categories:
-- Food & Dining, Groceries, Gas & Fuel
-- Entertainment, Shopping, Utilities
-- Healthcare, Transportation, Other
+- Housing, Utilities, Food, Transportation
+- Healthcare, Entertainment, Shopping
+- Personal, Savings, Other
+
+These can be edited or removed in the Settings page.
