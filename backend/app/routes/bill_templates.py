@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
 
@@ -48,7 +50,7 @@ def create_bill_template():
     try:
         data = BillTemplateCreate.model_validate(request.json)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"error": json.loads(e.json())}), 400
 
     session = db.get_session()
     try:
@@ -79,7 +81,7 @@ def update_bill_template(template_id: int):
     try:
         data = BillTemplateUpdate.model_validate(request.json)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"error": json.loads(e.json())}), 400
 
     session = db.get_session()
     try:

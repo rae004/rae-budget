@@ -1,5 +1,6 @@
 """Data management routes for export, import, and reset operations."""
 
+import json
 from datetime import UTC, datetime
 
 from flask import Blueprint, Response, jsonify, request
@@ -139,7 +140,7 @@ def import_data():
     try:
         data = DataImport.model_validate(request.json)
     except ValidationError as e:
-        return jsonify({"error": e.errors()}), 400
+        return jsonify({"error": json.loads(e.json())}), 400
 
     session = db.get_session()
     try:
