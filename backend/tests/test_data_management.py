@@ -80,6 +80,34 @@ class TestDataExport:
         assert se["amount"] == "150.00"
         assert se["category_name"] == "Food"
 
+    def test_export_includes_category_monthly_target(self, client, session):
+        session.add(
+            Category(
+                name="Groceries", color="#22c55e", monthly_target=Decimal("450.00")
+            )
+        )
+        session.add(Category(name="Travel", color="#06b6d4"))  # no target
+        session.commit()
+
+        response = client.get("/api/data/export")
+        data = json.loads(response.data)
+        by_name = {c["name"]: c for c in data["data"]["categories"]}
+        assert by_name["Groceries"]["monthly_target"] == "450.00"
+        assert by_name["Travel"]["monthly_target"] is None
+
+    def test_export_includes_pay_period_additional_income(
+        self, client, session, sample_pay_period
+    ):
+        sample_pay_period.additional_income = Decimal("750.00")
+        sample_pay_period.additional_income_description = "Tax refund"
+        session.commit()
+
+        response = client.get("/api/data/export")
+        data = json.loads(response.data)
+        pp = data["data"]["pay_periods"][0]
+        assert pp["additional_income"] == "750.00"
+        assert pp["additional_income_description"] == "Tax refund"
+
     def test_export_bill_template_with_category(self, client, session, sample_category):
         """Export maps bill template category_id to category_name."""
         template = BillTemplate(
@@ -325,6 +353,111 @@ class TestDataImport:
         assert len(pay_period.spending_entries) == 1
         assert pay_period.spending_entries[0].description == "Coffee"
 
+    def test_import_sets_category_monthly_target(self, client, session):
+        import_data = {
+            "export_version": "1.0",
+            "export_date": "2026-04-27T10:00:00Z",
+            "data": {
+                "categories": [
+                    {
+                        "name": "Groceries",
+                        "description": None,
+                        "color": "#22c55e",
+                        "monthly_target": "450.00",
+                    },
+                    {
+                        "name": "Travel",
+                        "description": None,
+                        "color": "#06b6d4",
+                        "monthly_target": None,
+                    },
+                ],
+                "bill_templates": [],
+                "pay_periods": [],
+            },
+        }
+
+        response = client.post(
+            "/api/data/import",
+            data=json.dumps(import_data),
+            content_type="application/json",
+        )
+        assert response.status_code == 200
+
+        groceries = session.query(Category).filter_by(name="Groceries").one()
+        travel = session.query(Category).filter_by(name="Travel").one()
+        assert groceries.monthly_target == Decimal("450.00")
+        assert travel.monthly_target is None
+
+    def test_import_sets_pay_period_additional_income(self, client, session):
+        import_data = {
+            "export_version": "1.0",
+            "export_date": "2026-04-27T10:00:00Z",
+            "data": {
+                "categories": [],
+                "bill_templates": [],
+                "pay_periods": [
+                    {
+                        "start_date": "2026-04-06",
+                        "end_date": "2026-04-19",
+                        "expected_income": "2500.00",
+                        "actual_income": None,
+                        "additional_income": "300.00",
+                        "additional_income_description": "Side gig",
+                        "notes": None,
+                        "bills": [],
+                        "spending_entries": [],
+                    }
+                ],
+            },
+        }
+
+        response = client.post(
+            "/api/data/import",
+            data=json.dumps(import_data),
+            content_type="application/json",
+        )
+        assert response.status_code == 200
+
+        pp = session.query(PayPeriod).one()
+        assert pp.additional_income == Decimal("300.00")
+        assert pp.additional_income_description == "Side gig"
+
+    def test_import_omitting_new_fields_still_works(self, client, session):
+        """Old export format without monthly_target/additional_income still imports."""
+        import_data = {
+            "export_version": "1.0",
+            "export_date": "2026-04-27T10:00:00Z",
+            "data": {
+                "categories": [
+                    {"name": "Groceries", "description": None, "color": "#22c55e"}
+                ],
+                "bill_templates": [],
+                "pay_periods": [
+                    {
+                        "start_date": "2026-04-06",
+                        "end_date": "2026-04-19",
+                        "expected_income": "2500.00",
+                        "actual_income": None,
+                        "notes": None,
+                        "bills": [],
+                        "spending_entries": [],
+                    }
+                ],
+            },
+        }
+
+        response = client.post(
+            "/api/data/import",
+            data=json.dumps(import_data),
+            content_type="application/json",
+        )
+        assert response.status_code == 200
+        cat = session.query(Category).one()
+        pp = session.query(PayPeriod).one()
+        assert cat.monthly_target is None
+        assert pp.additional_income is None
+
     def test_import_invalid_format(self, client, session):
         """Import rejects invalid data format."""
         import_data = {"invalid": "data"}
@@ -482,3 +615,38 @@ class TestExportImportRoundTrip:
         assert pay_period.expected_income == Decimal("2500.00")
         assert pay_period.bills[0].name == "Rent"
         assert pay_period.spending_entries[0].description == "Groceries at Publix"
+
+    def test_round_trip_preserves_monthly_target_and_additional_income(
+        self, client, session, sample_pay_period
+    ):
+        # Set up the new fields on existing fixtures
+        session.add(
+            Category(
+                name="Groceries", color="#22c55e", monthly_target=Decimal("450.00")
+            )
+        )
+        sample_pay_period.additional_income = Decimal("750.00")
+        sample_pay_period.additional_income_description = "Tax refund"
+        session.commit()
+
+        export_response = client.get("/api/data/export")
+        exported_data = json.loads(export_response.data)
+
+        client.delete(
+            "/api/data/reset",
+            headers={"X-Confirm-Reset": "DELETE-ALL-DATA"},
+        )
+
+        import_response = client.post(
+            "/api/data/import",
+            data=json.dumps(exported_data),
+            content_type="application/json",
+        )
+        assert import_response.status_code == 200
+
+        cat = session.query(Category).filter_by(name="Groceries").one()
+        assert cat.monthly_target == Decimal("450.00")
+
+        pp = session.query(PayPeriod).one()
+        assert pp.additional_income == Decimal("750.00")
+        assert pp.additional_income_description == "Tax refund"
