@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.9](https://github.com/rae004/rae-budget/compare/v0.1.8...v0.1.9) (2026-04-27)
+
+
+### Features
+
+* add monthly rollup toggle to Insights ([3406d6a](https://github.com/rae004/rae-budget/commit/3406d6aa06f5659bd726b304d625b3f772acc9f7))
+* add monthly rollup toggle to Insights ([3d7d339](https://github.com/rae004/rae-budget/commit/3d7d339266485dd6863e56605b84c77ec76cfd24))
+
 ## [0.1.8](https://github.com/rae004/rae-budget/compare/v0.1.7...v0.1.8) (2026-04-27)
 
 
