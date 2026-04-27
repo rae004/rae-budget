@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode } from 'react';
+import { cloneElement, type ReactElement, type ReactNode } from 'react';
 import { Insights } from './Insights';
 import { api } from '../services/api';
 import type {
@@ -19,6 +19,18 @@ vi.mock('../services/api', () => ({
     delete: vi.fn(),
   },
 }));
+
+vi.mock('recharts', async (importActual) => {
+  const actual = await importActual<typeof import('recharts')>();
+  return {
+    ...actual,
+    ResponsiveContainer: ({
+      children,
+    }: {
+      children: ReactElement<{ width?: number; height?: number }>;
+    }) => cloneElement(children, { width: 600, height: 300 }),
+  };
+});
 
 const categories: Category[] = [
   {
@@ -134,9 +146,11 @@ describe('Insights page', () => {
   it('shows summary counts after data loads', async () => {
     render(<Insights />, { wrapper: createWrapper() });
 
-    expect(
-      await screen.findByTestId('insights-period-count'),
-    ).toHaveTextContent('2');
+    await waitFor(() => {
+      expect(screen.getByTestId('insights-period-count')).toHaveTextContent(
+        '2',
+      );
+    });
     expect(screen.getByTestId('insights-category-count')).toHaveTextContent(
       '1',
     );
@@ -149,14 +163,18 @@ describe('Insights page', () => {
   it('updates the grand total when toggling Include to Bills only', async () => {
     render(<Insights />, { wrapper: createWrapper() });
 
-    await screen.findByTestId('insights-grand-total');
+    await waitFor(() => {
+      expect(screen.getByTestId('insights-grand-total')).toHaveTextContent(
+        '$1800.00',
+      );
+    });
 
     fireEvent.click(screen.getByRole('radio', { name: 'Bills' }));
 
-    // Wait for re-render with new aggregate
-    await screen.findByText('$1500.00');
-    expect(screen.getByTestId('insights-grand-total')).toHaveTextContent(
-      '$1500.00',
-    );
+    await waitFor(() => {
+      expect(screen.getByTestId('insights-grand-total')).toHaveTextContent(
+        '$1500.00',
+      );
+    });
   });
 });

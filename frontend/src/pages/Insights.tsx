@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { InsightsToolbar } from '../components/InsightsToolbar';
+import { SpendingByCategoryChart } from '../components/insights/SpendingByCategoryChart';
+import { SpendingOverTimeChart } from '../components/insights/SpendingOverTimeChart';
 import { useCategories } from '../hooks/useCategories';
 import { useInsights, type InsightsFilter } from '../hooks/useInsights';
 
@@ -24,8 +26,7 @@ export function Insights() {
       <div>
         <h1 className="text-2xl font-bold">Insights</h1>
         <p className="text-base-content/60 text-sm mt-1">
-          Filter and roll up your spending across pay periods. Charts coming
-          soon.
+          Filter and roll up your spending across pay periods.
         </p>
       </div>
 
@@ -35,33 +36,31 @@ export function Insights() {
         categories={categories ?? []}
       />
 
+      {/* Summary strip */}
+      <div className="text-sm text-base-content/70">
+        <strong data-testid="insights-period-count">{periodCount}</strong>{' '}
+        pay period{periodCount === 1 ? '' : 's'} ·{' '}
+        <strong data-testid="insights-category-count">{categoryCount}</strong>{' '}
+        {categoryCount === 1 ? 'category' : 'categories'} ·{' '}
+        <strong data-testid="insights-grand-total">
+          ${grandTotal.toFixed(2)}
+        </strong>{' '}
+        total
+      </div>
+
       {isLoading ? (
         <div className="flex justify-center py-12">
           <span className="loading loading-spinner loading-lg" />
         </div>
-      ) : (
-        <div className="card bg-base-100 shadow">
-          <div className="card-body">
-            <h2 className="card-title">Selected range</h2>
-            <p className="text-base">
-              <strong data-testid="insights-period-count">{periodCount}</strong>{' '}
-              pay period{periodCount === 1 ? '' : 's'} ·{' '}
-              <strong data-testid="insights-category-count">
-                {categoryCount}
-              </strong>{' '}
-              {categoryCount === 1 ? 'category' : 'categories'} ·{' '}
-              <strong data-testid="insights-grand-total">
-                ${grandTotal.toFixed(2)}
-              </strong>{' '}
-              total
-            </p>
-            <p className="text-base-content/60 mt-2 text-sm">
-              Charts (Spending by Category, Spending Over Time, Category Trend,
-              Bills vs Discretionary) land in upcoming PRs.
-            </p>
-          </div>
+      ) : data ? (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <SpendingByCategoryChart
+            data={data.byCategory}
+            grandTotal={data.grandTotal}
+          />
+          <SpendingOverTimeChart data={data.spendingByPeriod} />
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
