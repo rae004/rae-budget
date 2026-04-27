@@ -38,12 +38,12 @@ const buckets: InsightsCategoryBucket[] = [
 
 describe('SpendingByCategoryChart', () => {
   it('renders the empty state when no data', () => {
-    render(<SpendingByCategoryChart data={[]} grandTotal={0} />);
+    render(<SpendingByCategoryChart data={[]} grandTotal={0} periodCount={0} />);
     expect(screen.getByText(/No spending in the selected range/)).toBeInTheDocument();
   });
 
   it('renders the chart card with title when data is present', () => {
-    render(<SpendingByCategoryChart data={buckets} grandTotal={350} />);
+    render(<SpendingByCategoryChart data={buckets} grandTotal={350} periodCount={2} />);
     expect(
       screen.getByRole('heading', { name: 'Spending by Category' }),
     ).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe('SpendingByCategoryChart', () => {
 
   it('renders a Recharts pie SVG when data is present', () => {
     const { container } = render(
-      <SpendingByCategoryChart data={buckets} grandTotal={350} />,
+      <SpendingByCategoryChart data={buckets} grandTotal={350} periodCount={2} />,
     );
     // jsdom doesn't compute layout, so legend/tooltip text is absent — but the
     // SVG container and pie group are emitted. That's enough to prove the
