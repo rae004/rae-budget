@@ -1,6 +1,7 @@
 import type { Category } from '../types';
 import type {
   InsightsFilter,
+  InsightsGroupBy,
   InsightsInclude,
   InsightsRangeMode,
 } from '../hooks/useInsights';
@@ -238,6 +239,30 @@ export function InsightsToolbar({ filter, onChange, categories }: Props) {
                   {v === 'both' ? 'Both' : v === 'spending' ? 'Spending' : 'Bills'}
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Group By toggle */}
+          <div className="flex flex-col">
+            <label className="label py-1">
+              <span className="label-text">Group by</span>
+            </label>
+            <div role="radiogroup" className="join" aria-label="Group by">
+              {(['period', 'month'] as InsightsGroupBy[]).map((v) => {
+                const active = (filter.groupBy ?? 'period') === v;
+                return (
+                  <button
+                    key={v}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    className={`join-item btn btn-sm ${active ? 'btn-primary' : 'btn-outline'}`}
+                    onClick={() => onChange({ ...filter, groupBy: v })}
+                  >
+                    {v === 'period' ? 'Period' : 'Month'}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

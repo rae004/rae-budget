@@ -176,6 +176,36 @@ describe('InsightsToolbar', () => {
     );
   });
 
+  it('Group by toggle defaults to Period when groupBy is undefined', () => {
+    render(
+      <InsightsToolbar
+        filter={defaultFilter}
+        onChange={onChange}
+        categories={categories}
+      />,
+    );
+    const group = screen.getByRole('radiogroup', { name: 'Group by' });
+    expect(within(group).getByRole('radio', { name: 'Period' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    );
+  });
+
+  it('Group by toggle emits the new mode when clicked', () => {
+    render(
+      <InsightsToolbar
+        filter={defaultFilter}
+        onChange={onChange}
+        categories={categories}
+      />,
+    );
+    const group = screen.getByRole('radiogroup', { name: 'Group by' });
+    fireEvent.click(within(group).getByRole('radio', { name: 'Month' }));
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ groupBy: 'month' }),
+    );
+  });
+
   it('shows "No categories yet" when none exist', () => {
     render(
       <InsightsToolbar

@@ -294,6 +294,100 @@ describe('useInsights', () => {
       expect(result.current.data!.grandTotal).toBe(150);
     });
   });
+
+  describe('groupBy month rollup', () => {
+    // Periods (sorted by start_date):
+    //   P1: 2025-12-06 → Dec 2025
+    //   P2: 2025-12-20 → Dec 2025
+    //   P3: 2026-02-06 → Feb 2026
+    //   P4: 2026-03-06 → Mar 2026
+    //   P5: 2026-04-06 → Apr 2026
+    //   P6: 2026-04-20 → Apr 2026
+    // → 4 month buckets across all 6 periods.
+
+    it('collapses 6 periods into 4 month buckets', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 6,
+        include: 'both',
+        groupBy: 'month',
+      });
+      const labels = result.current.data!.spendingByPeriod.map((b) => b.label);
+      expect(labels).toEqual(['Dec 2025', 'Feb 2026', 'Mar 2026', 'Apr 2026']);
+    });
+
+    it('sums spending across periods within the same month', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 6,
+        include: 'both',
+        groupBy: 'month',
+      });
+      const apr = result.current.data!.spendingByPeriod.find(
+        (b) => b.label === 'Apr 2026',
+      );
+      // P5 spending: 100 + 50 = 150 ; P6 spending: 200 + 30 = 230 → total 380
+      expect(apr?.total).toBe(380);
+      const dec = result.current.data!.spendingByPeriod.find(
+        (b) => b.label === 'Dec 2025',
+      );
+      // P1 spending: 75 ; P2 spending: 0 → total 75
+      expect(dec?.total).toBe(75);
+    });
+
+    it('sums bills across periods within the same month', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 6,
+        include: 'both',
+        groupBy: 'month',
+      });
+      const apr = result.current.data!.billsVsDiscretionary.find(
+        (b) => b.label === 'Apr 2026',
+      );
+      // P5 bills: 1500 ; P6 bills: 1500 → 3000
+      expect(apr?.bills).toBe(3000);
+    });
+
+    it('rolls categoryTrend perCategory across periods within a month', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 6,
+        include: 'both',
+        groupBy: 'month',
+      });
+      const apr = result.current.data!.categoryTrend.find(
+        (b) => b.label === 'Apr 2026',
+      );
+      // Food across P5+P6: 100 + 200 = 300
+      // Travel across P5+P6: 50
+      // Uncategorized across P5+P6: 30
+      expect(apr?.perCategory['10']).toBe(300);
+      expect(apr?.perCategory['20']).toBe(50);
+      expect(apr?.perCategory.uncategorized).toBe(30);
+    });
+
+    it('byCategory and grandTotal are unaffected by groupBy', async () => {
+      const periodMode = await renderInsights({
+        rangeMode: 'last-n',
+        n: 6,
+        include: 'both',
+        groupBy: 'period',
+      });
+      const monthMode = await renderInsights({
+        rangeMode: 'last-n',
+        n: 6,
+        include: 'both',
+        groupBy: 'month',
+      });
+      expect(monthMode.current.data!.grandTotal).toBe(
+        periodMode.current.data!.grandTotal,
+      );
+      expect(monthMode.current.data!.byCategory.length).toBe(
+        periodMode.current.data!.byCategory.length,
+      );
+    });
+  });
 });
 
 const UNCATEGORIZED = 'Uncategorized';

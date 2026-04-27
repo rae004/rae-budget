@@ -13,6 +13,7 @@ import { useAllSpending } from './useSpending';
 
 export type InsightsRangeMode = 'last-n' | 'ytd' | 'custom';
 export type InsightsInclude = 'bills' | 'spending' | 'both';
+export type InsightsGroupBy = 'period' | 'month';
 
 export interface InsightsFilter {
   rangeMode: InsightsRangeMode;
@@ -23,6 +24,7 @@ export interface InsightsFilter {
   minAmount?: number;
   maxAmount?: number;
   include: InsightsInclude;
+  groupBy?: InsightsGroupBy;
 }
 
 export interface InsightsCategoryBucket {
@@ -168,35 +170,58 @@ function aggregate(
     );
   }
 
-  const spendingByPeriod: InsightsPeriodBucket[] = periods.map((p) => ({
-    periodId: p.id,
-    label: formatDateRange(p.start_date, p.end_date),
-    total: spendingByPeriodMap.get(p.id) ?? 0,
+  // Per-period × category map, used to roll up categoryTrend across buckets.
+  const spendingByPeriodCategory = new Map<number, Map<string, number>>();
+  for (const e of spending) {
+    let inner = spendingByPeriodCategory.get(e.pay_period_id);
+    if (!inner) {
+      inner = new Map();
+      spendingByPeriodCategory.set(e.pay_period_id, inner);
+    }
+    const key =
+      e.category_id === null ? UNCATEGORIZED_KEY : String(e.category_id);
+    inner.set(key, (inner.get(key) ?? 0) + Number(e.amount));
+  }
+
+  const groupBy: InsightsGroupBy = filter.groupBy ?? 'period';
+  const timeBuckets = buildTimeBuckets(periods, groupBy);
+
+  const spendingByPeriod: InsightsPeriodBucket[] = timeBuckets.map((b, idx) => ({
+    periodId: idx,
+    label: b.label,
+    total: b.periodIds.reduce(
+      (sum, pid) => sum + (spendingByPeriodMap.get(pid) ?? 0),
+      0,
+    ),
   }));
 
-  const categoryTrend: InsightsCategoryTrendBucket[] = periods.map((p) => {
-    const perCategory: Record<string, number> = {};
-    for (const e of spending) {
-      if (e.pay_period_id !== p.id) continue;
-      const key =
-        e.category_id === null ? UNCATEGORIZED_KEY : String(e.category_id);
-      perCategory[key] = (perCategory[key] ?? 0) + Number(e.amount);
-    }
-    return {
-      periodId: p.id,
-      label: formatDateRange(p.start_date, p.end_date),
-      perCategory,
-    };
-  });
-
-  const billsVsDiscretionary: InsightsBillsVsDiscretionaryBucket[] = periods.map(
-    (p) => ({
-      periodId: p.id,
-      label: formatDateRange(p.start_date, p.end_date),
-      bills: billsByPeriodMap.get(p.id) ?? 0,
-      spending: spendingByPeriodMap.get(p.id) ?? 0,
-    }),
+  const categoryTrend: InsightsCategoryTrendBucket[] = timeBuckets.map(
+    (b, idx) => {
+      const perCategory: Record<string, number> = {};
+      for (const pid of b.periodIds) {
+        const inner = spendingByPeriodCategory.get(pid);
+        if (!inner) continue;
+        for (const [k, v] of inner) {
+          perCategory[k] = (perCategory[k] ?? 0) + v;
+        }
+      }
+      return { periodId: idx, label: b.label, perCategory };
+    },
   );
+
+  const billsVsDiscretionary: InsightsBillsVsDiscretionaryBucket[] =
+    timeBuckets.map((b, idx) => ({
+      periodId: idx,
+      label: b.label,
+      bills: b.periodIds.reduce(
+        (s, pid) => s + (billsByPeriodMap.get(pid) ?? 0),
+        0,
+      ),
+      spending: b.periodIds.reduce(
+        (s, pid) => s + (spendingByPeriodMap.get(pid) ?? 0),
+        0,
+      ),
+    }));
 
   let grandTotal = 0;
   for (const e of spending) grandTotal += Number(e.amount);
@@ -210,6 +235,47 @@ function aggregate(
     billsVsDiscretionary,
     grandTotal,
   };
+}
+
+interface TimeBucket {
+  key: string;
+  label: string;
+  periodIds: number[];
+}
+
+function buildTimeBuckets(
+  periods: PayPeriod[],
+  groupBy: InsightsGroupBy,
+): TimeBucket[] {
+  if (groupBy === 'month') {
+    // Group by start_date YYYY-MM. With semi-monthly periods on the 6th/20th
+    // cadence, periods starting Apr 6 and Apr 20 both fall into "Apr".
+    const map = new Map<string, TimeBucket>();
+    for (const p of periods) {
+      const key = p.start_date.slice(0, 7);
+      let bucket = map.get(key);
+      if (!bucket) {
+        const date = parseLocalDate(p.start_date);
+        const label = date
+          ? date.toLocaleDateString('en-US', {
+              month: 'short',
+              year: 'numeric',
+            })
+          : key;
+        bucket = { key, label, periodIds: [] };
+        map.set(key, bucket);
+      }
+      bucket.periodIds.push(p.id);
+    }
+    return Array.from(map.values()).sort((a, b) =>
+      a.key.localeCompare(b.key),
+    );
+  }
+  return periods.map((p) => ({
+    key: String(p.id),
+    label: formatDateRange(p.start_date, p.end_date),
+    periodIds: [p.id],
+  }));
 }
 
 function filterPeriods(
