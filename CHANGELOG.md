@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.7](https://github.com/rae004/rae-budget/compare/v0.1.6...v0.1.7) (2026-04-27)
+
+
+### Features
+
+* add Spending by Category and Spending Over Time charts ([13a8855](https://github.com/rae004/rae-budget/commit/13a8855d8385ae9d73dca58dabc23bd6a65732d1))
+* add Spending by Category and Spending Over Time charts ([7f86458](https://github.com/rae004/rae-budget/commit/7f8645843d264297af3a2ed5ba76422edc50912f))
+
 ## [0.1.6](https://github.com/rae004/rae-budget/compare/v0.1.5...v0.1.6) (2026-04-26)
 
 
