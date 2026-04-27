@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.8](https://github.com/rae004/rae-budget/compare/v0.1.7...v0.1.8) (2026-04-27)
+
+
+### Features
+
+* add Category Trend and Bills vs Discretionary charts with budget overlay ([a8f2530](https://github.com/rae004/rae-budget/commit/a8f25306afc00dfa73b45b5d67f3cbb626c34922))
+* add Category Trend and Bills vs Discretionary charts with budget overlay ([497126d](https://github.com/rae004/rae-budget/commit/497126d93455168aa57b0eead029ccfc91813844))
+
 ## [0.1.7](https://github.com/rae004/rae-budget/compare/v0.1.6...v0.1.7) (2026-04-27)
 
 
