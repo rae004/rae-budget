@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.10](https://github.com/rae004/rae-budget/compare/v0.1.9...v0.1.10) (2026-05-17)
+
+
+### Features
+
+* autofill spending description from recent entries ([0ee0d36](https://github.com/rae004/rae-budget/commit/0ee0d361a1e9d0efb6a4d52f772936f63c807c4b))
+* autofill spending description from recent entries ([3999942](https://github.com/rae004/rae-budget/commit/3999942ddd66e976cda0d206917c2763e0d73932))
+
 ## [0.1.9](https://github.com/rae004/rae-budget/compare/v0.1.8...v0.1.9) (2026-04-27)
 
 
