@@ -1,17 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../services/api';
 import type {
+  SpendingDescriptionSuggestion,
   SpendingEntry,
   SpendingEntryCreate,
   SpendingEntryUpdate,
 } from '../types';
 import { payPeriodKeys } from './usePayPeriods';
+import { useDebounce } from './useDebounce';
 
 export const spendingKeys = {
   all: ['spending'] as const,
   lists: () => [...spendingKeys.all, 'list'] as const,
   list: (payPeriodId: number) => [...spendingKeys.lists(), payPeriodId] as const,
   allEntries: () => [...spendingKeys.all, 'all'] as const,
+  descriptionSuggestions: (q: string) =>
+    [...spendingKeys.all, 'description-suggestions', q] as const,
 };
 
 export function useSpending(payPeriodId: number | undefined) {
@@ -63,6 +67,19 @@ export function useUpdateSpending() {
       queryClient.invalidateQueries({ queryKey: spendingKeys.list(payPeriodId) });
       queryClient.invalidateQueries({ queryKey: payPeriodKeys.detail(payPeriodId) });
     },
+  });
+}
+
+export function useSpendingDescriptionSuggestions(query: string) {
+  const debounced = useDebounce(query.trim(), 200);
+  return useQuery({
+    queryKey: spendingKeys.descriptionSuggestions(debounced),
+    queryFn: () =>
+      api.get<SpendingDescriptionSuggestion[]>(
+        `/spending/description-suggestions?q=${encodeURIComponent(debounced)}&days=90`
+      ),
+    enabled: debounced.length >= 1,
+    staleTime: 30_000,
   });
 }
 

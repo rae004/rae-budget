@@ -31,3 +31,9 @@ class SpendingEntryResponse(SpendingEntryBase):
     pay_period_id: int
     created_at: datetime
     updated_at: datetime
+
+
+class SpendingDescriptionSuggestion(BaseModel):
+    description: str
+    frequency: int
+    last_category_id: int | None = None

@@ -27,6 +27,7 @@ from app.schemas.pay_period import (
     PayPeriodUpdate,
 )
 from app.schemas.spending import (
+    SpendingDescriptionSuggestion,
     SpendingEntryCreate,
     SpendingEntryResponse,
     SpendingEntryUpdate,
@@ -51,6 +52,7 @@ __all__ = [
     "PayPeriodResponse",
     "PayPeriodSummary",
     "PayPeriodUpdate",
+    "SpendingDescriptionSuggestion",
     "SpendingEntryCreate",
     "SpendingEntryResponse",
     "SpendingEntryUpdate",
