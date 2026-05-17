@@ -562,7 +562,7 @@ wheels = [
 
 [[package]]
 name = "rae-budget-api"
-version = "0.1.9"
+version = "0.1.12"
 source = { virtual = "." }
 dependencies = [
     { name = "alembic" },
