@@ -12,6 +12,7 @@ class CategoryExport(BaseModel):
     name: str
     description: str | None
     color: str
+    monthly_target: Decimal | None = None
 
 
 class BillTemplateExport(BaseModel):
@@ -54,6 +55,8 @@ class PayPeriodExport(BaseModel):
     end_date: date
     expected_income: Decimal
     actual_income: Decimal | None
+    additional_income: Decimal | None = None
+    additional_income_description: str | None = None
     notes: str | None
     bills: list[PayPeriodBillExport]
     spending_entries: list[SpendingEntryExport]

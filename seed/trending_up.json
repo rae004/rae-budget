@@ -1,0 +1,239 @@
+{
+  "export_version": "1.0",
+  "export_date": "2026-04-27T00:00:00+00:00",
+  "data": {
+    "categories": [
+      {"name": "Groceries", "description": "Supermarket and food shopping", "color": "#22c55e", "monthly_target": "500.00"},
+      {"name": "Dining Out", "description": "Restaurants, cafes, takeout", "color": "#f59e0b", "monthly_target": "300.00"},
+      {"name": "Gas", "description": "Fuel for the car", "color": "#eab308", "monthly_target": "120.00"},
+      {"name": "Entertainment", "description": "Movies, games, events", "color": "#a855f7", "monthly_target": "150.00"},
+      {"name": "Shopping", "description": "Clothing, electronics, household", "color": "#ec4899", "monthly_target": "250.00"},
+      {"name": "Health", "description": "Pharmacy, gym, copays", "color": "#14b8a6", "monthly_target": "100.00"},
+      {"name": "Utilities", "description": "Internet, phone, electric", "color": "#3b82f6", "monthly_target": null},
+      {"name": "Travel", "description": "Trips, hotels, flights", "color": "#06b6d4", "monthly_target": "200.00"}
+    ],
+    "bill_templates": [
+      {"name": "Rent", "default_amount": "1500.00", "due_day_of_month": 1, "is_recurring": true, "category_name": null, "notes": null},
+      {"name": "Internet", "default_amount": "80.00", "due_day_of_month": 5, "is_recurring": true, "category_name": "Utilities", "notes": null},
+      {"name": "Phone", "default_amount": "60.00", "due_day_of_month": 12, "is_recurring": true, "category_name": "Utilities", "notes": null},
+      {"name": "Electric", "default_amount": "90.00", "due_day_of_month": 15, "is_recurring": true, "category_name": "Utilities", "notes": null},
+      {"name": "Streaming", "default_amount": "35.00", "due_day_of_month": 18, "is_recurring": true, "category_name": "Entertainment", "notes": null}
+    ],
+    "pay_periods": [
+      {
+        "start_date": "2025-11-06",
+        "end_date": "2025-11-19",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Phone", "amount": "60.00", "due_date": "2025-11-12", "is_paid": true, "paid_date": "2025-11-12", "notes": null, "bill_template_name": "Phone"},
+          {"name": "Electric", "amount": "90.00", "due_date": "2025-11-15", "is_paid": true, "paid_date": "2025-11-15", "notes": null, "bill_template_name": "Electric"},
+          {"name": "Streaming", "amount": "35.00", "due_date": "2025-11-18", "is_paid": true, "paid_date": "2025-11-18", "notes": null, "bill_template_name": "Streaming"}
+        ],
+        "spending_entries": [
+          {"description": "Whole Foods run", "amount": "145.00", "spent_date": "2025-11-08", "category_name": "Groceries", "notes": null},
+          {"description": "Shell fillup", "amount": "50.00", "spent_date": "2025-11-11", "category_name": "Gas", "notes": null},
+          {"description": "Date night", "amount": "85.00", "spent_date": "2025-11-14", "category_name": "Dining Out", "notes": null},
+          {"description": "Target run", "amount": "120.00", "spent_date": "2025-11-17", "category_name": "Shopping", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2025-11-20",
+        "end_date": "2025-12-05",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Rent", "amount": "1500.00", "due_date": "2025-12-01", "is_paid": true, "paid_date": "2025-12-01", "notes": null, "bill_template_name": "Rent"},
+          {"name": "Internet", "amount": "80.00", "due_date": "2025-12-05", "is_paid": true, "paid_date": "2025-12-05", "notes": null, "bill_template_name": "Internet"}
+        ],
+        "spending_entries": [
+          {"description": "Costco haul", "amount": "170.00", "spent_date": "2025-11-22", "category_name": "Groceries", "notes": null},
+          {"description": "Brunch", "amount": "80.00", "spent_date": "2025-11-26", "category_name": "Dining Out", "notes": null},
+          {"description": "Costco gas", "amount": "50.00", "spent_date": "2025-11-30", "category_name": "Gas", "notes": null},
+          {"description": "Amazon order", "amount": "150.00", "spent_date": "2025-12-03", "category_name": "Shopping", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2025-12-06",
+        "end_date": "2025-12-19",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Phone", "amount": "60.00", "due_date": "2025-12-12", "is_paid": true, "paid_date": "2025-12-12", "notes": null, "bill_template_name": "Phone"},
+          {"name": "Electric", "amount": "90.00", "due_date": "2025-12-15", "is_paid": true, "paid_date": "2025-12-15", "notes": null, "bill_template_name": "Electric"},
+          {"name": "Streaming", "amount": "35.00", "due_date": "2025-12-18", "is_paid": true, "paid_date": "2025-12-18", "notes": null, "bill_template_name": "Streaming"}
+        ],
+        "spending_entries": [
+          {"description": "Trader Joe's", "amount": "135.00", "spent_date": "2025-12-08", "category_name": "Groceries", "notes": null},
+          {"description": "Lunch w/ team", "amount": "75.00", "spent_date": "2025-12-12", "category_name": "Dining Out", "notes": null},
+          {"description": "Concert ticket", "amount": "90.00", "spent_date": "2025-12-15", "category_name": "Entertainment", "notes": null},
+          {"description": "Headphones", "amount": "200.00", "spent_date": "2025-12-18", "category_name": "Shopping", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2025-12-20",
+        "end_date": "2026-01-05",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "additional_income": "500.00",
+        "additional_income_description": "Holiday bonus",
+        "notes": null,
+        "bills": [
+          {"name": "Rent", "amount": "1500.00", "due_date": "2026-01-01", "is_paid": true, "paid_date": "2026-01-01", "notes": null, "bill_template_name": "Rent"},
+          {"name": "Internet", "amount": "80.00", "due_date": "2026-01-05", "is_paid": true, "paid_date": "2026-01-05", "notes": null, "bill_template_name": "Internet"}
+        ],
+        "spending_entries": [
+          {"description": "Whole Foods run", "amount": "180.00", "spent_date": "2025-12-22", "category_name": "Groceries", "notes": null},
+          {"description": "Date night", "amount": "110.00", "spent_date": "2025-12-26", "category_name": "Dining Out", "notes": null},
+          {"description": "Kitchen gadget", "amount": "145.00", "spent_date": "2025-12-30", "category_name": "Shopping", "notes": null},
+          {"description": "Steam game", "amount": "115.00", "spent_date": "2026-01-02", "category_name": "Entertainment", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2026-01-06",
+        "end_date": "2026-01-19",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Phone", "amount": "60.00", "due_date": "2026-01-12", "is_paid": true, "paid_date": "2026-01-12", "notes": null, "bill_template_name": "Phone"},
+          {"name": "Electric", "amount": "90.00", "due_date": "2026-01-15", "is_paid": true, "paid_date": "2026-01-15", "notes": null, "bill_template_name": "Electric"},
+          {"name": "Streaming", "amount": "35.00", "due_date": "2026-01-18", "is_paid": true, "paid_date": "2026-01-18", "notes": null, "bill_template_name": "Streaming"}
+        ],
+        "spending_entries": [
+          {"description": "Costco haul", "amount": "190.00", "spent_date": "2026-01-08", "category_name": "Groceries", "notes": null},
+          {"description": "Shell fillup", "amount": "55.00", "spent_date": "2026-01-11", "category_name": "Gas", "notes": null},
+          {"description": "Friday pizza", "amount": "140.00", "spent_date": "2026-01-13", "category_name": "Dining Out", "notes": null},
+          {"description": "New shoes", "amount": "215.00", "spent_date": "2026-01-17", "category_name": "Shopping", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2026-01-20",
+        "end_date": "2026-02-05",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Rent", "amount": "1500.00", "due_date": "2026-02-01", "is_paid": true, "paid_date": "2026-02-01", "notes": null, "bill_template_name": "Rent"},
+          {"name": "Internet", "amount": "80.00", "due_date": "2026-02-05", "is_paid": true, "paid_date": "2026-02-05", "notes": null, "bill_template_name": "Internet"}
+        ],
+        "spending_entries": [
+          {"description": "Trader Joe's", "amount": "200.00", "spent_date": "2026-01-22", "category_name": "Groceries", "notes": null},
+          {"description": "Brunch", "amount": "135.00", "spent_date": "2026-01-26", "category_name": "Dining Out", "notes": null},
+          {"description": "Gym membership", "amount": "60.00", "spent_date": "2026-01-30", "category_name": "Health", "notes": null},
+          {"description": "Hotel night", "amount": "255.00", "spent_date": "2026-02-02", "category_name": "Travel", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2026-02-06",
+        "end_date": "2026-02-19",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Phone", "amount": "60.00", "due_date": "2026-02-12", "is_paid": true, "paid_date": "2026-02-12", "notes": null, "bill_template_name": "Phone"},
+          {"name": "Electric", "amount": "90.00", "due_date": "2026-02-15", "is_paid": true, "paid_date": "2026-02-15", "notes": null, "bill_template_name": "Electric"},
+          {"name": "Streaming", "amount": "35.00", "due_date": "2026-02-18", "is_paid": true, "paid_date": "2026-02-18", "notes": null, "bill_template_name": "Streaming"}
+        ],
+        "spending_entries": [
+          {"description": "Whole Foods run", "amount": "215.00", "spent_date": "2026-02-08", "category_name": "Groceries", "notes": null},
+          {"description": "Date night", "amount": "145.00", "spent_date": "2026-02-12", "category_name": "Dining Out", "notes": null},
+          {"description": "Board game cafe", "amount": "80.00", "spent_date": "2026-02-15", "category_name": "Entertainment", "notes": null},
+          {"description": "Amazon order", "amount": "260.00", "spent_date": "2026-02-18", "category_name": "Shopping", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2026-02-20",
+        "end_date": "2026-03-05",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Rent", "amount": "1500.00", "due_date": "2026-03-01", "is_paid": true, "paid_date": "2026-03-01", "notes": null, "bill_template_name": "Rent"},
+          {"name": "Internet", "amount": "80.00", "due_date": "2026-03-05", "is_paid": true, "paid_date": "2026-03-05", "notes": null, "bill_template_name": "Internet"}
+        ],
+        "spending_entries": [
+          {"description": "Costco haul", "amount": "225.00", "spent_date": "2026-02-22", "category_name": "Groceries", "notes": null},
+          {"description": "Takeout", "amount": "165.00", "spent_date": "2026-02-26", "category_name": "Dining Out", "notes": null},
+          {"description": "Costco gas", "amount": "60.00", "spent_date": "2026-03-01", "category_name": "Gas", "notes": null},
+          {"description": "Flight booking", "amount": "300.00", "spent_date": "2026-03-04", "category_name": "Travel", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2026-03-06",
+        "end_date": "2026-03-19",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Phone", "amount": "60.00", "due_date": "2026-03-12", "is_paid": true, "paid_date": "2026-03-12", "notes": null, "bill_template_name": "Phone"},
+          {"name": "Electric", "amount": "90.00", "due_date": "2026-03-15", "is_paid": true, "paid_date": "2026-03-15", "notes": null, "bill_template_name": "Electric"},
+          {"name": "Streaming", "amount": "35.00", "due_date": "2026-03-18", "is_paid": true, "paid_date": "2026-03-18", "notes": null, "bill_template_name": "Streaming"}
+        ],
+        "spending_entries": [
+          {"description": "Whole Foods run", "amount": "235.00", "spent_date": "2026-03-08", "category_name": "Groceries", "notes": null},
+          {"description": "Lunch w/ team", "amount": "175.00", "spent_date": "2026-03-12", "category_name": "Dining Out", "notes": null},
+          {"description": "Concert ticket", "amount": "120.00", "spent_date": "2026-03-15", "category_name": "Entertainment", "notes": null},
+          {"description": "New shoes", "amount": "270.00", "spent_date": "2026-03-18", "category_name": "Shopping", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2026-03-20",
+        "end_date": "2026-04-05",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "additional_income": "1200.00",
+        "additional_income_description": "Tax refund",
+        "notes": null,
+        "bills": [
+          {"name": "Rent", "amount": "1500.00", "due_date": "2026-04-01", "is_paid": true, "paid_date": "2026-04-01", "notes": null, "bill_template_name": "Rent"},
+          {"name": "Internet", "amount": "80.00", "due_date": "2026-04-05", "is_paid": true, "paid_date": "2026-04-05", "notes": null, "bill_template_name": "Internet"}
+        ],
+        "spending_entries": [
+          {"description": "Trader Joe's", "amount": "250.00", "spent_date": "2026-03-22", "category_name": "Groceries", "notes": null},
+          {"description": "Date night", "amount": "185.00", "spent_date": "2026-03-26", "category_name": "Dining Out", "notes": null},
+          {"description": "Headphones", "amount": "220.00", "spent_date": "2026-03-30", "category_name": "Shopping", "notes": null},
+          {"description": "Hotel night", "amount": "195.00", "spent_date": "2026-04-02", "category_name": "Travel", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2026-04-06",
+        "end_date": "2026-04-19",
+        "expected_income": "2500.00",
+        "actual_income": "2500.00",
+        "notes": null,
+        "bills": [
+          {"name": "Phone", "amount": "60.00", "due_date": "2026-04-12", "is_paid": true, "paid_date": "2026-04-12", "notes": null, "bill_template_name": "Phone"},
+          {"name": "Electric", "amount": "90.00", "due_date": "2026-04-15", "is_paid": true, "paid_date": "2026-04-15", "notes": null, "bill_template_name": "Electric"},
+          {"name": "Streaming", "amount": "35.00", "due_date": "2026-04-18", "is_paid": true, "paid_date": "2026-04-18", "notes": null, "bill_template_name": "Streaming"}
+        ],
+        "spending_entries": [
+          {"description": "Costco haul", "amount": "260.00", "spent_date": "2026-04-08", "category_name": "Groceries", "notes": null},
+          {"description": "Brunch", "amount": "200.00", "spent_date": "2026-04-12", "category_name": "Dining Out", "notes": null},
+          {"description": "Movie night", "amount": "80.00", "spent_date": "2026-04-15", "category_name": "Entertainment", "notes": null},
+          {"description": "Amazon order", "amount": "360.00", "spent_date": "2026-04-18", "category_name": "Shopping", "notes": null}
+        ]
+      },
+      {
+        "start_date": "2026-04-20",
+        "end_date": "2026-05-05",
+        "expected_income": "2500.00",
+        "actual_income": null,
+        "notes": null,
+        "bills": [
+          {"name": "Rent", "amount": "1500.00", "due_date": "2026-05-01", "is_paid": false, "paid_date": null, "notes": null, "bill_template_name": "Rent"},
+          {"name": "Internet", "amount": "80.00", "due_date": "2026-05-05", "is_paid": false, "paid_date": null, "notes": null, "bill_template_name": "Internet"}
+        ],
+        "spending_entries": [
+          {"description": "Whole Foods run", "amount": "275.00", "spent_date": "2026-04-22", "category_name": "Groceries", "notes": null},
+          {"description": "Date night", "amount": "220.00", "spent_date": "2026-04-26", "category_name": "Dining Out", "notes": null},
+          {"description": "Flight booking", "amount": "400.00", "spent_date": "2026-04-30", "category_name": "Travel", "notes": null},
+          {"description": "Kitchen gadget", "amount": "105.00", "spent_date": "2026-05-03", "category_name": "Shopping", "notes": null}
+        ]
+      }
+    ]
+  }
+}

@@ -42,6 +42,7 @@ def export_data():
                 name=c.name,
                 description=c.description,
                 color=c.color,
+                monthly_target=c.monthly_target,
             )
             for c in categories
         ]
@@ -104,6 +105,8 @@ def export_data():
                     end_date=pp.end_date,
                     expected_income=pp.expected_income,
                     actual_income=pp.actual_income,
+                    additional_income=pp.additional_income,
+                    additional_income_description=pp.additional_income_description,
                     notes=pp.notes,
                     bills=bills,
                     spending_entries=spending_entries,
@@ -170,6 +173,7 @@ def import_data():
                     name=cat_data.name,
                     description=cat_data.description,
                     color=cat_data.color,
+                    monthly_target=cat_data.monthly_target,
                 )
                 session.add(category)
                 session.flush()  # Get the ID
@@ -213,6 +217,8 @@ def import_data():
                 end_date=pp_data.end_date,
                 expected_income=pp_data.expected_income,
                 actual_income=pp_data.actual_income,
+                additional_income=pp_data.additional_income,
+                additional_income_description=pp_data.additional_income_description,
                 notes=pp_data.notes,
             )
             session.add(pay_period)
