@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.11](https://github.com/rae004/rae-budget/compare/v0.1.10...v0.1.11) (2026-05-17)
+
+
+### Features
+
+* include monthly_target and additional_income in export/import ([7c6dcc1](https://github.com/rae004/rae-budget/commit/7c6dcc1ea4c037bc53f261533af07348b7935698))
+
 ## [0.1.10](https://github.com/rae004/rae-budget/compare/v0.1.9...v0.1.10) (2026-05-17)
 
 
