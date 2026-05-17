@@ -109,12 +109,14 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
     return new Date(b.spent_date).getTime() - new Date(a.spent_date).getTime();
   });
 
-  // Calculate running total (accumulates top-to-bottom as displayed)
-  let runningTotal = 0;
-  const entriesWithRunningTotal = sortedEntries.map((entry) => {
-    runningTotal += parseFloat(entry.amount);
-    return { ...entry, runningTotal };
-  });
+  // Calculate running total (accumulates top-to-bottom as displayed).
+  const entriesWithRunningTotal = sortedEntries.reduce<
+    Array<(typeof sortedEntries)[number] & { runningTotal: number }>
+  >((acc, entry) => {
+    const prev = acc.length > 0 ? acc[acc.length - 1].runningTotal : 0;
+    acc.push({ ...entry, runningTotal: prev + parseFloat(entry.amount) });
+    return acc;
+  }, []);
 
   if (entries.length === 0) {
     return (
