@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { usePayPeriods, usePayPeriod } from '../hooks/usePayPeriods';
 import { useBills } from '../hooks/useBills';
 import { useSpending } from '../hooks/useSpending';
@@ -12,19 +12,14 @@ import { SpendingTable } from '../components/SpendingTable';
 import { AddSpendingForm } from '../components/AddSpendingForm';
 
 export function Dashboard() {
-  const [selectedPayPeriodId, setSelectedPayPeriodId] = useState<number | undefined>();
+  const [explicitlySelectedId, setSelectedPayPeriodId] = useState<number | undefined>();
 
   const { data: payPeriods, isLoading: isLoadingPayPeriods } = usePayPeriods();
+  // Default to the most recent pay period; user choice via the selector overrides.
+  const selectedPayPeriodId = explicitlySelectedId ?? payPeriods?.[0]?.id;
   const { data: payPeriodDetail, isLoading: isLoadingDetail } = usePayPeriod(selectedPayPeriodId);
   const { data: bills, isLoading: isLoadingBills } = useBills(selectedPayPeriodId);
   const { data: spending, isLoading: isLoadingSpending } = useSpending(selectedPayPeriodId);
-
-  // Select the most recent pay period by default
-  useEffect(() => {
-    if (payPeriods && payPeriods.length > 0 && !selectedPayPeriodId) {
-      setSelectedPayPeriodId(payPeriods[0].id);
-    }
-  }, [payPeriods, selectedPayPeriodId]);
 
   if (isLoadingPayPeriods) {
     return (

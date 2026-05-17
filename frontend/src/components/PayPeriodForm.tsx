@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useCreatePayPeriod, useSuggestedPayPeriod } from '../hooks/usePayPeriods';
 import { useBillTemplates } from '../hooks/useBillTemplates';
 import { useToast } from '../contexts/ToastContext';
@@ -19,13 +19,19 @@ export function PayPeriodForm({ onSuccess }: PayPeriodFormProps) {
   const { data: billTemplates } = useBillTemplates();
   const { showToast } = useToast();
 
-  // Auto-fill suggested dates when form opens
-  useEffect(() => {
+  // Auto-fill suggested dates the first time the form opens with both a
+  // suggestion available and the date fields untouched. Re-runs only when the
+  // (isOpen, suggestion) pair changes identity, not on every keystroke.
+  const autofillKey =
+    isOpen && suggestedDates ? suggestedDates.start_date : null;
+  const [lastAutofillKey, setLastAutofillKey] = useState<string | null>(null);
+  if (autofillKey !== lastAutofillKey) {
+    setLastAutofillKey(autofillKey);
     if (isOpen && suggestedDates && !startDate && !endDate) {
       setStartDate(suggestedDates.start_date);
       setEndDate(suggestedDates.end_date);
     }
-  }, [isOpen, suggestedDates, startDate, endDate]);
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

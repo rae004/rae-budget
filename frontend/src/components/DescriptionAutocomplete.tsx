@@ -1,6 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSpendingDescriptionSuggestions } from '../hooks/useSpending';
 import type { SpendingDescriptionSuggestion } from '../types';
+
+// Stable reference so the "reset highlight on identity change" check below
+// doesn't fire on every render when data is still undefined.
+const EMPTY_SUGGESTIONS: readonly SpendingDescriptionSuggestion[] = [];
 
 interface DescriptionAutocompleteProps {
   value: string;
@@ -23,12 +27,16 @@ export function DescriptionAutocomplete({
   const [highlightIndex, setHighlightIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { data: suggestions = [] } = useSpendingDescriptionSuggestions(value);
+  const { data } = useSpendingDescriptionSuggestions(value);
+  const suggestions = data ?? EMPTY_SUGGESTIONS;
   const showDropdown = isFocused && value.trim().length >= 1 && suggestions.length > 0;
 
-  useEffect(() => {
+  // Reset highlight to the first row when the suggestion list identity changes.
+  const [prevSuggestions, setPrevSuggestions] = useState(suggestions);
+  if (prevSuggestions !== suggestions) {
+    setPrevSuggestions(suggestions);
     setHighlightIndex(suggestions.length > 0 ? 0 : -1);
-  }, [suggestions]);
+  }
 
   const choose = (suggestion: SpendingDescriptionSuggestion) => {
     onSelect(suggestion);
