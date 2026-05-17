@@ -386,7 +386,5 @@ class TestSpendingDescriptionSuggestions:
         assert body[0]["description"] == "Coffee at Starbucks"
 
     def test_invalid_days_param(self, client, session):
-        response = client.get(
-            "/api/spending/description-suggestions?q=L&days=abc"
-        )
+        response = client.get("/api/spending/description-suggestions?q=L&days=abc")
         assert response.status_code == 400
