@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { render, screen, fireEvent, within } from '@testing-library/react';
 import { InsightsToolbar } from './InsightsToolbar';
 import type { Category } from '../types';
@@ -33,10 +33,10 @@ const defaultFilter: InsightsFilter = {
 };
 
 describe('InsightsToolbar', () => {
-  let onChange: ReturnType<typeof vi.fn>;
+  let onChange: Mock<(next: InsightsFilter) => void>;
 
   beforeEach(() => {
-    onChange = vi.fn();
+    onChange = vi.fn<(next: InsightsFilter) => void>();
   });
 
   it('selects the matching range preset on render', () => {
