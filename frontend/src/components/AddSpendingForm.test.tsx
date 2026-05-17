@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { AddSpendingForm } from "./AddSpendingForm";
 import { ToastProvider } from "../contexts/ToastContext";
-import type { Category } from "../types";
+import type { Category, SpendingDescriptionSuggestion } from "../types";
 
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
@@ -47,6 +47,9 @@ function createWrapper() {
 
 async function renderWithCategories(categories: Category[]) {
   mockFetch.mockResolvedValueOnce(jsonResponse(200, categories));
+  // Catch-all for any other request (e.g., description suggestions fetched
+  // by the autocomplete after a debounce tick).
+  mockFetch.mockResolvedValue(jsonResponse(200, []));
   render(<AddSpendingForm payPeriodId={2} />, { wrapper: createWrapper() });
   await waitFor(() => {
     expect(screen.getByPlaceholderText("What did you buy?")).toBeInTheDocument();
@@ -63,13 +66,12 @@ describe("AddSpendingForm", () => {
     expect(screen.getByPlaceholderText("What did you buy?")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("0.00")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Optional notes")).toBeInTheDocument();
-    expect(screen.getByRole("combobox")).toBeInTheDocument(); // Category select
+    expect(screen.getByLabelText("Category")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Add Spending/i })).toBeInTheDocument();
   });
 
   it("includes categories in the dropdown when present", async () => {
     await renderWithCategories(mockCategories);
-    // Wait for the async useCategories query to populate the dropdown
     expect(await screen.findByRole("option", { name: "Food" })).toBeInTheDocument();
   });
 
@@ -89,13 +91,11 @@ describe("AddSpendingForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /Add Spending/i }));
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith(
-        "/api/pay-periods/2/spending",
-        expect.objectContaining({
-          method: "POST",
-          body: expect.stringContaining('"description":"Coffee"'),
-        })
+      const postCall = mockFetch.mock.calls.find(
+        (c) => c[0] === "/api/pay-periods/2/spending" && c[1]?.method === "POST"
       );
+      expect(postCall).toBeDefined();
+      expect(postCall?.[1]?.body).toContain('"description":"Coffee"');
     });
   });
 
@@ -108,7 +108,7 @@ describe("AddSpendingForm", () => {
     fireEvent.change(screen.getByPlaceholderText("0.00"), {
       target: { value: "12" },
     });
-    fireEvent.change(screen.getByRole("combobox"), { target: { value: "5" } });
+    fireEvent.change(screen.getByLabelText("Category"), { target: { value: "5" } });
 
     mockFetch.mockResolvedValueOnce(jsonResponse(201, { id: 1 }));
     mockFetch.mockResolvedValue(jsonResponse(200, []));
@@ -117,7 +117,7 @@ describe("AddSpendingForm", () => {
 
     await waitFor(() => {
       const call = mockFetch.mock.calls.find(
-        (c) => c[0] === "/api/pay-periods/2/spending"
+        (c) => c[0] === "/api/pay-periods/2/spending" && c[1]?.method === "POST"
       );
       expect(call?.[1]?.body).toContain('"category_id":5');
     });
@@ -129,5 +129,74 @@ describe("AddSpendingForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /Add Spending/i }));
     await new Promise((r) => setTimeout(r, 0));
     expect(mockFetch.mock.calls.length).toBe(callsBefore);
+  });
+
+  describe("description autofill", () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    async function setup(suggestions: SpendingDescriptionSuggestion[]) {
+      mockFetch.mockImplementation((url: string) => {
+        if (typeof url === "string" && url.includes("/spending/description-suggestions")) {
+          return Promise.resolve(jsonResponse(200, suggestions));
+        }
+        return Promise.resolve(jsonResponse(200, mockCategories));
+      });
+      render(<AddSpendingForm payPeriodId={2} />, { wrapper: createWrapper() });
+      await waitFor(() => {
+        expect(screen.getByPlaceholderText("What did you buy?")).toBeInTheDocument();
+      });
+    }
+
+    async function typeAndOpenDropdown(text: string) {
+      const input = screen.getByPlaceholderText("What did you buy?");
+      fireEvent.focus(input);
+      fireEvent.change(input, { target: { value: text } });
+      await act(async () => {
+        vi.advanceTimersByTime(250);
+      });
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("description-suggestion-list")
+        ).toBeInTheDocument();
+      });
+    }
+
+    it("fills description when a suggestion is selected", async () => {
+      await setup([{ description: "Lunch", frequency: 5, last_category_id: 5 }]);
+      await typeAndOpenDropdown("L");
+      fireEvent.mouseDown(screen.getByRole("button", { name: /Lunch/ }));
+      expect(screen.getByPlaceholderText("What did you buy?")).toHaveValue("Lunch");
+    });
+
+    it("fills category when none is selected and suggestion carries one", async () => {
+      await setup([{ description: "Lunch", frequency: 5, last_category_id: 5 }]);
+      await typeAndOpenDropdown("L");
+      fireEvent.mouseDown(screen.getByRole("button", { name: /Lunch/ }));
+      expect(screen.getByLabelText("Category")).toHaveValue("5");
+    });
+
+    it("does not overwrite a category the user already picked", async () => {
+      await setup([{ description: "Lunch", frequency: 5, last_category_id: 999 }]);
+      await waitFor(() => {
+        expect(screen.getByRole("option", { name: "Food" })).toBeInTheDocument();
+      });
+      fireEvent.change(screen.getByLabelText("Category"), { target: { value: "5" } });
+      await typeAndOpenDropdown("L");
+      fireEvent.mouseDown(screen.getByRole("button", { name: /Lunch/ }));
+      expect(screen.getByLabelText("Category")).toHaveValue("5");
+    });
+
+    it("leaves category empty when suggestion has null last_category_id", async () => {
+      await setup([{ description: "Lunch", frequency: 5, last_category_id: null }]);
+      await typeAndOpenDropdown("L");
+      fireEvent.mouseDown(screen.getByRole("button", { name: /Lunch/ }));
+      expect(screen.getByLabelText("Category")).toHaveValue("");
+    });
   });
 });

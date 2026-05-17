@@ -1,8 +1,8 @@
 import json
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 
-from app.models import SpendingEntry
+from app.models import PayPeriod, SpendingEntry
 
 
 class TestSpendingEntryModel:
@@ -244,3 +244,149 @@ class TestDeleteSpending:
     def test_not_found(self, client, session):
         response = client.delete("/api/spending/9999")
         assert response.status_code == 404
+
+
+class TestSpendingDescriptionSuggestions:
+    """GET /api/spending/description-suggestions"""
+
+    @staticmethod
+    def _make_entry(session, pp_id, description, days_ago, category_id=None):
+        entry = SpendingEntry(
+            pay_period_id=pp_id,
+            description=description,
+            amount=Decimal("1.00"),
+            spent_date=date.today() - timedelta(days=days_ago),
+            category_id=category_id,
+        )
+        session.add(entry)
+        session.commit()
+        return entry
+
+    def _setup_pp(self, session):
+        pp = PayPeriod(
+            start_date=date.today() - timedelta(days=120),
+            end_date=date.today() + timedelta(days=30),
+            expected_income=Decimal("2500.00"),
+        )
+        session.add(pp)
+        session.commit()
+        return pp
+
+    def test_empty_q_returns_empty_list(self, client, session):
+        response = client.get("/api/spending/description-suggestions")
+        assert response.status_code == 200
+        assert response.get_json() == []
+
+    def test_blank_q_returns_empty_list(self, client, session):
+        response = client.get("/api/spending/description-suggestions?q=%20%20")
+        assert response.status_code == 200
+        assert response.get_json() == []
+
+    def test_starts_with_match_case_insensitive(self, client, session):
+        pp = self._setup_pp(session)
+        self._make_entry(session, pp.id, "Lunch", 1)
+        self._make_entry(session, pp.id, "latte", 2)
+        self._make_entry(session, pp.id, "Coffee", 3)
+
+        response = client.get("/api/spending/description-suggestions?q=L")
+        body = response.get_json()
+        descriptions = {row["description"] for row in body}
+        assert descriptions == {"Lunch", "latte"}
+
+    def test_does_not_match_mid_string(self, client, session):
+        pp = self._setup_pp(session)
+        self._make_entry(session, pp.id, "Coffee", 1)
+        self._make_entry(session, pp.id, "ice cream", 2)
+
+        response = client.get("/api/spending/description-suggestions?q=cream")
+        assert response.get_json() == []
+
+    def test_ordered_by_frequency_desc(self, client, session):
+        pp = self._setup_pp(session)
+        for _ in range(3):
+            self._make_entry(session, pp.id, "Lunch", 1)
+        for _ in range(5):
+            self._make_entry(session, pp.id, "Latte", 1)
+        self._make_entry(session, pp.id, "Lyft", 1)
+
+        response = client.get("/api/spending/description-suggestions?q=L")
+        body = response.get_json()
+        assert [row["description"] for row in body] == ["Latte", "Lunch", "Lyft"]
+        assert body[0]["frequency"] == 5
+        assert body[1]["frequency"] == 3
+        assert body[2]["frequency"] == 1
+
+    def test_excludes_entries_outside_window(self, client, session):
+        pp = self._setup_pp(session)
+        self._make_entry(session, pp.id, "Lunch", 10)
+        self._make_entry(session, pp.id, "Lunch", 200)  # outside default 90d
+        self._make_entry(session, pp.id, "Latte", 100)  # outside default 90d
+
+        response = client.get("/api/spending/description-suggestions?q=L")
+        body = response.get_json()
+        assert len(body) == 1
+        assert body[0]["description"] == "Lunch"
+        assert body[0]["frequency"] == 1
+
+    def test_custom_days_param(self, client, session):
+        pp = self._setup_pp(session)
+        self._make_entry(session, pp.id, "Lunch", 20)
+        self._make_entry(session, pp.id, "Lunch", 200)
+
+        response = client.get("/api/spending/description-suggestions?q=L&days=10")
+        assert response.get_json() == []
+
+        response = client.get("/api/spending/description-suggestions?q=L&days=365")
+        body = response.get_json()
+        assert body[0]["frequency"] == 2
+
+    def test_limit_param(self, client, session):
+        pp = self._setup_pp(session)
+        for name in ["Latte", "Lunch", "Lyft", "Loan"]:
+            self._make_entry(session, pp.id, name, 1)
+
+        response = client.get("/api/spending/description-suggestions?q=L&limit=2")
+        body = response.get_json()
+        assert len(body) == 2
+
+    def test_last_category_id_returns_most_recent(
+        self, client, session, sample_category
+    ):
+        pp = self._setup_pp(session)
+        cat_id = sample_category.id
+        # Older entry has category; newer has no category — newer wins.
+        self._make_entry(session, pp.id, "Lunch", 30, category_id=cat_id)
+        self._make_entry(session, pp.id, "Lunch", 1, category_id=None)
+
+        response = client.get("/api/spending/description-suggestions?q=L")
+        body = response.get_json()
+        assert body[0]["description"] == "Lunch"
+        assert body[0]["frequency"] == 2
+        assert body[0]["last_category_id"] is None
+
+    def test_last_category_id_when_present(self, client, session, sample_category):
+        pp = self._setup_pp(session)
+        cat_id = sample_category.id
+        self._make_entry(session, pp.id, "Lunch", 30, category_id=None)
+        self._make_entry(session, pp.id, "Lunch", 1, category_id=cat_id)
+
+        response = client.get("/api/spending/description-suggestions?q=L")
+        body = response.get_json()
+        assert body[0]["last_category_id"] == cat_id
+
+    def test_multi_word_prefix(self, client, session):
+        pp = self._setup_pp(session)
+        self._make_entry(session, pp.id, "Coffee at Starbucks", 1)
+        self._make_entry(session, pp.id, "Coffee beans", 1)
+        self._make_entry(session, pp.id, "Tea", 1)
+
+        response = client.get("/api/spending/description-suggestions?q=Coffee%20at")
+        body = response.get_json()
+        assert len(body) == 1
+        assert body[0]["description"] == "Coffee at Starbucks"
+
+    def test_invalid_days_param(self, client, session):
+        response = client.get(
+            "/api/spending/description-suggestions?q=L&days=abc"
+        )
+        assert response.status_code == 400

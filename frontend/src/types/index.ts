@@ -166,6 +166,12 @@ export interface SpendingEntryUpdate {
   notes?: string | null;
 }
 
+export interface SpendingDescriptionSuggestion {
+  description: string;
+  frequency: number;
+  last_category_id: number | null;
+}
+
 // API Error
 export interface ApiError {
   error: string | object[];

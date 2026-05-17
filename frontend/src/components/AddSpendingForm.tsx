@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useCreateSpending } from '../hooks/useSpending';
 import { useCategories } from '../hooks/useCategories';
 import { useToast } from '../contexts/ToastContext';
+import { DescriptionAutocomplete } from './DescriptionAutocomplete';
+import type { SpendingDescriptionSuggestion } from '../types';
 
 interface AddSpendingFormProps {
   payPeriodId: number;
@@ -19,6 +21,13 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
   const createSpending = useCreateSpending();
   const { data: categories } = useCategories();
   const { showToast } = useToast();
+
+  const handleSuggestionSelect = (suggestion: SpendingDescriptionSuggestion) => {
+    setDescription(suggestion.description);
+    if (!categoryId && suggestion.last_category_id != null) {
+      setCategoryId(String(suggestion.last_category_id));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,14 +66,14 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
       {/* Row 1: Description, Amount, Date */}
       <div className="flex flex-wrap gap-2 items-end">
         <div className="flex flex-col flex-1 min-w-48">
-          <label className="label py-1">
+          <label className="label py-1" htmlFor="spending-description">
             <span className="label-text">Description</span>
           </label>
-          <input
-            type="text"
-            className="input input-bordered input-sm w-full"
+          <DescriptionAutocomplete
+            id="spending-description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={setDescription}
+            onSelect={handleSuggestionSelect}
             placeholder="What did you buy?"
             required
           />
@@ -103,10 +112,11 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
       {/* Row 2: Category, Notes, Submit */}
       <div className="flex flex-wrap gap-2 items-end">
         <div className="flex flex-col">
-          <label className="label py-1">
+          <label className="label py-1" htmlFor="spending-category">
             <span className="label-text">Category</span>
           </label>
           <select
+            id="spending-category"
             className="select select-bordered select-sm"
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
