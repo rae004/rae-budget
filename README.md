@@ -3,6 +3,7 @@
 [![CI](https://github.com/rae004/rae-budget/actions/workflows/ci.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/rae004/rae-budget/branch/main/graph/badge.svg)](https://codecov.io/gh/rae004/rae-budget)
 [![Release](https://github.com/rae004/rae-budget/actions/workflows/release-please.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/release-please.yml)
+[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot&logoColor=white)](./.github/dependabot.yml)
 [![Version](https://img.shields.io/github/package-json/v/rae004/rae-budget?filename=frontend%2Fpackage.json&color=blue&label=version)](./CHANGELOG.md)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
