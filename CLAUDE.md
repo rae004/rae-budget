@@ -83,9 +83,10 @@ cp .env.example .env
 docker compose up -d
 
 # 3. Frontend dev server (separate terminal)
+corepack enable   # one-time; activates pnpm from packageManager field
 cd frontend
-npm install   # postinstall script runs `npm rebuild rollup` automatically
-npm run dev
+pnpm install --frozen-lockfile
+pnpm dev
 
 # URLs
 # Frontend: http://localhost:5173
@@ -112,11 +113,9 @@ Tests use **in-memory SQLite** via `Base.metadata.create_all` in `conftest.py` �
 
 ```bash
 cd frontend
-npm test
-npm run test:coverage
+pnpm test
+pnpm test:coverage
 ```
-
-If you see `Cannot find module @rollup/rollup-<platform>`, the postinstall script should have prevented it but: `cd frontend && npm install` (re-run) or `rm -rf node_modules package-lock.json && npm install` as the heavy hammer. See "Gotchas" below.
 
 ---
 
@@ -237,14 +236,6 @@ The user uses **merge commits** (not squash) for PRs. release-please reads every
 
 ## Gotchas
 
-### Rollup native binary mismatch (`Cannot find module @rollup/rollup-<platform>`)
-
-Long-standing npm bug ([npm/cli#4828](https://github.com/npm/cli/issues/4828)). Rollup uses platform-specific `optionalDependencies`; npm sometimes installs the wrong one when the lockfile was generated on a different arch.
-
-**Mitigation in place**: `frontend/package.json` has `"postinstall": "npm rebuild rollup"`. Forces npm to fetch the right native binary for the current platform on every install.
-
-**Failure mode**: even with the postinstall, if the user's terminal is in **Rosetta (x86_64)** but the npm install was done from a native ARM session, the wrong binary is on disk. Fix: re-run `npm install` from the affected terminal. Real fix: get the user out of Rosetta (Terminal Get Info → uncheck "Open using Rosetta").
-
 ### Backend `.venv` corruption (historical)
 
 The Dockerfile puts the venv at **`/opt/venv`** (not `/app/.venv`) so the bind-mount of `./backend:/app` can't shadow or corrupt it. If you see the container restart loop with `/app/.venv/bin/flask: cannot execute`, that means someone ran `uv` on the host and poisoned `backend/.venv`. Fix: `rm -rf backend/.venv` and restart the container. **But** this should never happen with the current Dockerfile — only if someone reverts `UV_PROJECT_ENVIRONMENT=/opt/venv`.
@@ -295,6 +286,6 @@ These come from accumulated feedback. Honor them by default.
 2. `git log --oneline origin/main -10` — see recent merged work
 3. `docker compose ps` — see if containers are up
 4. `docker compose logs api --tail 30` — verify the API is healthy
-5. `cd frontend && npm test 2>&1 | tail -5` — confirm the FE test setup works (will trigger postinstall if first run)
+5. `cd frontend && pnpm test 2>&1 | tail -5` — confirm the FE test setup works
 
 If the API container is in a restart loop, check `docker compose logs api` first — usually it's the legacy `.venv` corruption gotcha (see above).
