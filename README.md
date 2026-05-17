@@ -33,13 +33,13 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 
 - **Backend**: Flask 3.x, SQLAlchemy 2.x, Pydantic 2.x, PostgreSQL 17
 - **Frontend**: React 19, TypeScript, TanStack Query, Vite, TailwindCSS 4.x, DaisyUI 5.x
-- **Package Management**: UV (Python), npm (Node)
+- **Package Management**: UV (Python), pnpm (Node)
 - **Development**: Docker Compose, Ruff (linting), ESLint
 
 ## Prerequisites
 
 - Docker and Docker Compose
-- Node.js 22+ (for frontend development)
+- Node.js 22+ and Corepack (for frontend development; activates pnpm automatically via the `packageManager` field in `frontend/package.json`)
 
 ## Quick Start
 
@@ -60,9 +60,10 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 
 4. **Start frontend development server**
    ```bash
+   corepack enable                       # one-time, picks up pnpm version from package.json
    cd frontend
-   npm install
-   npm run dev
+   pnpm install --frozen-lockfile
+   pnpm dev
    ```
 
 5. **Access the application**
@@ -157,12 +158,12 @@ uv run pytest -v
 
 ```bash
 cd frontend
-npm run dev             # Start dev server
-npm run build           # Production build
-npm run lint            # Run ESLint
-npm test                # Run Vitest tests
-npm run test:coverage   # Run Vitest with coverage report
-npx tsc --noEmit        # Type check
+pnpm dev               # Start dev server
+pnpm build             # Production build
+pnpm lint              # Run ESLint
+pnpm test              # Run Vitest tests
+pnpm test:coverage     # Run Vitest with coverage report
+pnpm exec tsc --noEmit # Type check
 ```
 
 ## Project Structure
