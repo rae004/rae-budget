@@ -28,7 +28,6 @@ wheels/
 venv/
 ENV/
 .uv/
-uv.lock
 
 # Python testing
 .tox/
