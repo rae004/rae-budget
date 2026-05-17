@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.12](https://github.com/rae004/rae-budget/compare/v0.1.11...v0.1.12) (2026-05-17)
+
+
+### Bug Fixes
+
+* address react-hooks 7 lint errors ([71ea648](https://github.com/rae004/rae-budget/commit/71ea648b4aeee6baf73c308faaa354c1e058e7b1))
+
 ## [0.1.11](https://github.com/rae004/rae-budget/compare/v0.1.10...v0.1.11) (2026-05-17)
 
 
