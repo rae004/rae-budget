@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -122,9 +122,10 @@ def create_pay_period():
 
         result = PayPeriodResponse.model_validate(pay_period).model_dump(mode="json")
         return jsonify(result), 201
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in pay_periods route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -152,9 +153,10 @@ def update_pay_period(pay_period_id: int):
 
         result = PayPeriodResponse.model_validate(pay_period).model_dump(mode="json")
         return jsonify(result)
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in pay_periods route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -172,9 +174,10 @@ def delete_pay_period(pay_period_id: int):
         session.commit()
 
         return "", 204
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in pay_periods route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -205,9 +208,10 @@ def repopulate_pay_period_bills(pay_period_id: int):
                 "bills_created": result["created"],
             }
         )
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in pay_periods route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -255,8 +259,9 @@ def repopulate_all_pay_period_bills():
                 "total_bills_created": total_created,
             }
         )
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in pay_periods route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()

@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -77,9 +77,10 @@ def create_bill(pay_period_id: int):
 
         result = PayPeriodBillResponse.model_validate(bill).model_dump(mode="json")
         return jsonify(result), 201
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in bills route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -107,9 +108,10 @@ def update_bill(bill_id: int):
 
         result = PayPeriodBillResponse.model_validate(bill).model_dump(mode="json")
         return jsonify(result)
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in bills route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -127,8 +129,9 @@ def delete_bill(bill_id: int):
         session.commit()
 
         return "", 204
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in bills route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()

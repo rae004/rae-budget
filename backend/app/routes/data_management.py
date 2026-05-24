@@ -3,7 +3,7 @@
 import json
 from datetime import UTC, datetime
 
-from flask import Blueprint, Response, jsonify, request
+from flask import Blueprint, Response, current_app, jsonify, request
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -276,9 +276,10 @@ def import_data():
         )
 
         return jsonify(result.model_dump(mode="json")), 200
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in data_management route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -327,8 +328,9 @@ def reset_data():
         )
 
         return jsonify(result.model_dump(mode="json")), 200
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in data_management route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
