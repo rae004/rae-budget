@@ -3,15 +3,14 @@
 [![CI](https://github.com/rae004/rae-budget/actions/workflows/ci.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/rae004/rae-budget/branch/main/graph/badge.svg)](https://codecov.io/gh/rae004/rae-budget)
 [![Release](https://github.com/rae004/rae-budget/actions/workflows/release-please.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/release-please.yml)
-[![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot&logoColor=white)](./.github/dependabot.yml)
 [![Version](https://img.shields.io/github/package-json/v/rae004/rae-budget?filename=frontend%2Fpackage.json&color=blue&label=version)](./CHANGELOG.md)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![Node.js](https://img.shields.io/badge/Node-22-brightgreen?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![License](https://img.shields.io/github/license/rae004/rae-budget?color=blue)](./LICENSE)
+[![Python](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Frae004%2Frae-budget%2Fmain%2Fbackend%2Fpyproject.toml&query=%24.project.requires-python&label=Python&color=3776AB&logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Frae004%2Frae-budget%2Fmain%2Fbackend%2Fuv.lock&query=%24.package%5B%3F%28%40.name%3D%3D%27flask%27%29%5D.version&label=Flask&color=000000&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Node.js](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frae004%2Frae-budget%2Fmain%2Ffrontend%2Fpackage.json&query=%24.engines.node&label=Node&color=brightgreen&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![React](https://img.shields.io/github/package-json/dependency-version/rae004/rae-budget/react?filename=frontend%2Fpackage.json&color=61DAFB&logo=react&logoColor=white)](https://react.dev/)
+[![TypeScript](https://img.shields.io/github/package-json/dependency-version/rae004/rae-budget/dev/typescript?filename=frontend%2Fpackage.json&color=3178c6&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![PostgreSQL](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Frae004%2Frae-budget%2Fmain%2Fdocker-compose.yml&query=%24.services.postgres.image&label=PostgreSQL&color=4169E1&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 
 Personal budget tracking application for managing pay periods, bills, and spending.
 
