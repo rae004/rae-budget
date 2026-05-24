@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.13](https://github.com/rae004/rae-budget/compare/v0.1.12...v0.1.13) (2026-05-24)
+
+
+### Bug Fixes
+
+* stop leaking exception messages in API error responses ([17de40a](https://github.com/rae004/rae-budget/commit/17de40a07c0aa08fa05157edf798bd0e6b81d35b))
+* stop leaking exception messages in API error responses ([1f05ce8](https://github.com/rae004/rae-budget/commit/1f05ce8bcfbee281d2a60df5cbc1eb39e5c24d5d))
+
 ## [0.1.12](https://github.com/rae004/rae-budget/compare/v0.1.11...v0.1.12) (2026-05-17)
 
 
