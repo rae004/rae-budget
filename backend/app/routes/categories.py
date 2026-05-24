@@ -1,6 +1,6 @@
 import json
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -66,9 +66,10 @@ def create_category():
 
         result = CategoryResponse.model_validate(category).model_dump(mode="json")
         return jsonify(result), 201
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in categories route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -96,9 +97,10 @@ def update_category(category_id: int):
 
         result = CategoryResponse.model_validate(category).model_dump(mode="json")
         return jsonify(result)
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in categories route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -139,8 +141,9 @@ def delete_category(category_id: int):
         session.commit()
 
         return "", 204
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in categories route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()

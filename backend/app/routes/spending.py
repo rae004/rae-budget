@@ -1,7 +1,7 @@
 import json
 from datetime import UTC, datetime, timedelta
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, current_app, jsonify, request
 from pydantic import ValidationError
 from sqlalchemy import desc, func, select
 
@@ -158,9 +158,10 @@ def create_spending(pay_period_id: int):
 
         result = SpendingEntryResponse.model_validate(entry).model_dump(mode="json")
         return jsonify(result), 201
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in spending route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -188,9 +189,10 @@ def update_spending(spending_id: int):
 
         result = SpendingEntryResponse.model_validate(entry).model_dump(mode="json")
         return jsonify(result)
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in spending route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
 
@@ -208,8 +210,9 @@ def delete_spending(spending_id: int):
         session.commit()
 
         return "", 204
-    except Exception as e:
+    except Exception:
         session.rollback()
-        return jsonify({"error": str(e)}), 500
+        current_app.logger.exception("Unhandled exception in spending route")
+        return jsonify({"error": "Internal server error"}), 500
     finally:
         session.close()
