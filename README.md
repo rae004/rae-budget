@@ -6,7 +6,7 @@
 [![Version](https://img.shields.io/github/package-json/v/rae004/rae-budget?filename=frontend%2Fpackage.json&color=blue&label=version)](./CHANGELOG.md)
 [![License](https://img.shields.io/github/license/rae004/rae-budget?color=blue)](./LICENSE)
 [![Python](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Frae004%2Frae-budget%2Fmain%2Fbackend%2Fpyproject.toml&query=%24.project.requires-python&label=Python&color=3776AB&logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Frae004%2Frae-budget%2Fmain%2Fbackend%2Fuv.lock&query=%24.package%5B%3F%28%40.name%3D%3D%27flask%27%29%5D.version&label=Flask&color=000000&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Flask](https://img.shields.io/badge/Flask-3-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
 [![Node.js](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Frae004%2Frae-budget%2Fmain%2Ffrontend%2Fpackage.json&query=%24.engines.node&label=Node&color=brightgreen&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![React](https://img.shields.io/github/package-json/dependency-version/rae004/rae-budget/react?filename=frontend%2Fpackage.json&color=61DAFB&logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/github/package-json/dependency-version/rae004/rae-budget/dev/typescript?filename=frontend%2Fpackage.json&color=3178c6&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
