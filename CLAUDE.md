@@ -63,7 +63,7 @@ rae-budget/
 ├── .github/workflows/
 │   ├── ci.yml                        # Lint + test + build + Codecov upload
 │   └── release-please.yml            # Auto-release management
-├── docker-compose.yml                # `api` + `postgres` services
+├── docker-compose.yml                # `api` + `postgres` + `frontend` services
 ├── release-please-config.json        # Synced versions across both packages
 ├── .release-please-manifest.json     # Current released version (truth source)
 ├── CHANGELOG.md                      # Owned by release-please
@@ -79,19 +79,23 @@ rae-budget/
 # 1. Env file (one-time)
 cp .env.example .env
 
-# 2. Start everything
+# 2. Start everything (api + postgres + frontend)
 docker compose up -d
-
-# 3. Frontend dev server (separate terminal)
-corepack enable   # one-time; activates pnpm from packageManager field
-cd frontend
-pnpm install --frozen-lockfile
-pnpm dev
 
 # URLs
 # Frontend: http://localhost:5173
 # API:      http://localhost:5000/api
 # Health:   http://localhost:5000/api/health
+```
+
+If HMR feels slow under Docker on macOS, run Vite directly on the host instead:
+
+```bash
+docker compose stop frontend
+corepack enable   # one-time; activates pnpm from packageManager field
+cd frontend
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
 Default Postgres credentials in `.env.example`: user `rae_budget`, password `localdev123`, db `rae_budget`.

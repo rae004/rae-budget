@@ -37,5 +37,23 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rae-budget-frontend
+    environment:
+      - VITE_PROXY_TARGET=http://api:5000
+    volumes:
+      - ./frontend:/app
+      # Anonymous volume keeps the container's node_modules from being shadowed
+      # by the host's, so platform-specific native bindings always match.
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+    restart: unless-stopped
+
 volumes:
   postgres_data:
