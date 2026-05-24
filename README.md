@@ -38,7 +38,8 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 ## Prerequisites
 
 - Docker and Docker Compose
-- Node.js 22+ and Corepack (for frontend development; activates pnpm automatically via the `packageManager` field in `frontend/package.json`)
+
+(For running the frontend dev server on the host instead of in Docker, also install Node.js 22+ and Corepack.)
 
 ## Quick Start
 
@@ -47,27 +48,28 @@ Personal budget tracking application for managing pay periods, bills, and spendi
    cp .env.example .env
    ```
 
-2. **Start services**
+2. **Start everything**
    ```bash
    docker compose up -d
    ```
 
-3. **Verify backend is running**
-   ```bash
-   curl http://localhost:5000/api/health
-   ```
-
-4. **Start frontend development server**
-   ```bash
-   corepack enable                       # one-time, picks up pnpm version from package.json
-   cd frontend
-   pnpm install --frozen-lockfile
-   pnpm dev
-   ```
-
-5. **Access the application**
+3. **Access the application**
    - Frontend: http://localhost:5173
    - API: http://localhost:5000/api
+   - Health: http://localhost:5000/api/health
+
+### Running the frontend on the host instead
+
+If HMR feels slow under Docker on macOS, run Vite directly on the host:
+
+```bash
+corepack enable          # one-time, picks up pnpm version from package.json
+cd frontend
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+Then either stop the `frontend` service (`docker compose stop frontend`) or accept that two dev servers will be running.
 
 ## API Endpoints
 
