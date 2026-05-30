@@ -44,6 +44,9 @@ services:
     container_name: rae-budget-frontend
     environment:
       - VITE_PROXY_TARGET=http://api:5000
+      # pnpm 11 refuses to purge/rebuild node_modules without a TTY; CI=true
+      # lets the entrypoint's `pnpm install` run non-interactively.
+      - CI=true
     volumes:
       - ./frontend:/app
       # Anonymous volume keeps the container's node_modules from being shadowed
