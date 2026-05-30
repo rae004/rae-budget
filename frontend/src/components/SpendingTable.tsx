@@ -40,6 +40,9 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
     return category?.name ?? '-';
   };
 
+  const truncate = (text: string, max = 24): string =>
+    text.length > max ? `${text.slice(0, max - 1)}…` : text;
+
   const getCategoryColor = (categoryId: number | null): string => {
     if (!categoryId || !categories) return '#6b7280';
     const category = categories.find((c) => c.id === categoryId);
@@ -242,10 +245,11 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
                 </td>
                 <td>
                   <span
-                    className="badge badge-sm"
+                    className="badge badge-sm whitespace-nowrap"
                     style={{ backgroundColor: getCategoryColor(entry.category_id), color: 'white' }}
+                    title={getCategoryName(entry.category_id)}
                   >
-                    {getCategoryName(entry.category_id)}
+                    {truncate(getCategoryName(entry.category_id))}
                   </span>
                 </td>
                 <td>{formatCurrency(entry.amount)}</td>
