@@ -113,7 +113,7 @@ export function DescriptionAutocomplete({
                 <button
                   type="button"
                   className={`flex justify-between items-center w-full ${
-                    isHighlighted ? 'active' : ''
+                    isHighlighted ? 'bg-base-content/10' : ''
                   }`}
                   onMouseDown={(e) => {
                     e.preventDefault();
