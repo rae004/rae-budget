@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.15](https://github.com/rae004/rae-budget/compare/v0.1.14...v0.1.15) (2026-05-31)
+
+
+### Bug Fixes
+
+* highlight autocomplete suggestions during keyboard navigation ([6581200](https://github.com/rae004/rae-budget/commit/65812007e8e2e57b3675a8df5c5610c30c7891ac))
+* highlight autocomplete suggestions during keyboard navigation ([d188998](https://github.com/rae004/rae-budget/commit/d188998c73f2018df7e3b14ab8431438f92bd446))
+
 ## [0.1.14](https://github.com/rae004/rae-budget/compare/v0.1.13...v0.1.14) (2026-05-30)
 
 
