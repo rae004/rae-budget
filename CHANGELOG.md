@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.14](https://github.com/rae004/rae-budget/compare/v0.1.13...v0.1.14) (2026-05-30)
+
+
+### Bug Fixes
+
+* clamp long category names in spending table + fix Docker frontend restart loop ([293a305](https://github.com/rae004/rae-budget/commit/293a3053d9fd27a6309c1a9a832cd5480c41c102))
+* clamp long category names in spending table to single line ([b9cce77](https://github.com/rae004/rae-budget/commit/b9cce77d91a31b4ecbe55694f51b128061a34ec4))
+* let frontend pnpm install run non-interactively in Docker ([2244f1f](https://github.com/rae004/rae-budget/commit/2244f1ff69e37bdc4f549c72b8739decd16fa65e))
+
 ## [0.1.13](https://github.com/rae004/rae-budget/compare/v0.1.12...v0.1.13) (2026-05-24)
 
 
