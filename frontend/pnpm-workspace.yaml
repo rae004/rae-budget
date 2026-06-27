@@ -1,0 +1,5 @@
+# Force a patched undici (>=7.28.0) to clear transitive advisories pulled in
+# through jsdom -> vitest. pnpm 10+ reads overrides from this file, not
+# package.json. See https://github.com/advisories/GHSA-... (undici TLS bypass).
+overrides:
+  undici: '>=7.28.0 <8'
