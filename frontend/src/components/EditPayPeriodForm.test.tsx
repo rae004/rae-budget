@@ -113,6 +113,9 @@ describe("EditPayPeriodForm", () => {
   it("Save after changing dates PUTs and triggers repopulate-bills", async () => {
     const { onClose } = renderForm();
 
+    fireEvent.change(screen.getByDisplayValue("2026-06-06"), {
+      target: { value: "2026-06-07" },
+    });
     fireEvent.change(screen.getByDisplayValue("2026-06-19"), {
       target: { value: "2026-06-25" },
     });
@@ -162,5 +165,95 @@ describe("EditPayPeriodForm", () => {
     expect(
       mockFetch.mock.calls.some((c) => c[1]?.method === "PUT")
     ).toBe(false);
+  });
+
+  it("includes edited notes and actual income in the PUT body", async () => {
+    const { onClose } = renderForm();
+
+    fireEvent.change(screen.getByLabelText(/Actual Income/i), {
+      target: { value: "1950.50" },
+    });
+    fireEvent.change(screen.getByLabelText(/Notes/i), {
+      target: { value: "Short month" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Save/i }));
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+
+    const putCall = mockFetch.mock.calls.find(
+      (c) => c[0] === "/api/pay-periods/7" && c[1]?.method === "PUT"
+    );
+    expect(putCall?.[1]?.body).toContain('"actual_income":1950.5');
+    expect(putCall?.[1]?.body).toContain('"notes":"Short month"');
+  });
+
+  it("clears notes and actual income to null when emptied", async () => {
+    const { onClose } = renderForm();
+
+    fireEvent.change(screen.getByLabelText(/Actual Income/i), {
+      target: { value: "" },
+    });
+    fireEvent.change(screen.getByLabelText(/Notes/i), {
+      target: { value: "  " },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Save/i }));
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+
+    const putCall = mockFetch.mock.calls.find(
+      (c) => c[0] === "/api/pay-periods/7" && c[1]?.method === "PUT"
+    );
+    expect(putCall?.[1]?.body).toContain('"actual_income":null');
+    expect(putCall?.[1]?.body).toContain('"notes":null');
+  });
+
+  it("keeps the form open when the PUT fails", async () => {
+    const { onClose } = renderForm();
+    mockFetch.mockImplementation((url: string) => {
+      if (String(url) === "/api/pay-periods/7") {
+        return Promise.resolve(jsonResponse(500, { error: "boom" }));
+      }
+      return Promise.resolve(jsonResponse(200, {}));
+    });
+
+    fireEvent.change(screen.getByDisplayValue("2000.00"), {
+      target: { value: "2500" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Save/i }));
+
+    // Save button returns to its enabled label and onClose never fired.
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /Save/i })).toBeEnabled()
+    );
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("still closes when the PUT succeeds but repopulate fails", async () => {
+    const { onClose } = renderForm();
+    // Wait for templates so the repopulate path is taken.
+    await screen.findByDisplayValue("2026-06-19");
+    mockFetch.mockImplementation((url: string) => {
+      if (String(url).includes("repopulate-bills")) {
+        return Promise.resolve(jsonResponse(500, { error: "nope" }));
+      }
+      if (String(url).startsWith("/api/bill-templates")) {
+        return Promise.resolve(
+          jsonResponse(200, [{ id: 1, name: "Rent", default_amount: "500" }])
+        );
+      }
+      return Promise.resolve(jsonResponse(200, {}));
+    });
+
+    fireEvent.change(screen.getByDisplayValue("2026-06-19"), {
+      target: { value: "2026-06-25" },
+    });
+    await screen.findByText(/re-add template bills/i);
+    fireEvent.click(screen.getByRole("button", { name: /Save/i }));
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    const repopCall = mockFetch.mock.calls.find((c) =>
+      String(c[0]).includes("repopulate-bills")
+    );
+    expect(repopCall).toBeTruthy();
   });
 });
