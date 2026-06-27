@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/rae004/rae-budget/compare/v0.1.15...v0.2.0) (2026-06-27)
+
+
+### Features
+
+* edit pay periods with bill re-derivation ([#93](https://github.com/rae004/rae-budget/issues/93)) ([7ab1c0c](https://github.com/rae004/rae-budget/commit/7ab1c0c4f661d7715e942c93da2aca85e157c8f6))
+
+
+### Bug Fixes
+
+* use standard semver bumps in release-please ([#95](https://github.com/rae004/rae-budget/issues/95)) ([31ffe26](https://github.com/rae004/rae-budget/commit/31ffe2638f0ec78aaf8eeabfd9c4f8f94ec7128e))
+
 ## [0.1.15](https://github.com/rae004/rae-budget/compare/v0.1.14...v0.1.15) (2026-05-31)
 
 
