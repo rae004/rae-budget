@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import type { PayPeriodDetail } from '../types';
 import { formatDate } from '../utils/date';
+import { EditPayPeriodForm } from './EditPayPeriodForm';
 
 interface SummaryCardProps {
   payPeriod: PayPeriodDetail;
@@ -13,67 +15,89 @@ function formatCurrency(value: string): string {
 }
 
 export function SummaryCard({ payPeriod }: SummaryCardProps) {
+  const [isEditing, setIsEditing] = useState(false);
   const remaining = parseFloat(payPeriod.summary.remaining);
   const isNegative = remaining < 0;
 
   return (
     <div className="card bg-base-100 shadow-xl">
       <div className="card-body">
-        <h2 className="card-title">
-          Pay Period: {formatDate(payPeriod.start_date)} - {formatDate(payPeriod.end_date)}
-        </h2>
-
-        <div className="stats stats-vertical lg:stats-horizontal shadow mt-4">
-          <div className="stat">
-            <div className="stat-title">Expected Income</div>
-            <div className="stat-value text-primary text-2xl">
-              {formatCurrency(payPeriod.expected_income)}
-            </div>
-            {payPeriod.actual_income && (
-              <div className="stat-desc">
-                Actual: {formatCurrency(payPeriod.actual_income)}
-              </div>
-            )}
-            {payPeriod.additional_income && (
-              <div className="stat-desc">
-                + Additional: {formatCurrency(payPeriod.additional_income)}
-              </div>
-            )}
-          </div>
-
-          <div className="stat">
-            <div className="stat-title">Bills Total</div>
-            <div className="stat-value text-2xl">
-              {formatCurrency(payPeriod.summary.bill_total)}
-            </div>
-          </div>
-
-          <div className="stat">
-            <div className="stat-title">Spending Total</div>
-            <div className="stat-value text-2xl">
-              {formatCurrency(payPeriod.summary.spending_total)}
-            </div>
-          </div>
-
-          <div className="stat">
-            <div className="stat-title">Running Total</div>
-            <div className="stat-value text-2xl">
-              {formatCurrency(payPeriod.summary.running_total)}
-            </div>
-          </div>
-
-          <div className="stat">
-            <div className="stat-title">Remaining</div>
-            <div className={`stat-value text-2xl ${isNegative ? 'text-error' : 'text-success'}`}>
-              {formatCurrency(payPeriod.summary.remaining)}
-            </div>
-          </div>
+        <div className="flex items-start justify-between gap-2">
+          <h2 className="card-title">
+            Pay Period: {formatDate(payPeriod.start_date)} - {formatDate(payPeriod.end_date)}
+          </h2>
+          {!isEditing && (
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit
+            </button>
+          )}
         </div>
 
-        {payPeriod.notes && (
+        {isEditing ? (
           <div className="mt-4">
-            <span className="font-semibold">Notes:</span> {payPeriod.notes}
+            <EditPayPeriodForm
+              payPeriod={payPeriod}
+              onClose={() => setIsEditing(false)}
+            />
           </div>
+        ) : (
+          <>
+            <div className="stats stats-vertical lg:stats-horizontal shadow mt-4">
+              <div className="stat">
+                <div className="stat-title">Expected Income</div>
+                <div className="stat-value text-primary text-2xl">
+                  {formatCurrency(payPeriod.expected_income)}
+                </div>
+                {payPeriod.actual_income && (
+                  <div className="stat-desc">
+                    Actual: {formatCurrency(payPeriod.actual_income)}
+                  </div>
+                )}
+                {payPeriod.additional_income && (
+                  <div className="stat-desc">
+                    + Additional: {formatCurrency(payPeriod.additional_income)}
+                  </div>
+                )}
+              </div>
+
+              <div className="stat">
+                <div className="stat-title">Bills Total</div>
+                <div className="stat-value text-2xl">
+                  {formatCurrency(payPeriod.summary.bill_total)}
+                </div>
+              </div>
+
+              <div className="stat">
+                <div className="stat-title">Spending Total</div>
+                <div className="stat-value text-2xl">
+                  {formatCurrency(payPeriod.summary.spending_total)}
+                </div>
+              </div>
+
+              <div className="stat">
+                <div className="stat-title">Running Total</div>
+                <div className="stat-value text-2xl">
+                  {formatCurrency(payPeriod.summary.running_total)}
+                </div>
+              </div>
+
+              <div className="stat">
+                <div className="stat-title">Remaining</div>
+                <div className={`stat-value text-2xl ${isNegative ? 'text-error' : 'text-success'}`}>
+                  {formatCurrency(payPeriod.summary.remaining)}
+                </div>
+              </div>
+            </div>
+
+            {payPeriod.notes && (
+              <div className="mt-4">
+                <span className="font-semibold">Notes:</span> {payPeriod.notes}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

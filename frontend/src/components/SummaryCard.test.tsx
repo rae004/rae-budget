@@ -1,7 +1,10 @@
-import { describe, it, expect } from "vitest";
-import { render, screen } from "../test/utils";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent } from "../test/utils";
 import { SummaryCard } from "./SummaryCard";
 import type { PayPeriodDetail } from "../types";
+
+const mockFetch = vi.fn();
+vi.stubGlobal("fetch", mockFetch);
 
 const mockPayPeriod: PayPeriodDetail = {
   id: 1,
@@ -23,6 +26,15 @@ const mockPayPeriod: PayPeriodDetail = {
 };
 
 describe("SummaryCard", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockFetch.mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([]),
+    });
+  });
+
   it("renders pay period dates", () => {
     render(<SummaryCard payPeriod={mockPayPeriod} />);
 
@@ -111,5 +123,30 @@ describe("SummaryCard", () => {
     render(<SummaryCard payPeriod={mockPayPeriod} />);
 
     expect(screen.queryByText("Notes:")).not.toBeInTheDocument();
+  });
+
+  describe("edit toggle", () => {
+    it("clicking Edit reveals the edit form and hides the stats", () => {
+      render(<SummaryCard payPeriod={mockPayPeriod} />);
+
+      fireEvent.click(screen.getByRole("button", { name: /Edit/i }));
+
+      // The form's Save button appears; the stats and the Edit button go away.
+      expect(screen.getByRole("button", { name: /Save/i })).toBeInTheDocument();
+      expect(screen.queryByText("Bills Total")).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /^Edit$/i })
+      ).not.toBeInTheDocument();
+    });
+
+    it("Cancel returns to the stats view", () => {
+      render(<SummaryCard payPeriod={mockPayPeriod} />);
+
+      fireEvent.click(screen.getByRole("button", { name: /Edit/i }));
+      fireEvent.click(screen.getByRole("button", { name: /Cancel/i }));
+
+      expect(screen.getByText("Bills Total")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /Edit/i })).toBeInTheDocument();
+    });
   });
 });
