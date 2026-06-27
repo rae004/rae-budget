@@ -65,6 +65,25 @@ export function useUpdatePayPeriod() {
   });
 }
 
+interface RepopulateBillsResult {
+  pay_period_id: number;
+  bills_deleted: number;
+  bills_created: number;
+}
+
+export function useRepopulatePayPeriodBills() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) =>
+      api.post<RepopulateBillsResult>(`/pay-periods/${id}/repopulate-bills`, {}),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: payPeriodKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: ['bills'] });
+    },
+  });
+}
+
 export function useDeletePayPeriod() {
   const queryClient = useQueryClient();
 
