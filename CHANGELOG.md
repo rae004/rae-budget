@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/rae004/rae-budget/compare/v0.2.0...v0.2.1) (2026-06-28)
+
+
+### Bug Fixes
+
+* copy pnpm-workspace.yaml into frontend Docker build ([3180e3e](https://github.com/rae004/rae-budget/commit/3180e3eb0756ac336a82dde3644ccab3e478e0da))
+* copy pnpm-workspace.yaml into frontend Docker build ([48fbc08](https://github.com/rae004/rae-budget/commit/48fbc080d2d5b95bc842041bdee0f91e6ce34ee7))
+
 ## [0.2.0](https://github.com/rae004/rae-budget/compare/v0.1.15...v0.2.0) (2026-06-27)
 
 
