@@ -167,6 +167,9 @@ jobs:
         with:
           node-version: '22'
 
+      # Advisories that don't apply to this app are ignored via
+      # auditConfig.ignoreGhsas in frontend/pnpm-workspace.yaml, where each
+      # entry carries its rationale and removal condition.
       - name: Audit pnpm deps
         run: pnpm audit --audit-level high
 
