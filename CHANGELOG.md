@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.2](https://github.com/rae004/rae-budget/compare/v0.2.1...v0.2.2) (2026-08-02)
+
+
+### Bug Fixes
+
+* **deps:** clear dependency audit failures ([970d145](https://github.com/rae004/rae-budget/commit/970d14517d777e0061b2e3cd443af51dc6887341))
+* **deps:** clear dependency audit failures ([b95ffbf](https://github.com/rae004/rae-budget/commit/b95ffbfadbb0fd2b3125e9c619c5ec3fc087ec76))
+* make Category Trend tooltip readable and add totals ([c32fa9e](https://github.com/rae004/rae-budget/commit/c32fa9e3200eb77d18164a4f32368fd6269b34c5))
+* make Category Trend tooltip readable and add totals ([766630e](https://github.com/rae004/rae-budget/commit/766630e51d6c32441d32a54eb22ce41fa0c25963))
+
 ## [0.2.1](https://github.com/rae004/rae-budget/compare/v0.2.0...v0.2.1) (2026-06-28)
 
 
