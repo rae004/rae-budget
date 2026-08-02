@@ -46,6 +46,14 @@ updates:
           - "daisyui"
           - "autoprefixer"
           - "postcss"
+    ignore:
+      # typescript-eslint pins peerDependencies.typescript to ">=4.8.4 <6.1.0",
+      # so TS 7 crashes ESLint with "Cannot read properties of undefined
+      # (reading 'Cjs')". Every TS 7.x PR fails CI until upstream widens that
+      # range. Drop this entry when typescript-eslint supports TS 7.
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
     labels:
       - dependencies
       - frontend
