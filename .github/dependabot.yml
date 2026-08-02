@@ -58,7 +58,12 @@ updates:
       - dependencies
       - frontend
 
-  - package-ecosystem: pip
+  # The backend is uv-managed (pyproject.toml + uv.lock). The pip ecosystem
+  # reads pyproject dependencies but not uv.lock, so transitive advisories
+  # never surfaced as PRs — the click 8.3.2 finding (PYSEC-2026-2132) had to
+  # be relocked by hand after it failed CI. The uv ecosystem understands the
+  # lockfile and covers transitives.
+  - package-ecosystem: uv
     directory: /backend
     schedule:
       interval: weekly
