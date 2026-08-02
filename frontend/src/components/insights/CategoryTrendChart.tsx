@@ -29,6 +29,69 @@ function categoryKey(b: InsightsCategoryBucket): string {
   return b.categoryId === null ? 'uncategorized' : String(b.categoryId);
 }
 
+interface TooltipRow {
+  key: string;
+  name: string;
+  color: string;
+  value: number;
+}
+
+/**
+ * Compact tooltip. The default Recharts tooltip grows one row per stacked
+ * series, which overflows the 300px chart box once there are more than a
+ * handful of categories. This keeps rows tight, drops $0 categories, and
+ * spills into a second column instead of running off the bottom. Rows are
+ * sorted highest-to-lowest and fill column-major, so the biggest spend is
+ * top-left and the smallest is at the bottom of the last column.
+ */
+export function CategoryTrendTooltip({
+  active,
+  label,
+  rows,
+}: {
+  active: boolean;
+  label: string;
+  rows: TooltipRow[];
+}) {
+  if (!active || rows.length === 0) return null;
+
+  const total = rows.reduce((sum, r) => sum + r.value, 0);
+  const sorted = [...rows].sort((a, b) => b.value - a.value);
+  const twoColumn = sorted.length > 10;
+  const perColumn = twoColumn ? Math.ceil(sorted.length / 2) : sorted.length;
+
+  return (
+    <div className="rounded border border-base-300 bg-base-100 px-2 py-1.5 text-[11px] leading-tight shadow-lg">
+      <div className="mb-1 font-semibold">{label}</div>
+      <div
+        className={twoColumn ? 'grid grid-flow-col gap-x-3' : 'flex flex-col'}
+        style={
+          twoColumn
+            ? { gridTemplateRows: `repeat(${perColumn}, minmax(0, auto))` }
+            : undefined
+        }
+      >
+        {sorted.map((row) => (
+          <div key={row.key} className="flex items-center gap-1.5 py-px">
+            <span
+              className="inline-block h-2 w-2 shrink-0 rounded-sm"
+              style={{ backgroundColor: row.color }}
+            />
+            <span className="mr-2 truncate max-w-[10rem]">{row.name}</span>
+            <span className="ml-auto tabular-nums">
+              ${row.value.toFixed(2)}
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="mt-1 flex items-center gap-1.5 border-t border-base-300 pt-1 font-semibold">
+        <span>Total</span>
+        <span className="ml-auto tabular-nums">${total.toFixed(2)}</span>
+      </div>
+    </div>
+  );
+}
+
 export function CategoryTrendChart({ data, byCategory }: Props) {
   if (data.length === 0 || byCategory.length === 0) {
     return (
@@ -62,10 +125,32 @@ export function CategoryTrendChart({ data, byCategory }: Props) {
             tick={{ fontSize: 11 }}
           />
           <Tooltip
-            formatter={(value, name) => {
-              const num = typeof value === 'number' ? value : 0;
-              const bucket = byCategory.find((b) => categoryKey(b) === name);
-              return [`$${num.toFixed(2)}`, bucket?.name ?? String(name)];
+            cursor={{ fill: 'currentColor', fillOpacity: 0.06 }}
+            wrapperStyle={{ zIndex: 50, outline: 'none' }}
+            allowEscapeViewBox={{ x: false, y: true }}
+            content={(props) => {
+              const items = Array.isArray(props.payload) ? props.payload : [];
+              const rows: TooltipRow[] = items
+                .map((item) => {
+                  const key = String(item.dataKey ?? item.name ?? '');
+                  const bucket = byCategory.find(
+                    (b) => categoryKey(b) === key,
+                  );
+                  return {
+                    key,
+                    name: bucket?.name ?? key,
+                    color: bucket?.color ?? String(item.color ?? '#888'),
+                    value: typeof item.value === 'number' ? item.value : 0,
+                  };
+                })
+                .filter((row) => row.value !== 0);
+              return (
+                <CategoryTrendTooltip
+                  active={Boolean(props.active)}
+                  label={String(props.label ?? '')}
+                  rows={rows}
+                />
+              );
             }}
           />
           <Legend

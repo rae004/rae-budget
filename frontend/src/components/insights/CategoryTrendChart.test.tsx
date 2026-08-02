@@ -1,7 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { cloneElement, type ReactElement } from 'react';
-import { CategoryTrendChart } from './CategoryTrendChart';
+import {
+  CategoryTrendChart,
+  CategoryTrendTooltip,
+} from './CategoryTrendChart';
 import type {
   InsightsCategoryBucket,
   InsightsCategoryTrendBucket,
@@ -85,5 +88,66 @@ describe('CategoryTrendChart', () => {
     expect(
       container.querySelector('.recharts-reference-line'),
     ).not.toBeInTheDocument();
+  });
+});
+
+describe('CategoryTrendTooltip', () => {
+  const rows = [
+    { key: '10', name: 'Food', color: '#f59e0b', value: 100 },
+    { key: '20', name: 'Travel', color: '#3b82f6', value: 50.5 },
+  ];
+
+  it('renders nothing when inactive', () => {
+    const { container } = render(
+      <CategoryTrendTooltip active={false} label="Apr" rows={rows} />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('renders nothing when there are no rows', () => {
+    const { container } = render(
+      <CategoryTrendTooltip active label="Apr" rows={[]} />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('renders each category with a totals row', () => {
+    render(<CategoryTrendTooltip active label="Apr 6 - Apr 19" rows={rows} />);
+    expect(screen.getByText('Apr 6 - Apr 19')).toBeInTheDocument();
+    expect(screen.getByText('Food')).toBeInTheDocument();
+    expect(screen.getByText('$100.00')).toBeInTheDocument();
+    expect(screen.getByText('Travel')).toBeInTheDocument();
+    expect(screen.getByText('$50.50')).toBeInTheDocument();
+    expect(screen.getByText('Total')).toBeInTheDocument();
+    expect(screen.getByText('$150.50')).toBeInTheDocument();
+  });
+
+  it('sorts rows highest value first', () => {
+    const unsorted = [
+      { key: '1', name: 'Small', color: '#111', value: 5 },
+      { key: '2', name: 'Big', color: '#222', value: 500 },
+      { key: '3', name: 'Mid', color: '#333', value: 50 },
+    ];
+    render(<CategoryTrendTooltip active label="Apr" rows={unsorted} />);
+    const names = screen
+      .getAllByText(/^(Small|Big|Mid)$/)
+      .map((el) => el.textContent);
+    expect(names).toEqual(['Big', 'Mid', 'Small']);
+  });
+
+  it('fills column-major with balanced rows when there are many categories', () => {
+    const many = Array.from({ length: 12 }, (_, i) => ({
+      key: String(i),
+      name: `Cat ${i}`,
+      color: '#888888',
+      value: i + 1,
+    }));
+    const { container } = render(
+      <CategoryTrendTooltip active label="Apr" rows={many} />,
+    );
+    const grid = container.querySelector<HTMLElement>('.grid-flow-col');
+    expect(grid).toBeInTheDocument();
+    // 12 rows → 6 per column, so the grid declares 6 template rows
+    expect(grid?.style.gridTemplateRows).toBe('repeat(6, minmax(0, auto))');
   });
 });
