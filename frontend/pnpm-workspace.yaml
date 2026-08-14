@@ -10,15 +10,3 @@ overrides:
   # GHSA-2v37-7h3g-55p8 — custom generators can loop indefinitely when size
   # is zero. Pulled in through vite/vitest -> postcss.
   nanoid: '>=3.3.18'
-
-# Advisories that don't apply to this app. Each entry needs a rationale and a
-# condition for removal.
-#
-# GHSA-qwww-vcr4-c8h2 — react-router RSC Mode CSRF bypass. Patched only in
-# react-router 8.3.0; every 7.x release is in the vulnerable range. This app is
-# a client-only Vite SPA on BrowserRouter with no RSC mode and no server
-# actions, so the vulnerable path is unreachable. Remove this entry when the
-# react-router v8 migration lands.
-auditConfig:
-  ignoreGhsas:
-    - GHSA-qwww-vcr4-c8h2
