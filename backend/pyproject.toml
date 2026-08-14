@@ -5,7 +5,7 @@ description = "Budget tracking API for rae-budget"
 requires-python = ">=3.13"
 dependencies = [
     "flask>=3.0.0",
-    "flask-cors>=4.0.0",
+    "flask-cors>=6.0.5",
     "sqlalchemy>=2.0.51",
     "psycopg[binary]>=3.3.4",
     "pydantic>=2.13.4",
@@ -17,7 +17,7 @@ dependencies = [
 dev = [
     "pytest>=9.1.1",
     "pytest-cov>=4.0.0",
-    "ruff>=0.16.0",
+    "ruff>=0.16.2",
     "mypy>=2.3.0",
 ]
 
@@ -25,7 +25,7 @@ dev = [
 dev = [
     "pytest>=9.1.1",
     "pytest-cov>=4.0.0",
-    "ruff>=0.16.0",
+    "ruff>=0.16.2",
     "mypy>=2.3.0",
 ]
 
