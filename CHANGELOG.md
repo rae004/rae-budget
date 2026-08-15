@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.3](https://github.com/rae004/rae-budget/compare/v0.2.2...v0.2.3) (2026-08-15)
+
+
+### Bug Fixes
+
+* **frontend:** pin transitive deps to clear new high-severity advisories ([e0dc170](https://github.com/rae004/rae-budget/commit/e0dc17001ebc4a67b23ea3363c1d205d74231f32))
+* **frontend:** pin transitive deps to clear new high-severity advisories ([34875dd](https://github.com/rae004/rae-budget/commit/34875dd9fed71884534701904eae60cf3f7f524c))
+
 ## [0.2.2](https://github.com/rae004/rae-budget/compare/v0.2.1...v0.2.2) (2026-08-02)
 
 
