@@ -1,8 +1,9 @@
 import {
+  Bar,
   CartesianGrid,
+  ComposedChart,
   Legend,
   Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -33,7 +34,7 @@ export function IncomeVsExpensesChart({ data }: Props) {
   return (
     <ChartCard title="Income vs Expenses">
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart
+        <ComposedChart
           data={data}
           margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
         >
@@ -57,6 +58,8 @@ export function IncomeVsExpensesChart({ data }: Props) {
             height={36}
             formatter={(value) => SERIES_LABELS[String(value)] ?? value}
           />
+          <Bar dataKey="bills" stackId="expenses" fill="#ef4444" />
+          <Bar dataKey="spending" stackId="expenses" fill="#3b82f6" />
           <Line
             type="monotone"
             dataKey="income"
@@ -64,21 +67,7 @@ export function IncomeVsExpensesChart({ data }: Props) {
             strokeWidth={2}
             dot={{ r: 3 }}
           />
-          <Line
-            type="monotone"
-            dataKey="bills"
-            stroke="#ef4444"
-            strokeWidth={2}
-            dot={{ r: 3 }}
-          />
-          <Line
-            type="monotone"
-            dataKey="spending"
-            stroke="#3b82f6"
-            strokeWidth={2}
-            dot={{ r: 3 }}
-          />
-        </LineChart>
+        </ComposedChart>
       </ResponsiveContainer>
     </ChartCard>
   );
