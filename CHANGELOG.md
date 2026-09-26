@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/rae004/rae-budget/compare/v0.2.3...v0.3.0) (2026-09-26)
+
+
+### Features
+
+* **insights:** add income charts and income line to bills vs discretionary ([66541c0](https://github.com/rae004/rae-budget/commit/66541c0878d7e01e4578093c3c1e338deddd3dfa))
+* **insights:** add income charts and income line to bills vs discretionary ([67d2381](https://github.com/rae004/rae-budget/commit/67d2381f9071547293b07efb1c1655fe4bf8813d))
+
 ## [0.2.3](https://github.com/rae004/rae-budget/compare/v0.2.2...v0.2.3) (2026-08-15)
 
 
