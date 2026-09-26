@@ -13,6 +13,7 @@ interface DescriptionAutocompleteProps {
   placeholder?: string;
   required?: boolean;
   id?: string;
+  ref?: React.Ref<HTMLInputElement>;
 }
 
 export function DescriptionAutocomplete({
@@ -22,6 +23,7 @@ export function DescriptionAutocomplete({
   placeholder,
   required,
   id,
+  ref,
 }: DescriptionAutocompleteProps) {
   const [isFocused, setIsFocused] = useState(false);
   const [highlightIndex, setHighlightIndex] = useState(-1);
@@ -73,6 +75,7 @@ export function DescriptionAutocomplete({
   return (
     <div ref={containerRef} className="relative w-full">
       <input
+        ref={ref}
         id={id}
         type="text"
         className="input input-bordered input-sm w-full"
