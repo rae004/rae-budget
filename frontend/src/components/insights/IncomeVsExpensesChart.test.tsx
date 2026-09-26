@@ -48,9 +48,10 @@ describe('IncomeVsExpensesChart', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders three Recharts line series', () => {
+  it('renders bills and spending as stacked bars, income as a line', () => {
     const { container } = render(<IncomeVsExpensesChart data={data} />);
     expect(container.querySelector('svg')).toBeInTheDocument();
-    expect(container.querySelectorAll('.recharts-line').length).toBe(3);
+    expect(container.querySelectorAll('.recharts-bar').length).toBe(2);
+    expect(container.querySelectorAll('.recharts-line').length).toBe(1);
   });
 });
