@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useCreateSpending } from '../hooks/useSpending';
 import { useCategories } from '../hooks/useCategories';
 import { useToast } from '../contexts/ToastContext';
@@ -17,6 +17,7 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
   );
   const [categoryId, setCategoryId] = useState('');
   const [notes, setNotes] = useState('');
+  const descriptionRef = useRef<HTMLInputElement>(null);
 
   const createSpending = useCreateSpending();
   const { data: categories } = useCategories();
@@ -53,6 +54,7 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
           setCategoryId('');
           setNotes('');
           showToast('Spending entry added', 'success');
+          descriptionRef.current?.focus();
         },
         onError: (error) => {
           showToast(error instanceof Error ? error.message : 'Failed to add spending', 'error');
@@ -70,6 +72,7 @@ export function AddSpendingForm({ payPeriodId }: AddSpendingFormProps) {
             <span className="label-text">Description</span>
           </label>
           <DescriptionAutocomplete
+            ref={descriptionRef}
             id="spending-description"
             value={description}
             onChange={setDescription}

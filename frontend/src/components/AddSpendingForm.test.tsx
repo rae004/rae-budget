@@ -123,6 +123,26 @@ describe("AddSpendingForm", () => {
     });
   });
 
+  it("refocuses the description field after a successful submit", async () => {
+    await renderWithCategories([]);
+
+    fireEvent.change(screen.getByPlaceholderText("What did you buy?"), {
+      target: { value: "Coffee" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("0.00"), {
+      target: { value: "4.50" },
+    });
+
+    mockFetch.mockResolvedValueOnce(jsonResponse(201, { id: 1 }));
+    mockFetch.mockResolvedValue(jsonResponse(200, []));
+
+    fireEvent.click(screen.getByRole("button", { name: /Add Spending/i }));
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText("What did you buy?")).toHaveFocus();
+    });
+  });
+
   it("does not submit when description is missing", async () => {
     await renderWithCategories([]);
     const callsBefore = mockFetch.mock.calls.length;
