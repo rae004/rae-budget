@@ -47,11 +47,20 @@ export interface InsightsCategoryTrendBucket {
   perCategory: Record<string, number>;
 }
 
-export interface InsightsBillsVsDiscretionaryBucket {
+export interface InsightsIncomeVsExpensesBucket {
   periodId: number;
   label: string;
   bills: number;
   spending: number;
+  income: number;
+}
+
+export interface InsightsIncomeBucket {
+  periodId: number;
+  label: string;
+  income: number;
+  baseIncome: number;
+  additionalIncome: number;
 }
 
 export interface InsightsData {
@@ -59,7 +68,8 @@ export interface InsightsData {
   byCategory: InsightsCategoryBucket[];
   spendingByPeriod: InsightsPeriodBucket[];
   categoryTrend: InsightsCategoryTrendBucket[];
-  billsVsDiscretionary: InsightsBillsVsDiscretionaryBucket[];
+  incomeVsExpenses: InsightsIncomeVsExpensesBucket[];
+  incomeByPeriod: InsightsIncomeBucket[];
   grandTotal: number;
 }
 
@@ -183,6 +193,19 @@ function aggregate(
     inner.set(key, (inner.get(key) ?? 0) + Number(e.amount));
   }
 
+  // Income is a per-period fact (base pay + any additional/rollover income),
+  // not a spending/bill entry — it's unaffected by the include toggle or the
+  // category/amount filters, only by which periods are in range.
+  const incomeByPeriodMap = new Map<
+    number,
+    { total: number; base: number; additional: number }
+  >();
+  for (const p of periods) {
+    const base = p.actual_income ? Number(p.actual_income) : Number(p.expected_income);
+    const additional = p.additional_income ? Number(p.additional_income) : 0;
+    incomeByPeriodMap.set(p.id, { total: base + additional, base, additional });
+  }
+
   const groupBy: InsightsGroupBy = filter.groupBy ?? 'period';
   const timeBuckets = buildTimeBuckets(periods, groupBy);
 
@@ -209,8 +232,22 @@ function aggregate(
     },
   );
 
-  const billsVsDiscretionary: InsightsBillsVsDiscretionaryBucket[] =
-    timeBuckets.map((b, idx) => ({
+  const incomeByPeriod: InsightsIncomeBucket[] = timeBuckets.map((b, idx) => {
+    let income = 0;
+    let baseIncome = 0;
+    let additionalIncome = 0;
+    for (const pid of b.periodIds) {
+      const inc = incomeByPeriodMap.get(pid);
+      if (!inc) continue;
+      income += inc.total;
+      baseIncome += inc.base;
+      additionalIncome += inc.additional;
+    }
+    return { periodId: idx, label: b.label, income, baseIncome, additionalIncome };
+  });
+
+  const incomeVsExpenses: InsightsIncomeVsExpensesBucket[] = timeBuckets.map(
+    (b, idx) => ({
       periodId: idx,
       label: b.label,
       bills: b.periodIds.reduce(
@@ -221,7 +258,12 @@ function aggregate(
         (s, pid) => s + (spendingByPeriodMap.get(pid) ?? 0),
         0,
       ),
-    }));
+      income: b.periodIds.reduce(
+        (s, pid) => s + (incomeByPeriodMap.get(pid)?.total ?? 0),
+        0,
+      ),
+    }),
+  );
 
   let grandTotal = 0;
   for (const e of spending) grandTotal += Number(e.amount);
@@ -232,7 +274,8 @@ function aggregate(
     byCategory,
     spendingByPeriod,
     categoryTrend,
-    billsVsDiscretionary,
+    incomeVsExpenses,
+    incomeByPeriod,
     grandTotal,
   };
 }

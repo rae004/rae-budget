@@ -48,7 +48,10 @@ const mockPayPeriods: PayPeriod[] = [
   makePeriod(3, '2026-02-06', '2026-02-19'),
   makePeriod(4, '2026-03-06', '2026-03-19'),
   makePeriod(5, '2026-04-06', '2026-04-19'),
-  makePeriod(6, '2026-04-20', '2026-05-05'),
+  makePeriod(6, '2026-04-20', '2026-05-05', {
+    actual: '2600.00',
+    additional: '500.00',
+  }),
 ];
 
 const mockSpending: SpendingEntry[] = [
@@ -68,14 +71,19 @@ const mockBills: PayPeriodBill[] = [
   makeBill(203, 1, '1400.00'),
 ];
 
-function makePeriod(id: number, start: string, end: string): PayPeriod {
+function makePeriod(
+  id: number,
+  start: string,
+  end: string,
+  income?: { actual?: string; additional?: string },
+): PayPeriod {
   return {
     id,
     start_date: start,
     end_date: end,
     expected_income: '2500.00',
-    actual_income: null,
-    additional_income: null,
+    actual_income: income?.actual ?? null,
+    additional_income: income?.additional ?? null,
     additional_income_description: null,
     notes: null,
     created_at: '2026-04-01T00:00:00Z',
@@ -245,7 +253,7 @@ describe('useInsights', () => {
         n: 3,
         include: 'spending',
       });
-      const billsTotals = result.current.data!.billsVsDiscretionary.map(
+      const billsTotals = result.current.data!.incomeVsExpenses.map(
         (b) => b.bills,
       );
       expect(billsTotals).toEqual([0, 0, 0]);
@@ -262,6 +270,83 @@ describe('useInsights', () => {
         (s) => s.total,
       );
       expect(spendingTotals).toEqual([0, 0, 0]);
+    });
+  });
+
+  describe('income aggregation', () => {
+    it('falls back to expected_income when actual_income is null', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 3,
+        include: 'both',
+      });
+      // P4, P5 have no actual/additional income → expected_income (2500) each.
+      const p4 = result.current.data!.incomeByPeriod.find(
+        (b) => b.label.startsWith('Mar'),
+      );
+      expect(p4?.income).toBe(2500);
+      expect(p4?.baseIncome).toBe(2500);
+      expect(p4?.additionalIncome).toBe(0);
+    });
+
+    it('prefers actual_income over expected_income and adds additional_income', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 3,
+        include: 'both',
+      });
+      // P6: actual_income 2600 + additional_income 500 = 3100
+      const p6 = result.current.data!.incomeByPeriod.find(
+        (b) => b.label.startsWith('Apr 20'),
+      );
+      expect(p6?.income).toBe(3100);
+      expect(p6?.baseIncome).toBe(2600);
+      expect(p6?.additionalIncome).toBe(500);
+    });
+
+    it('is unaffected by the include toggle', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 3,
+        include: 'bills',
+      });
+      const total = result.current.data!.incomeByPeriod.reduce(
+        (sum, b) => sum + b.income,
+        0,
+      );
+      // P4 (2500) + P5 (2500) + P6 (3100) = 8100, regardless of 'bills' include
+      expect(total).toBe(8100);
+    });
+
+    it('carries the same income totals onto incomeVsExpenses buckets', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 3,
+        include: 'both',
+      });
+      const incomeByPeriod = result.current.data!.incomeByPeriod.map(
+        (b) => b.income,
+      );
+      const incomeVsExpenses = result.current.data!.incomeVsExpenses.map(
+        (b) => b.income,
+      );
+      expect(incomeVsExpenses).toEqual(incomeByPeriod);
+    });
+
+    it('rolls income up across periods within the same month', async () => {
+      const result = await renderInsights({
+        rangeMode: 'last-n',
+        n: 6,
+        include: 'both',
+        groupBy: 'month',
+      });
+      const apr = result.current.data!.incomeByPeriod.find(
+        (b) => b.label === 'Apr 2026',
+      );
+      // P5 (2500) + P6 (3100) = 5600
+      expect(apr?.income).toBe(5600);
+      expect(apr?.baseIncome).toBe(2500 + 2600);
+      expect(apr?.additionalIncome).toBe(500);
     });
   });
 
@@ -342,7 +427,7 @@ describe('useInsights', () => {
         include: 'both',
         groupBy: 'month',
       });
-      const apr = result.current.data!.billsVsDiscretionary.find(
+      const apr = result.current.data!.incomeVsExpenses.find(
         (b) => b.label === 'Apr 2026',
       );
       // P5 bills: 1500 ; P6 bills: 1500 → 3000

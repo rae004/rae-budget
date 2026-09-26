@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { InsightsToolbar } from '../components/InsightsToolbar';
-import { BillsVsDiscretionaryChart } from '../components/insights/BillsVsDiscretionaryChart';
 import { CategoryTrendChart } from '../components/insights/CategoryTrendChart';
+import { IncomeOverTimeChart } from '../components/insights/IncomeOverTimeChart';
+import { IncomeVsExpensesChart } from '../components/insights/IncomeVsExpensesChart';
 import { SpendingByCategoryChart } from '../components/insights/SpendingByCategoryChart';
 import { SpendingOverTimeChart } from '../components/insights/SpendingOverTimeChart';
 import { useCategories } from '../hooks/useCategories';
@@ -66,7 +67,8 @@ export function Insights() {
             data={data.categoryTrend}
             byCategory={data.byCategory}
           />
-          <BillsVsDiscretionaryChart data={data.billsVsDiscretionary} />
+          <IncomeVsExpensesChart data={data.incomeVsExpenses} />
+          <IncomeOverTimeChart data={data.incomeByPeriod} />
         </div>
       ) : null}
     </div>

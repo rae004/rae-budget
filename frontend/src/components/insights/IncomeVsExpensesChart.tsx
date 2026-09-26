@@ -8,29 +8,30 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import type { InsightsBillsVsDiscretionaryBucket } from '../../hooks/useInsights';
+import type { InsightsIncomeVsExpensesBucket } from '../../hooks/useInsights';
 import { ChartCard, ChartEmptyState } from './ChartCard';
 
 interface Props {
-  data: InsightsBillsVsDiscretionaryBucket[];
+  data: InsightsIncomeVsExpensesBucket[];
 }
 
 const SERIES_LABELS: Record<string, string> = {
   bills: 'Bills',
   spending: 'Discretionary',
+  income: 'Income',
 };
 
-export function BillsVsDiscretionaryChart({ data }: Props) {
+export function IncomeVsExpensesChart({ data }: Props) {
   if (data.length === 0) {
     return (
-      <ChartCard title="Bills vs Discretionary">
+      <ChartCard title="Income vs Expenses">
         <ChartEmptyState message="No pay periods in the selected range." />
       </ChartCard>
     );
   }
 
   return (
-    <ChartCard title="Bills vs Discretionary">
+    <ChartCard title="Income vs Expenses">
       <ResponsiveContainer width="100%" height={300}>
         <LineChart
           data={data}
@@ -55,6 +56,13 @@ export function BillsVsDiscretionaryChart({ data }: Props) {
             verticalAlign="bottom"
             height={36}
             formatter={(value) => SERIES_LABELS[String(value)] ?? value}
+          />
+          <Line
+            type="monotone"
+            dataKey="income"
+            stroke="#22c55e"
+            strokeWidth={2}
+            dot={{ r: 3 }}
           />
           <Line
             type="monotone"
