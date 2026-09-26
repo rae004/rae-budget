@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1](https://github.com/rae004/rae-budget/compare/v0.3.0...v0.3.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* **insights:** stack bills+spending in Income vs Expenses chart ([8dd18eb](https://github.com/rae004/rae-budget/commit/8dd18eb2c2ee510651d850e894abd049f7003fb4))
+* **insights:** stack bills+spending in Income vs Expenses chart ([1edc8f4](https://github.com/rae004/rae-budget/commit/1edc8f483c44dab9b5e99110bf3c7c9bb6c68a49))
+
 ## [0.3.0](https://github.com/rae004/rae-budget/compare/v0.2.3...v0.3.0) (2026-09-26)
 
 
