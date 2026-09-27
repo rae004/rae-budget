@@ -27,6 +27,103 @@ export interface InsightsFilter {
   groupBy?: InsightsGroupBy;
 }
 
+export const DEFAULT_INSIGHTS_FILTER: InsightsFilter = {
+  rangeMode: 'last-n',
+  n: 6,
+  include: 'both',
+  categoryIds: [],
+};
+
+/**
+ * Serializes a filter to URL search params so a filtered Insights view is
+ * bookmarkable/shareable. Only fields relevant to the current rangeMode are
+ * written, and fields at their default value are omitted to keep the URL
+ * minimal (the default filter round-trips to an empty query string).
+ */
+export function filterToSearchParams(filter: InsightsFilter): URLSearchParams {
+  const params = new URLSearchParams();
+
+  if (filter.rangeMode !== 'last-n' || filter.n !== DEFAULT_INSIGHTS_FILTER.n) {
+    params.set('range', filter.rangeMode);
+  }
+  if (filter.rangeMode === 'last-n') {
+    if (filter.n !== undefined && filter.n !== DEFAULT_INSIGHTS_FILTER.n) {
+      params.set('n', String(filter.n));
+    }
+  } else if (filter.rangeMode === 'custom') {
+    if (filter.fromDate) params.set('from', filter.fromDate);
+    if (filter.toDate) params.set('to', filter.toDate);
+  }
+
+  if (filter.categoryIds && filter.categoryIds.length > 0) {
+    params.set('categories', filter.categoryIds.join(','));
+  }
+  if (filter.minAmount !== undefined) params.set('min', String(filter.minAmount));
+  if (filter.maxAmount !== undefined) params.set('max', String(filter.maxAmount));
+  if (filter.include !== 'both') params.set('include', filter.include);
+  if (filter.groupBy && filter.groupBy !== 'period') {
+    params.set('group', filter.groupBy);
+  }
+
+  return params;
+}
+
+/**
+ * Inverse of filterToSearchParams. Tolerant of missing/malformed params —
+ * anything unrecognized falls back to the default filter's value, so a
+ * hand-edited or stale URL never breaks the page.
+ */
+export function searchParamsToFilter(
+  params: URLSearchParams,
+): InsightsFilter {
+  const rangeParam = params.get('range');
+  const rangeMode: InsightsRangeMode =
+    rangeParam === 'ytd' || rangeParam === 'custom' ? rangeParam : 'last-n';
+
+  const includeParam = params.get('include');
+  const include: InsightsInclude =
+    includeParam === 'bills' || includeParam === 'spending'
+      ? includeParam
+      : 'both';
+
+  const filter: InsightsFilter = { rangeMode, include, categoryIds: [] };
+
+  if (rangeMode === 'last-n') {
+    const n = Number(params.get('n'));
+    filter.n = Number.isFinite(n) && n > 0 ? n : DEFAULT_INSIGHTS_FILTER.n;
+  } else if (rangeMode === 'custom') {
+    const from = params.get('from');
+    const to = params.get('to');
+    if (from) filter.fromDate = from;
+    if (to) filter.toDate = to;
+  }
+
+  const categoriesParam = params.get('categories');
+  if (categoriesParam) {
+    filter.categoryIds = categoriesParam
+      .split(',')
+      .filter((s) => s !== '')
+      .map(Number)
+      .filter((n) => Number.isFinite(n));
+  }
+
+  const min = params.get('min');
+  if (min !== null) {
+    const n = Number(min);
+    if (Number.isFinite(n)) filter.minAmount = n;
+  }
+  const max = params.get('max');
+  if (max !== null) {
+    const n = Number(max);
+    if (Number.isFinite(n)) filter.maxAmount = n;
+  }
+
+  const group = params.get('group');
+  if (group === 'month') filter.groupBy = 'month';
+
+  return filter;
+}
+
 export interface InsightsCategoryBucket {
   categoryId: number | null;
   name: string;

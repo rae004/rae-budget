@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { InsightsToolbar } from '../components/InsightsToolbar';
 import { CategoryTrendChart } from '../components/insights/CategoryTrendChart';
 import { IncomeOverTimeChart } from '../components/insights/IncomeOverTimeChart';
@@ -6,17 +7,28 @@ import { IncomeVsExpensesChart } from '../components/insights/IncomeVsExpensesCh
 import { SpendingByCategoryChart } from '../components/insights/SpendingByCategoryChart';
 import { SpendingOverTimeChart } from '../components/insights/SpendingOverTimeChart';
 import { useCategories } from '../hooks/useCategories';
-import { useInsights, type InsightsFilter } from '../hooks/useInsights';
-
-const DEFAULT_FILTER: InsightsFilter = {
-  rangeMode: 'last-n',
-  n: 6,
-  include: 'both',
-  categoryIds: [],
-};
+import {
+  useInsights,
+  filterToSearchParams,
+  searchParamsToFilter,
+  type InsightsFilter,
+} from '../hooks/useInsights';
 
 export function Insights() {
-  const [filter, setFilter] = useState<InsightsFilter>(DEFAULT_FILTER);
+  const [searchParams, setSearchParams] = useSearchParams();
+  // The URL is the source of truth so a filtered view is bookmarkable/
+  // shareable and survives a refresh or back/forward navigation. Keyed on
+  // the string value so an unchanged URL doesn't produce a new filter
+  // object (and re-trigger useInsights' own memoized aggregation) every
+  // render.
+  const searchParamsString = searchParams.toString();
+  const filter = useMemo(
+    () => searchParamsToFilter(searchParams),
+    [searchParamsString], // eslint-disable-line react-hooks/exhaustive-deps
+  );
+  const handleFilterChange = (next: InsightsFilter) => {
+    setSearchParams(filterToSearchParams(next), { replace: true });
+  };
   const { data: categories } = useCategories();
   const { data, isLoading } = useInsights(filter);
 
@@ -35,7 +47,7 @@ export function Insights() {
 
       <InsightsToolbar
         filter={filter}
-        onChange={setFilter}
+        onChange={handleFilterChange}
         categories={categories ?? []}
       />
 
