@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/rae004/rae-budget/compare/v0.4.0...v0.4.1) (2026-09-27)
+
+
+### Bug Fixes
+
+* **insights:** restyle Spending Over Time and Income vs Expenses tooltips ([674b851](https://github.com/rae004/rae-budget/commit/674b8516511b8832b0d30f640a25ccffc5b6b624))
+* **insights:** restyle Spending Over Time and Income vs Expenses tooltips ([d1427fb](https://github.com/rae004/rae-budget/commit/d1427fb2f4bd1ae2f80521a03673de259612c351))
+
 ## [0.4.0](https://github.com/rae004/rae-budget/compare/v0.3.1...v0.4.0) (2026-09-27)
 
 
