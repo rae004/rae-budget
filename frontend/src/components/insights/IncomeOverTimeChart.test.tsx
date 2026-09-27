@@ -85,6 +85,20 @@ describe('IncomeTooltip', () => {
     expect(screen.getAllByText('$4027.22')).toHaveLength(2);
   });
 
+  it('shows a color swatch for each row matching its area color, additional above base to mirror the stack', () => {
+    const { container } = render(
+      <IncomeTooltip
+        active
+        label="Apr 20 - May 5"
+        payload={[{ payload: buckets[1] }]}
+      />,
+    );
+    const swatches = container.querySelectorAll<HTMLElement>('.rounded-sm');
+    expect(swatches).toHaveLength(2);
+    expect(swatches[0].style.backgroundColor).toBe('rgb(134, 239, 172)'); // #86efac Additional
+    expect(swatches[1].style.backgroundColor).toBe('rgb(20, 83, 45)'); // #14532d Base
+  });
+
   it('shows the additional row and total when additional income is present', () => {
     render(
       <IncomeTooltip
