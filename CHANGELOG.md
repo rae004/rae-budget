@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.4.0](https://github.com/rae004/rae-budget/compare/v0.3.1...v0.4.0) (2026-09-27)
+
+
+### Features
+
+* **dashboard:** refocus description field after adding spending ([3e907c2](https://github.com/rae004/rae-budget/commit/3e907c24b1eb9195471abf322d7f83a80cd6b178))
+* **dashboard:** refocus description field after adding spending ([0d283c3](https://github.com/rae004/rae-budget/commit/0d283c3c8b82bf507a96003de30dfe91881c99f9))
+* **insights:** stack base/additional income as two shaded areas ([f29d65c](https://github.com/rae004/rae-budget/commit/f29d65cdbd7147c84f037fe2fcdd7ab08b5c539c))
+* **insights:** stack base/additional income as two shaded areas ([f664eee](https://github.com/rae004/rae-budget/commit/f664eee2eceebe0c1da9f806a7d9f9c3f15361ad))
+
 ## [0.3.1](https://github.com/rae004/rae-budget/compare/v0.3.0...v0.3.1) (2026-09-26)
 
 
