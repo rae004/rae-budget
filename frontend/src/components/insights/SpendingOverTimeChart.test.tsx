@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { cloneElement, type ReactElement } from 'react';
-import { SpendingOverTimeChart } from './SpendingOverTimeChart';
+import { SpendingOverTimeChart, SpendingTooltip } from './SpendingOverTimeChart';
 import type { InsightsPeriodBucket } from '../../hooks/useInsights';
 
 vi.mock('recharts', async (importActual) => {
@@ -40,5 +40,36 @@ describe('SpendingOverTimeChart', () => {
     const { container } = render(<SpendingOverTimeChart data={buckets} />);
     expect(container.querySelector('svg')).toBeInTheDocument();
     expect(container.querySelector('.recharts-area')).toBeInTheDocument();
+  });
+});
+
+describe('SpendingTooltip', () => {
+  it('renders nothing when inactive', () => {
+    const { container } = render(
+      <SpendingTooltip active={false} label="Apr" payload={[{ payload: buckets[0] }]} />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('renders nothing when there is no payload', () => {
+    const { container } = render(
+      <SpendingTooltip active label="Apr" payload={[]} />,
+    );
+    expect(container).toBeEmptyDOMElement();
+  });
+
+  it('shows a color swatch and the total for the hovered period', () => {
+    const { container } = render(
+      <SpendingTooltip
+        active
+        label="Apr 6 - Apr 19, 2026"
+        payload={[{ payload: buckets[0] }]}
+      />,
+    );
+    expect(screen.getByText('Apr 6 - Apr 19, 2026')).toBeInTheDocument();
+    expect(screen.getByText('Total')).toBeInTheDocument();
+    expect(screen.getByText('$100.00')).toBeInTheDocument();
+    const swatch = container.querySelector<HTMLElement>('.rounded-sm');
+    expect(swatch?.style.backgroundColor).toBe('rgb(59, 130, 246)'); // #3b82f6
   });
 });
