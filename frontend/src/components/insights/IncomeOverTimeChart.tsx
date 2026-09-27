@@ -1,7 +1,8 @@
 import {
   Area,
-  AreaChart,
   CartesianGrid,
+  ComposedChart,
+  Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -13,6 +14,11 @@ import { ChartCard, ChartEmptyState } from './ChartCard';
 interface Props {
   data: InsightsIncomeBucket[];
 }
+
+const SERIES_LABELS: Record<string, string> = {
+  baseIncome: 'Base',
+  additionalIncome: 'Additional',
+};
 
 export function IncomeTooltip({
   active,
@@ -65,14 +71,24 @@ export function IncomeOverTimeChart({ data }: Props) {
   return (
     <ChartCard title="Income Over Time">
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart
+        <ComposedChart
           data={data}
           margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
         >
           <defs>
-            <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#22c55e" stopOpacity={0.5} />
-              <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
+            <linearGradient id="baseIncomeGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#15803d" stopOpacity={0.6} />
+              <stop offset="95%" stopColor="#15803d" stopOpacity={0.1} />
+            </linearGradient>
+            <linearGradient
+              id="additionalIncomeGradient"
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop offset="5%" stopColor="#86efac" stopOpacity={0.6} />
+              <stop offset="95%" stopColor="#86efac" stopOpacity={0.1} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -82,14 +98,28 @@ export function IncomeOverTimeChart({ data }: Props) {
             tick={{ fontSize: 11 }}
           />
           <Tooltip content={<IncomeTooltip />} />
+          <Legend
+            verticalAlign="bottom"
+            height={36}
+            formatter={(value) => SERIES_LABELS[String(value)] ?? value}
+          />
           <Area
             type="monotone"
-            dataKey="income"
-            stroke="#22c55e"
+            dataKey="baseIncome"
+            stackId="income"
+            stroke="#15803d"
             strokeWidth={2}
-            fill="url(#incomeGradient)"
+            fill="url(#baseIncomeGradient)"
           />
-        </AreaChart>
+          <Area
+            type="monotone"
+            dataKey="additionalIncome"
+            stackId="income"
+            stroke="#86efac"
+            strokeWidth={2}
+            fill="url(#additionalIncomeGradient)"
+          />
+        </ComposedChart>
       </ResponsiveContainer>
     </ChartCard>
   );

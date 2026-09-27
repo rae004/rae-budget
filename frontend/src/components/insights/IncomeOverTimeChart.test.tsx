@@ -48,10 +48,10 @@ describe('IncomeOverTimeChart', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders a Recharts area SVG when data is present', () => {
+  it('renders base and additional as two stacked Recharts area series', () => {
     const { container } = render(<IncomeOverTimeChart data={buckets} />);
     expect(container.querySelector('svg')).toBeInTheDocument();
-    expect(container.querySelector('.recharts-area')).toBeInTheDocument();
+    expect(container.querySelectorAll('.recharts-area').length).toBe(2);
   });
 });
 
