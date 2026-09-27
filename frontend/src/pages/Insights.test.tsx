@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cloneElement, type ReactElement, type ReactNode } from 'react';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { Insights } from './Insights';
 import { api } from '../services/api';
 import type {
@@ -120,13 +121,23 @@ function setupApiMock() {
   });
 }
 
-function createWrapper() {
+function LocationDisplay() {
+  const location = useLocation();
+  return <div data-testid="location-search">{location.search}</div>;
+}
+
+function createWrapper(initialEntries: string[] = ['/insights']) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
   return function Wrapper({ children }: { children: ReactNode }) {
     return (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter initialEntries={initialEntries}>
+          {children}
+          <LocationDisplay />
+        </MemoryRouter>
+      </QueryClientProvider>
     );
   };
 }
@@ -175,6 +186,51 @@ describe('Insights page', () => {
       expect(screen.getByTestId('insights-grand-total')).toHaveTextContent(
         '$1500.00',
       );
+    });
+  });
+
+  describe('URL query param sync', () => {
+    it('writes filter changes to the URL', async () => {
+      render(<Insights />, { wrapper: createWrapper() });
+      await waitFor(() => {
+        expect(screen.getByTestId('insights-grand-total')).toHaveTextContent(
+          '$1800.00',
+        );
+      });
+      expect(screen.getByTestId('location-search')).toHaveTextContent('');
+
+      fireEvent.click(screen.getByRole('radio', { name: 'Bills' }));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('location-search')).toHaveTextContent(
+          'include=bills',
+        );
+      });
+    });
+
+    it('restores filter state from a deep-linked URL on mount', async () => {
+      render(<Insights />, {
+        wrapper: createWrapper(['/insights?include=bills&n=12']),
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId('insights-grand-total')).toHaveTextContent(
+          '$1500.00',
+        );
+      });
+      expect(
+        screen.getByRole('radio', { name: 'Bills', checked: true }),
+      ).toBeInTheDocument();
+    });
+
+    it('produces an empty query string for the default filter', async () => {
+      render(<Insights />, { wrapper: createWrapper() });
+      await waitFor(() => {
+        expect(screen.getByTestId('insights-grand-total')).toHaveTextContent(
+          '$1800.00',
+        );
+      });
+      expect(screen.getByTestId('location-search')).toHaveTextContent('');
     });
   });
 });

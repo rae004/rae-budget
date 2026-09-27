@@ -2,7 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
-import { useInsights, type InsightsFilter } from './useInsights';
+import {
+  useInsights,
+  filterToSearchParams,
+  searchParamsToFilter,
+  type InsightsFilter,
+} from './useInsights';
 import { api } from '../services/api';
 import type {
   Category,
@@ -472,6 +477,78 @@ describe('useInsights', () => {
         periodMode.current.data!.byCategory.length,
       );
     });
+  });
+});
+
+describe('filterToSearchParams / searchParamsToFilter', () => {
+  it('round-trips the default filter to an empty query string', () => {
+    const filter: InsightsFilter = {
+      rangeMode: 'last-n',
+      n: 6,
+      include: 'both',
+      categoryIds: [],
+    };
+    const params = filterToSearchParams(filter);
+    expect(params.toString()).toBe('');
+    expect(searchParamsToFilter(params)).toEqual(filter);
+  });
+
+  it('round-trips a custom range with categories and amount bounds', () => {
+    const filter: InsightsFilter = {
+      rangeMode: 'custom',
+      fromDate: '2026-01-01',
+      toDate: '2026-03-31',
+      categoryIds: [10, 20],
+      minAmount: 5,
+      maxAmount: 150.5,
+      include: 'spending',
+      groupBy: 'month',
+    };
+    const params = filterToSearchParams(filter);
+    expect(searchParamsToFilter(params)).toEqual(filter);
+  });
+
+  it('round-trips last-n with a non-default n', () => {
+    const filter: InsightsFilter = {
+      rangeMode: 'last-n',
+      n: 12,
+      include: 'bills',
+      categoryIds: [],
+    };
+    const params = filterToSearchParams(filter);
+    expect(searchParamsToFilter(params)).toEqual(filter);
+  });
+
+  it('omits categories/min/max from the URL when unset', () => {
+    const params = filterToSearchParams({
+      rangeMode: 'last-n',
+      n: 6,
+      include: 'both',
+      categoryIds: [],
+    });
+    expect(params.has('categories')).toBe(false);
+    expect(params.has('min')).toBe(false);
+    expect(params.has('max')).toBe(false);
+  });
+
+  it('falls back to defaults for malformed or unrecognized params', () => {
+    const params = new URLSearchParams(
+      'range=bogus&n=not-a-number&include=nonsense&categories=abc,20,&min=nope',
+    );
+    const filter = searchParamsToFilter(params);
+    expect(filter.rangeMode).toBe('last-n');
+    expect(filter.n).toBe(6);
+    expect(filter.include).toBe('both');
+    expect(filter.categoryIds).toEqual([20]);
+    expect(filter.minAmount).toBeUndefined();
+  });
+
+  it('ignores from/to and n when the range mode does not apply to them', () => {
+    const params = new URLSearchParams('range=ytd&n=12&from=2026-01-01');
+    const filter = searchParamsToFilter(params);
+    expect(filter.rangeMode).toBe('ytd');
+    expect(filter.n).toBeUndefined();
+    expect(filter.fromDate).toBeUndefined();
   });
 });
 
