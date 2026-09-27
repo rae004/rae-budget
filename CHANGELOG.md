@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/rae004/rae-budget/compare/v0.4.1...v0.5.0) (2026-09-27)
+
+
+### Features
+
+* **insights:** persist filters to the URL as query params ([38da449](https://github.com/rae004/rae-budget/commit/38da449f1e95ba5f2779f9160774d0719995a631))
+
 ## [0.4.1](https://github.com/rae004/rae-budget/compare/v0.4.0...v0.4.1) (2026-09-27)
 
 
