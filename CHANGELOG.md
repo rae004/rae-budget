@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.6.0](https://github.com/rae004/rae-budget/compare/v0.5.0...v0.6.0) (2026-10-17)
+
+
+### Features
+
+* **insights:** add Select All / Deselect All to category filter ([056db9f](https://github.com/rae004/rae-budget/commit/056db9f3a9607a2085dc23d2117933264653e3ff))
+* **insights:** add Select All / Deselect All to category filter ([9ecbf67](https://github.com/rae004/rae-budget/commit/9ecbf67c143c2557ea93e2aeeed1a8b447160933))
+
+
+### Bug Fixes
+
+* **deps:** clear new high-severity audit advisories ([b8e8efd](https://github.com/rae004/rae-budget/commit/b8e8efda1c35319d3a166e0899130d171aa58d59))
+
 ## [0.5.0](https://github.com/rae004/rae-budget/compare/v0.4.1...v0.5.0) (2026-09-27)
 
 
