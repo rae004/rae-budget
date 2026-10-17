@@ -51,6 +51,9 @@ export function InsightsToolbar({ filter, onChange, categories }: Props) {
 
   const clearCategories = () => onChange({ ...filter, categoryIds: [] });
 
+  const selectAllCategories = () =>
+    onChange({ ...filter, categoryIds: categories.map((c) => c.id) });
+
   const handleAmountChange = (
     field: 'minAmount' | 'maxAmount',
     value: string,
@@ -146,13 +149,33 @@ export function InsightsToolbar({ filter, onChange, categories }: Props) {
                 <span>{categoryButtonLabel}</span>
                 <span aria-hidden>▾</span>
               </summary>
-              <div className="dropdown-content z-10 menu p-2 shadow bg-base-100 rounded-box w-56 max-h-64 overflow-y-auto">
+              <div className="dropdown-content z-10 menu flex-nowrap p-2 shadow bg-base-100 rounded-box w-64 max-h-64 overflow-y-auto">
                 {categories.length === 0 ? (
                   <div className="text-sm text-base-content/60 px-2 py-1">
                     No categories yet
                   </div>
                 ) : (
                   <>
+                    <div className="flex gap-1 mb-1 pb-1 border-b border-base-300">
+                      {selectedCount < categories.length && (
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-ghost"
+                          onClick={selectAllCategories}
+                        >
+                          Select All
+                        </button>
+                      )}
+                      {selectedCount > 0 && (
+                        <button
+                          type="button"
+                          className="btn btn-xs btn-ghost"
+                          onClick={clearCategories}
+                        >
+                          Deselect All
+                        </button>
+                      )}
+                    </div>
                     {categories.map((c) => {
                       const checked = filter.categoryIds?.includes(c.id) ?? false;
                       return (
@@ -174,15 +197,6 @@ export function InsightsToolbar({ filter, onChange, categories }: Props) {
                         </label>
                       );
                     })}
-                    {selectedCount > 0 && (
-                      <button
-                        type="button"
-                        className="btn btn-xs btn-ghost mt-1"
-                        onClick={clearCategories}
-                      >
-                        Clear
-                      </button>
-                    )}
                   </>
                 )}
               </div>

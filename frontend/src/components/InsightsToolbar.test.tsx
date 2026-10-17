@@ -206,6 +206,72 @@ describe('InsightsToolbar', () => {
     );
   });
 
+  it('shows Select All but not Deselect All when no categories are selected', () => {
+    render(
+      <InsightsToolbar
+        filter={defaultFilter}
+        onChange={onChange}
+        categories={categories}
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'Select All' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Deselect All' })).not.toBeInTheDocument();
+  });
+
+  it('shows Deselect All but not Select All when every category is selected', () => {
+    render(
+      <InsightsToolbar
+        filter={{ ...defaultFilter, categoryIds: [10, 20] }}
+        onChange={onChange}
+        categories={categories}
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'Deselect All' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Select All' }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows both actions when only some categories are selected', () => {
+    render(
+      <InsightsToolbar
+        filter={{ ...defaultFilter, categoryIds: [10] }}
+        onChange={onChange}
+        categories={categories}
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'Select All' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Deselect All' })).toBeInTheDocument();
+  });
+
+  it('Select All checks every category', () => {
+    render(
+      <InsightsToolbar
+        filter={defaultFilter}
+        onChange={onChange}
+        categories={categories}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Select All' }));
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ categoryIds: [10, 20] }),
+    );
+  });
+
+  it('Deselect All unchecks every category', () => {
+    render(
+      <InsightsToolbar
+        filter={{ ...defaultFilter, categoryIds: [10, 20] }}
+        onChange={onChange}
+        categories={categories}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Deselect All' }));
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ categoryIds: [] }),
+    );
+  });
+
   it('shows "No categories yet" when none exist', () => {
     render(
       <InsightsToolbar
