@@ -2,6 +2,7 @@ import json
 from datetime import UTC, datetime, timedelta
 
 from flask import Blueprint, current_app, jsonify, request
+from flask.typing import ResponseReturnValue
 from pydantic import ValidationError
 from sqlalchemy import desc, func, select
 
@@ -18,7 +19,7 @@ spending_bp = Blueprint("spending", __name__)
 
 
 @spending_bp.route("/spending/description-suggestions", methods=["GET"])
-def description_suggestions():
+def description_suggestions() -> ResponseReturnValue:
     """Return distinct recent spending descriptions matching a prefix.
 
     Used to autofill the description field on the add-spending form. Returns
@@ -98,7 +99,7 @@ def description_suggestions():
 
 
 @spending_bp.route("/spending", methods=["GET"])
-def list_all_spending():
+def list_all_spending() -> ResponseReturnValue:
     """List all spending entries across every pay period (used by the Insights dashboard)."""
     session = db.get_session()
     try:
@@ -113,7 +114,7 @@ def list_all_spending():
 
 
 @spending_bp.route("/pay-periods/<int:pay_period_id>/spending", methods=["GET"])
-def list_spending(pay_period_id: int):
+def list_spending(pay_period_id: int) -> ResponseReturnValue:
     """List all spending entries for a pay period."""
     session = db.get_session()
     try:
@@ -131,7 +132,7 @@ def list_spending(pay_period_id: int):
 
 
 @spending_bp.route("/pay-periods/<int:pay_period_id>/spending", methods=["POST"])
-def create_spending(pay_period_id: int):
+def create_spending(pay_period_id: int) -> ResponseReturnValue:
     """Add a spending entry to a pay period."""
     try:
         data = SpendingEntryCreate.model_validate(request.json)
@@ -167,7 +168,7 @@ def create_spending(pay_period_id: int):
 
 
 @spending_bp.route("/spending/<int:spending_id>", methods=["PUT"])
-def update_spending(spending_id: int):
+def update_spending(spending_id: int) -> ResponseReturnValue:
     """Update a spending entry."""
     try:
         data = SpendingEntryUpdate.model_validate(request.json)
@@ -198,7 +199,7 @@ def update_spending(spending_id: int):
 
 
 @spending_bp.route("/spending/<int:spending_id>", methods=["DELETE"])
-def delete_spending(spending_id: int):
+def delete_spending(spending_id: int) -> ResponseReturnValue:
     """Delete a spending entry."""
     session = db.get_session()
     try:
