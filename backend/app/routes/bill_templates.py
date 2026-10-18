@@ -1,6 +1,7 @@
 import json
 
 from flask import Blueprint, current_app, jsonify, request
+from flask.typing import ResponseReturnValue
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -15,7 +16,7 @@ bill_templates_bp = Blueprint("bill_templates", __name__)
 
 
 @bill_templates_bp.route("/bill-templates", methods=["GET"])
-def list_bill_templates():
+def list_bill_templates() -> ResponseReturnValue:
     """List all bill templates."""
     session = db.get_session()
     try:
@@ -30,7 +31,7 @@ def list_bill_templates():
 
 
 @bill_templates_bp.route("/bill-templates/<int:template_id>", methods=["GET"])
-def get_bill_template(template_id: int):
+def get_bill_template(template_id: int) -> ResponseReturnValue:
     """Get a single bill template."""
     session = db.get_session()
     try:
@@ -45,7 +46,7 @@ def get_bill_template(template_id: int):
 
 
 @bill_templates_bp.route("/bill-templates", methods=["POST"])
-def create_bill_template():
+def create_bill_template() -> ResponseReturnValue:
     """Create a new bill template."""
     try:
         data = BillTemplateCreate.model_validate(request.json)
@@ -77,7 +78,7 @@ def create_bill_template():
 
 
 @bill_templates_bp.route("/bill-templates/<int:template_id>", methods=["PUT"])
-def update_bill_template(template_id: int):
+def update_bill_template(template_id: int) -> ResponseReturnValue:
     """Update a bill template."""
     try:
         data = BillTemplateUpdate.model_validate(request.json)
@@ -108,7 +109,7 @@ def update_bill_template(template_id: int):
 
 
 @bill_templates_bp.route("/bill-templates/<int:template_id>", methods=["DELETE"])
-def delete_bill_template(template_id: int):
+def delete_bill_template(template_id: int) -> ResponseReturnValue:
     """Delete a bill template."""
     session = db.get_session()
     try:
