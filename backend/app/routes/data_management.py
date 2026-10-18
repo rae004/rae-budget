@@ -4,6 +4,7 @@ import json
 from datetime import UTC, datetime
 
 from flask import Blueprint, Response, current_app, jsonify, request
+from flask.typing import ResponseReturnValue
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -31,7 +32,7 @@ data_management_bp = Blueprint("data_management", __name__)
 
 
 @data_management_bp.route("/data/export", methods=["GET"])
-def export_data():
+def export_data() -> ResponseReturnValue:
     """Export all user data as a JSON file."""
     session = db.get_session()
     try:
@@ -138,7 +139,7 @@ def export_data():
 
 
 @data_management_bp.route("/data/import", methods=["POST"])
-def import_data():
+def import_data() -> ResponseReturnValue:
     """Import data from a previously exported JSON file."""
     try:
         data = DataImport.model_validate(request.json)
@@ -285,7 +286,7 @@ def import_data():
 
 
 @data_management_bp.route("/data/reset", methods=["DELETE"])
-def reset_data():
+def reset_data() -> ResponseReturnValue:
     """Delete all user data. Requires confirmation header."""
     # Check for confirmation header
     confirm_header = request.headers.get("X-Confirm-Reset")
