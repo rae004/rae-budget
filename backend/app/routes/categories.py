@@ -1,6 +1,7 @@
 import json
 
 from flask import Blueprint, current_app, jsonify, request
+from flask.typing import ResponseReturnValue
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -15,7 +16,7 @@ categories_bp = Blueprint("categories", __name__)
 
 
 @categories_bp.route("/categories", methods=["GET"])
-def list_categories():
+def list_categories() -> ResponseReturnValue:
     """List all categories."""
     session = db.get_session()
     try:
@@ -30,7 +31,7 @@ def list_categories():
 
 
 @categories_bp.route("/categories/<int:category_id>", methods=["GET"])
-def get_category(category_id: int):
+def get_category(category_id: int) -> ResponseReturnValue:
     """Get a single category."""
     session = db.get_session()
     try:
@@ -45,7 +46,7 @@ def get_category(category_id: int):
 
 
 @categories_bp.route("/categories", methods=["POST"])
-def create_category():
+def create_category() -> ResponseReturnValue:
     """Create a new category."""
     try:
         data = CategoryCreate.model_validate(request.json)
@@ -75,7 +76,7 @@ def create_category():
 
 
 @categories_bp.route("/categories/<int:category_id>", methods=["PUT"])
-def update_category(category_id: int):
+def update_category(category_id: int) -> ResponseReturnValue:
     """Update a category."""
     try:
         data = CategoryUpdate.model_validate(request.json)
@@ -106,7 +107,7 @@ def update_category(category_id: int):
 
 
 @categories_bp.route("/categories/<int:category_id>", methods=["DELETE"])
-def delete_category(category_id: int):
+def delete_category(category_id: int) -> ResponseReturnValue:
     """Delete a category.
 
     By default, returns 409 if the category is referenced by any bill templates
