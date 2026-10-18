@@ -1,6 +1,7 @@
 import json
 
 from flask import Blueprint, current_app, jsonify, request
+from flask.typing import ResponseReturnValue
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -26,7 +27,7 @@ pay_periods_bp = Blueprint("pay_periods", __name__)
 
 
 @pay_periods_bp.route("/pay-periods", methods=["GET"])
-def list_pay_periods():
+def list_pay_periods() -> ResponseReturnValue:
     """List all pay periods, ordered by start date descending."""
     session = db.get_session()
     try:
@@ -43,7 +44,7 @@ def list_pay_periods():
 
 
 @pay_periods_bp.route("/pay-periods/suggest", methods=["GET"])
-def suggest_pay_period():
+def suggest_pay_period() -> ResponseReturnValue:
     """Suggest dates for the next pay period based on the 6th/20th schedule."""
     from datetime import date
 
@@ -69,7 +70,7 @@ def suggest_pay_period():
 
 
 @pay_periods_bp.route("/pay-periods/<int:pay_period_id>", methods=["GET"])
-def get_pay_period(pay_period_id: int):
+def get_pay_period(pay_period_id: int) -> ResponseReturnValue:
     """Get a single pay period with calculated summary."""
     session = db.get_session()
     try:
@@ -93,7 +94,7 @@ def get_pay_period(pay_period_id: int):
 
 
 @pay_periods_bp.route("/pay-periods", methods=["POST"])
-def create_pay_period():
+def create_pay_period() -> ResponseReturnValue:
     """Create a new pay period."""
     try:
         data = PayPeriodCreate.model_validate(request.json)
@@ -131,7 +132,7 @@ def create_pay_period():
 
 
 @pay_periods_bp.route("/pay-periods/<int:pay_period_id>", methods=["PUT"])
-def update_pay_period(pay_period_id: int):
+def update_pay_period(pay_period_id: int) -> ResponseReturnValue:
     """Update a pay period."""
     try:
         data = PayPeriodUpdate.model_validate(request.json)
@@ -162,7 +163,7 @@ def update_pay_period(pay_period_id: int):
 
 
 @pay_periods_bp.route("/pay-periods/<int:pay_period_id>", methods=["DELETE"])
-def delete_pay_period(pay_period_id: int):
+def delete_pay_period(pay_period_id: int) -> ResponseReturnValue:
     """Delete a pay period and all associated bills/spending."""
     session = db.get_session()
     try:
@@ -185,7 +186,7 @@ def delete_pay_period(pay_period_id: int):
 @pay_periods_bp.route(
     "/pay-periods/<int:pay_period_id>/repopulate-bills", methods=["POST"]
 )
-def repopulate_pay_period_bills(pay_period_id: int):
+def repopulate_pay_period_bills(pay_period_id: int) -> ResponseReturnValue:
     """
     Re-populate bills for a single pay period from templates.
 
@@ -217,7 +218,7 @@ def repopulate_pay_period_bills(pay_period_id: int):
 
 
 @pay_periods_bp.route("/pay-periods/repopulate-all-bills", methods=["POST"])
-def repopulate_all_pay_period_bills():
+def repopulate_all_pay_period_bills() -> ResponseReturnValue:
     """
     Re-populate bills for ALL pay periods from templates.
 
