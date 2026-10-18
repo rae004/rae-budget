@@ -1,6 +1,7 @@
 import json
 
 from flask import Blueprint, current_app, jsonify, request
+from flask.typing import ResponseReturnValue
 from pydantic import ValidationError
 
 from app.extensions import db
@@ -15,7 +16,7 @@ bills_bp = Blueprint("bills", __name__)
 
 
 @bills_bp.route("/bills", methods=["GET"])
-def list_all_bills():
+def list_all_bills() -> ResponseReturnValue:
     """List all bills across every pay period (used by the Insights dashboard)."""
     session = db.get_session()
     try:
@@ -30,7 +31,7 @@ def list_all_bills():
 
 
 @bills_bp.route("/pay-periods/<int:pay_period_id>/bills", methods=["GET"])
-def list_bills(pay_period_id: int):
+def list_bills(pay_period_id: int) -> ResponseReturnValue:
     """List all bills for a pay period."""
     session = db.get_session()
     try:
@@ -48,7 +49,7 @@ def list_bills(pay_period_id: int):
 
 
 @bills_bp.route("/pay-periods/<int:pay_period_id>/bills", methods=["POST"])
-def create_bill(pay_period_id: int):
+def create_bill(pay_period_id: int) -> ResponseReturnValue:
     """Add a bill to a pay period."""
     try:
         data = PayPeriodBillCreate.model_validate(request.json)
@@ -86,7 +87,7 @@ def create_bill(pay_period_id: int):
 
 
 @bills_bp.route("/bills/<int:bill_id>", methods=["PUT"])
-def update_bill(bill_id: int):
+def update_bill(bill_id: int) -> ResponseReturnValue:
     """Update a bill."""
     try:
         data = PayPeriodBillUpdate.model_validate(request.json)
@@ -117,7 +118,7 @@ def update_bill(bill_id: int):
 
 
 @bills_bp.route("/bills/<int:bill_id>", methods=["DELETE"])
-def delete_bill(bill_id: int):
+def delete_bill(bill_id: int) -> ResponseReturnValue:
     """Delete a bill."""
     session = db.get_session()
     try:
