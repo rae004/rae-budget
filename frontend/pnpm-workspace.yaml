@@ -13,3 +13,6 @@ overrides:
   # GHSA-68fv-2mgg-jv7q — event-loop DoS via crafted source map input.
   # Pulled in through vite/vitest -> postcss -> source-map-js.
   source-map-js: '>=1.2.2'
+  # GHSA-4x5r-pxfx-6jf8 — arbitrary file read via sourceMappingURL comment.
+  # Dev-only; pulled in through eslint-plugin-react-hooks -> @babel/core.
+  '@babel/core': '>=7.29.6'
