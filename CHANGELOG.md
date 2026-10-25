@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.1](https://github.com/rae004/rae-budget/compare/v0.6.0...v0.6.1) (2026-10-25)
+
+
+### Bug Fixes
+
+* **deps:** bump undici floor and add zod override for new audit advisories ([aa22f5d](https://github.com/rae004/rae-budget/commit/aa22f5dd198dc0c41f3d8747b64a83e38e0d8875))
+* **deps:** resolve Mako and @babel/core Dependabot alerts ([06950c6](https://github.com/rae004/rae-budget/commit/06950c65e86a34e999b4cb671737a4e4fc466831))
+* **deps:** resolve Mako and @babel/core Dependabot alerts ([9579bf4](https://github.com/rae004/rae-budget/commit/9579bf4342a1da3e15ce10fb2523414985798f3a))
+
 ## [0.6.0](https://github.com/rae004/rae-budget/compare/v0.5.0...v0.6.0) (2026-10-17)
 
 
