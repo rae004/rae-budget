@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDeleteSpending, useUpdateSpending } from '../hooks/useSpending';
 import { useCategories } from '../hooks/useCategories';
+import { usePayPeriods } from '../hooks/usePayPeriods';
 import { useToast } from '../contexts/ToastContext';
 import { formatDate } from '../utils/date';
 import type { SpendingEntry } from '../types';
@@ -17,6 +18,7 @@ interface EditingEntry {
   spent_date: string;
   category_id: string;
   notes: string;
+  pay_period_id: number;
 }
 
 function formatCurrency(value: string | number): string {
@@ -32,6 +34,7 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
   const deleteSpending = useDeleteSpending();
   const updateSpending = useUpdateSpending();
   const { data: categories } = useCategories();
+  const { data: payPeriods } = usePayPeriods();
   const { showToast } = useToast();
 
   const getCategoryName = (categoryId: number | null): string => {
@@ -57,6 +60,7 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
       spent_date: entry.spent_date,
       category_id: entry.category_id?.toString() || '',
       notes: entry.notes || '',
+      pay_period_id: entry.pay_period_id,
     });
   };
 
@@ -77,6 +81,7 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
           spent_date: editingEntry.spent_date,
           category_id: editingEntry.category_id ? parseInt(editingEntry.category_id) : null,
           notes: editingEntry.notes || null,
+          pay_period_id: editingEntry.pay_period_id,
         },
       },
       {
@@ -211,21 +216,41 @@ export function SpendingTable({ entries, payPeriodId }: SpendingTableProps) {
                   </td>
                   <td className="font-mono">{formatCurrency(entry.runningTotal)}</td>
                   <td>
-                    <div className="flex gap-1">
-                      <button
-                        className="btn btn-success btn-xs"
-                        onClick={handleSaveEdit}
-                        disabled={updateSpending.isPending}
+                    <div className="flex flex-col gap-1">
+                      <select
+                        className="select select-bordered select-xs"
+                        value={editingEntry.pay_period_id}
+                        onChange={(e) => {
+                          const next = parseInt(e.target.value);
+                          if (!Number.isNaN(next)) {
+                            setEditingEntry({ ...editingEntry, pay_period_id: next });
+                          }
+                        }}
+                        aria-label="Pay period"
                       >
-                        {updateSpending.isPending ? '...' : 'Save'}
-                      </button>
-                      <button
-                        className="btn btn-ghost btn-xs"
-                        onClick={handleCancelEdit}
-                        disabled={updateSpending.isPending}
-                      >
-                        Cancel
-                      </button>
+                        {payPeriods?.map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {formatDate(p.start_date, { month: 'short', day: 'numeric' })} –{' '}
+                            {formatDate(p.end_date, { month: 'short', day: 'numeric' })}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="flex gap-1">
+                        <button
+                          className="btn btn-success btn-xs"
+                          onClick={handleSaveEdit}
+                          disabled={updateSpending.isPending}
+                        >
+                          {updateSpending.isPending ? '...' : 'Save'}
+                        </button>
+                        <button
+                          className="btn btn-ghost btn-xs"
+                          onClick={handleCancelEdit}
+                          disabled={updateSpending.isPending}
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
                   </td>
                 </tr>

@@ -63,9 +63,14 @@ export function useUpdateSpending() {
       payPeriodId: number;
       data: SpendingEntryUpdate;
     }) => api.put<SpendingEntry>(`/spending/${spendingId}`, data),
-    onSuccess: (_, { payPeriodId }) => {
+    onSuccess: (_, { payPeriodId, data }) => {
       queryClient.invalidateQueries({ queryKey: spendingKeys.list(payPeriodId) });
       queryClient.invalidateQueries({ queryKey: payPeriodKeys.detail(payPeriodId) });
+      if (data.pay_period_id && data.pay_period_id !== payPeriodId) {
+        queryClient.invalidateQueries({ queryKey: spendingKeys.list(data.pay_period_id) });
+        queryClient.invalidateQueries({ queryKey: payPeriodKeys.detail(data.pay_period_id) });
+      }
+      queryClient.invalidateQueries({ queryKey: spendingKeys.allEntries() });
     },
   });
 }

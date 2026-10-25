@@ -22,6 +22,7 @@ class SpendingEntryUpdate(BaseModel):
     spent_date: date | None = None
     category_id: int | None = None
     notes: str | None = Field(None, max_length=500)
+    pay_period_id: int | None = None
 
 
 class SpendingEntryResponse(SpendingEntryBase):

@@ -164,6 +164,7 @@ export interface SpendingEntryUpdate {
   spent_date?: string;
   category_id?: number | null;
   notes?: string | null;
+  pay_period_id?: number;
 }
 
 export interface SpendingDescriptionSuggestion {
