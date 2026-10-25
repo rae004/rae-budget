@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.0](https://github.com/rae004/rae-budget/compare/v0.6.1...v0.7.0) (2026-10-25)
+
+
+### Features
+
+* allow moving a spending entry to a different pay period ([bce34c8](https://github.com/rae004/rae-budget/commit/bce34c8cbaa36d14664e20bad21cb265f7a83e53))
+* allow moving a spending entry to a different pay period ([5d31f7b](https://github.com/rae004/rae-budget/commit/5d31f7b1b3f8230e541aefe636d6aa0a76dcaa72))
+
 ## [0.6.1](https://github.com/rae004/rae-budget/compare/v0.6.0...v0.6.1) (2026-10-25)
 
 
