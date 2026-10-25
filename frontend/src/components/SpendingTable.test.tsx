@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { SpendingTable } from "./SpendingTable";
 import { ToastProvider } from "../contexts/ToastContext";
-import type { SpendingEntry, Category } from "../types";
+import type { SpendingEntry, Category, PayPeriod } from "../types";
 
 const mockFetch = vi.fn();
 vi.stubGlobal("fetch", mockFetch);
@@ -16,6 +16,33 @@ const mockCategories: Category[] = [
     description: null,
     color: "#f59e0b",
     monthly_target: null,
+    created_at: "2026-04-01T00:00:00Z",
+    updated_at: "2026-04-01T00:00:00Z",
+  },
+];
+
+const mockPayPeriods: PayPeriod[] = [
+  {
+    id: 5,
+    start_date: "2026-04-06",
+    end_date: "2026-04-20",
+    expected_income: "2000.00",
+    actual_income: null,
+    additional_income: null,
+    additional_income_description: null,
+    notes: null,
+    created_at: "2026-04-01T00:00:00Z",
+    updated_at: "2026-04-01T00:00:00Z",
+  },
+  {
+    id: 6,
+    start_date: "2026-04-21",
+    end_date: "2026-05-05",
+    expected_income: "2000.00",
+    actual_income: null,
+    additional_income: null,
+    additional_income_description: null,
+    notes: null,
     created_at: "2026-04-01T00:00:00Z",
     updated_at: "2026-04-01T00:00:00Z",
   },
@@ -62,8 +89,9 @@ function createWrapper() {
 }
 
 function renderTable(entries: SpendingEntry[]) {
-  // Component fetches categories on mount via useCategories
+  // Component fetches categories and pay periods on mount
   mockFetch.mockResolvedValueOnce(jsonResponse(200, mockCategories));
+  mockFetch.mockResolvedValueOnce(jsonResponse(200, mockPayPeriods));
   return render(<SpendingTable entries={entries} payPeriodId={5} />, {
     wrapper: createWrapper(),
   });
@@ -149,6 +177,33 @@ describe("SpendingTable", () => {
         expect.objectContaining({
           method: "PUT",
           body: expect.stringContaining('"description":"Brunch"'),
+        })
+      );
+    });
+  });
+
+  it("Save after changing the pay period PUTs the new pay_period_id", async () => {
+    renderTable([baseEntry]);
+
+    fireEvent.click(screen.getByRole("button", { name: /Edit/i }));
+    const select = await screen.findByLabelText("Pay period");
+    // Wait for the pay periods query to resolve so the "6" option exists.
+    await waitFor(() => expect(within(select).getAllByRole("option")).toHaveLength(2));
+    fireEvent.change(select, {
+      target: { value: "6" },
+    });
+
+    mockFetch.mockResolvedValueOnce(jsonResponse(200, { ...baseEntry, pay_period_id: 6 }));
+    mockFetch.mockResolvedValue(jsonResponse(200, []));
+
+    fireEvent.click(screen.getByRole("button", { name: /Save/i }));
+
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledWith(
+        "/api/spending/1",
+        expect.objectContaining({
+          method: "PUT",
+          body: expect.stringContaining('"pay_period_id":6'),
         })
       );
     });

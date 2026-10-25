@@ -181,6 +181,13 @@ def update_spending(spending_id: int) -> ResponseReturnValue:
         if not entry:
             return jsonify({"error": "Spending entry not found"}), 404
 
+        if data.pay_period_id is not None:
+            new_pay_period = (
+                session.query(PayPeriod).filter_by(id=data.pay_period_id).first()
+            )
+            if not new_pay_period:
+                return jsonify({"error": "Pay period not found"}), 404
+
         update_data = data.model_dump(exclude_unset=True)
         for key, value in update_data.items():
             setattr(entry, key, value)

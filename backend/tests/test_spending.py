@@ -231,6 +231,34 @@ class TestUpdateSpending:
         )
         assert response.status_code == 404
 
+    def test_move_to_another_pay_period(self, client, session, sample_spending):
+        entry_id = sample_spending.id
+        other_period = PayPeriod(
+            start_date=date(2026, 4, 20),
+            end_date=date(2026, 5, 5),
+            expected_income=Decimal("2500.00"),
+        )
+        session.add(other_period)
+        session.commit()
+        other_period_id = other_period.id
+
+        response = client.put(
+            f"/api/spending/{entry_id}",
+            data=json.dumps({"pay_period_id": other_period_id}),
+            content_type="application/json",
+        )
+        assert response.status_code == 200
+        assert response.get_json()["pay_period_id"] == other_period_id
+
+    def test_move_to_nonexistent_pay_period(self, client, sample_spending):
+        entry_id = sample_spending.id
+        response = client.put(
+            f"/api/spending/{entry_id}",
+            data=json.dumps({"pay_period_id": 9999}),
+            content_type="application/json",
+        )
+        assert response.status_code == 404
+
 
 class TestDeleteSpending:
     """DELETE /api/spending/:id"""
