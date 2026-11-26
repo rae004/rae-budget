@@ -245,3 +245,11 @@ The database is seeded with common spending categories:
 - Personal, Savings, Other
 
 These can be edited or removed in the Settings page.
+
+## Repo settings
+
+GitHub settings for this repo (merge options, Actions permissions, the branch ruleset) come
+from the shared baseline in [`rae004/.github`](https://github.com/rae004/.github) and are
+applied from there. The only part kept here is
+[`.github/repo-settings.json`](.github/repo-settings.json), which lists the CI jobs that must
+pass before a PR can merge.
