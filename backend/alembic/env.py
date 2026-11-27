@@ -10,10 +10,9 @@ from alembic import context
 # Make `app` importable when alembic runs from /app or backend/
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from app import (
-    models,  # noqa: E402, F401  — side-effect: registers models on Base.metadata
-)
-from app.extensions import Base  # noqa: E402
+# Importing Base through the models package (not app.extensions) is what
+# registers every model on Base.metadata, which autogenerate compares against.
+from app.models import Base  # noqa: E402
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

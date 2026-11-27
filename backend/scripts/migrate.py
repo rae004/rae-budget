@@ -9,7 +9,6 @@ This handles both fresh installs and existing databases:
 """
 
 import os
-import sys
 
 from alembic.config import Config
 from sqlalchemy import create_engine, inspect
@@ -41,4 +40,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    sys.exit(main() or 0)
+    main()
