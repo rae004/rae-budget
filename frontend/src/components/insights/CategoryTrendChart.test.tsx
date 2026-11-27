@@ -147,7 +147,10 @@ describe('CategoryTrendTooltip', () => {
     );
     const grid = container.querySelector<HTMLElement>('.grid-flow-col');
     expect(grid).toBeInTheDocument();
-    // 12 rows → 6 per column, so the grid declares 6 template rows
-    expect(grid?.style.gridTemplateRows).toBe('repeat(6, minmax(0, auto))');
+    // 12 rows → 6 per column, so the grid declares 6 template rows.
+    // jsdom 31 reports the zero length as `0px` where jsdom 30 reports `0`.
+    expect(grid?.style.gridTemplateRows).toMatch(
+      /^repeat\(6, minmax\(0(px)?, auto\)\)$/,
+    );
   });
 });
