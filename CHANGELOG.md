@@ -1,5 +1,9 @@
 # Changelog
 
+Releases after 0.7.0 are tagged directly on the merged commit and documented on the
+[GitHub Releases page](https://github.com/rae004/rae-budget/releases); this file is
+no longer updated.
+
 ## [0.7.0](https://github.com/rae004/rae-budget/compare/v0.6.1...v0.7.0) (2026-10-25)
 
 

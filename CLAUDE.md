@@ -23,7 +23,7 @@ GitHub: <https://github.com/rae004/rae-budget>
 | Lint/format | Ruff (backend), ESLint (frontend) |
 | Local dev | Docker Compose |
 | CI | GitHub Actions, runs on `pull_request` AND `push: main`; uploads to Codecov (flagged `backend` / `frontend`) |
-| Releases | release-please (Conventional Commits → auto version bumps + tags + GitHub Releases) |
+| Releases | Shared workflow in `rae004/.github` (Conventional Commit PR titles → version tag + GitHub Release on the squash commit) |
 
 ---
 
@@ -46,7 +46,7 @@ rae-budget/
 │   ├── tests/                        # pytest tests (94% coverage)
 │   ├── entrypoint.sh                 # Runs migrate.py before flask run
 │   ├── Dockerfile
-│   └── pyproject.toml                # uv-managed deps; version is owned by release-please
+│   └── pyproject.toml                # uv-managed deps; version is a fixed 0.0.0 placeholder
 ├── frontend/
 │   ├── src/
 │   │   ├── components/               # React components (each with co-located *.test.tsx)
@@ -57,16 +57,15 @@ rae-budget/
 │   │   ├── test/                     # Vitest setup + shared render helpers
 │   │   ├── types/                    # TypeScript types (mirror backend response shapes)
 │   │   └── utils/                    # Date helpers (timezone-aware)
-│   └── package.json                  # version owned by release-please
+│   └── package.json                  # version is a fixed 0.0.0 placeholder
 ├── docs/                             # Implementation plans (historical reference)
 ├── scripts/                          # Local CI helpers (e.g., scripts/ci-local.sh)
 ├── .github/workflows/
 │   ├── ci.yml                        # Lint + test + build + Codecov upload
-│   └── release-please.yml            # Auto-release management
+│   ├── release.yml                   # Calls the shared release workflow
+│   └── pr-title.yml                  # Calls the shared PR-title check
 ├── docker-compose.yml                # `api` + `postgres` + `frontend` services
-├── release-please-config.json        # Synced versions across both packages
-├── .release-please-manifest.json     # Current released version (truth source)
-├── CHANGELOG.md                      # Owned by release-please
+├── CHANGELOG.md                      # Historical; stops at 0.7.0
 ├── LICENSE                           # Apache-2.0
 └── README.md
 ```
@@ -168,30 +167,33 @@ docker compose exec postgres psql -U rae_budget -d rae_budget -c "DROP DATABASE 
 
 ---
 
-## Releases & versioning (release-please)
+## Releases & versioning
 
-The frontend (`package.json`) and backend (`pyproject.toml`) versions are **kept in lockstep** by release-please. A single tag `vX.Y.Z` covers the whole repo.
+Releases are cut by the shared workflow in [`rae004/.github`](https://github.com/rae004/.github#releases). A single tag `vX.Y.Z` covers the whole repo, and the version lives **in git tags only**: `frontend/package.json` and `backend/pyproject.toml` carry a fixed `0.0.0` placeholder. Never bump them.
 
 ### Conventional Commit prefixes
+
+The **PR title** becomes the squash commit message and decides the version.
 
 | Prefix | Bump | Example |
 |---|---|---|
 | `feat:` | minor | `feat: add category management` |
-| `fix:` | patch | `fix: handle null amount in spending form` |
-| `feat!:` / `BREAKING CHANGE:` footer | major | `feat!: drop /api/v0/health` |
-| `chore:`, `docs:`, `test:`, `ci:`, `style:`, `refactor:`, `perf:`, `build:` | none (silent) | `test: add CategoryManagement.test.tsx` |
+| `fix:`, `perf:` | patch | `fix: handle null amount in spending form` |
+| `feat!:` / `BREAKING CHANGE:` footer | minor while on 0.x | `feat!: drop /api/v0/health` |
+| `chore:`, `docs:`, `test:`, `ci:`, `style:`, `refactor:`, `build:` | none | `test: add CategoryManagement.test.tsx` |
+
+1.0.0 is only ever cut by hand (`gh release create v1.0.0 --generate-notes`).
 
 ### Release flow
 
-1. Conventional commits land on `main` (via merged PRs)
-2. `release-please.yml` opens (or updates) a "release PR" titled `chore(main): release X.Y.Z` that bumps both version files + prepends a CHANGELOG entry
-3. Merging that release PR triggers the workflow again, which creates the tag `vX.Y.Z` + a GitHub Release
+1. A PR is squash-merged to `main`; its title is the commit message.
+2. `release.yml` calls the shared workflow, which looks at every commit since the last tag. If any calls for a release, it puts the tag `vX.Y.Z` and a GitHub Release directly on that commit.
 
-**You never write release commits manually.** release-please does it.
+There is no release PR and no release commit. `chore`/`docs`/`ci` merges release nothing and show up in the notes of the next release.
 
-### When commits aren't conventional
+### PR titles
 
-The user uses **merge commits** (not squash) for PRs. release-please reads every individual commit on main, so commits inside PRs need to be conventional. If a commit's prefix is non-conventional, release-please silently ignores it for version-bump purposes.
+A required check (`pr-title.yml`) rejects titles that are not Conventional Commits. Dependabot titles runtime bumps `fix(deps)` (patch release) and dev-only bumps `chore(deps-dev)` (no release).
 
 ---
 
@@ -209,7 +211,7 @@ The user uses **merge commits** (not squash) for PRs. release-please reads every
 
 `CODECOV_TOKEN` repo secret is required for uploads.
 
-`.github/workflows/release-please.yml` triggers on `push: main` and runs the release-please action.
+`.github/workflows/release.yml` triggers on `push: main` and calls the shared release workflow. `.github/workflows/pr-title.yml` checks the PR title.
 
 ---
 
@@ -277,7 +279,7 @@ To check current PR state: `gh pr list --state all --head <branch> --limit 5`. A
 These come from accumulated feedback. Honor them by default.
 
 - **Be concise.** Short answers; no repetition or decorative tables. Lead with the answer or fix in 1–3 sentences. Don't pre-emptively dump a tradeoff comparison; ask "want more detail?" if useful.
-- **Don't push squash-merge.** User uses merge commits. Their in-PR commits are conventional, so release-please reads them fine.
+- **PRs are squash-merged.** Merge commits are disabled. The PR title is the commit message and must be a Conventional Commit, because it decides the release.
 - **Don't deflect blame.** When something breaks, accept it as "ours" and pivot to the fix. Skip forensic arguments to prove I didn't cause it, even if technically right.
 - **Verify PR state before referencing it.** Don't say "pushed to PR #N" without confirming #N is still open. The user merges quickly; old PRs may be closed/merged when you push next.
 - **User prefers to run Docker commands themselves** in some cases. If they say "I'll run that" — wait for them.

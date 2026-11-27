@@ -8,6 +8,13 @@ updates:
     open-pull-requests-limit: 8
     cooldown:
       default-days: 7
+    # The PR title becomes the squash commit, and release.yml reads its type.
+    # A bump to a runtime dependency is a `fix`, so it cuts a patch release;
+    # a dev-only bump is a `chore` and releases nothing.
+    commit-message:
+      prefix: "fix"
+      prefix-development: "chore"
+      include: "scope"
     groups:
       tanstack:
         patterns:
@@ -71,6 +78,13 @@ updates:
     open-pull-requests-limit: 5
     cooldown:
       default-days: 7
+    # The PR title becomes the squash commit, and release.yml reads its type.
+    # A bump to a runtime dependency is a `fix`, so it cuts a patch release;
+    # a dev-only bump is a `chore` and releases nothing.
+    commit-message:
+      prefix: "fix"
+      prefix-development: "chore"
+      include: "scope"
     labels:
       - dependencies
       - backend
@@ -83,6 +97,10 @@ updates:
     open-pull-requests-limit: 5
     cooldown:
       default-days: 7
+    # Workflow-only changes never need a release.
+    commit-message:
+      prefix: "chore"
+      include: "scope"
     groups:
       # init and analyze must run the same version — CodeQL fails with
       # "Loaded a configuration file for version X, but running version Y"
