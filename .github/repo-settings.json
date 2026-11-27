@@ -6,6 +6,7 @@
     "Frontend Tests",
     "Frontend Lint",
     "Frontend Dependency Audit",
-    "Frontend Build"
+    "Frontend Build",
+    "title / Conventional title"
   ]
 }

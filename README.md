@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/rae004/rae-budget/actions/workflows/ci.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/rae004/rae-budget/branch/main/graph/badge.svg)](https://codecov.io/gh/rae004/rae-budget)
-[![Release](https://github.com/rae004/rae-budget/actions/workflows/release-please.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/release-please.yml)
-[![Version](https://img.shields.io/github/package-json/v/rae004/rae-budget?filename=frontend%2Fpackage.json&color=blue&label=version)](./CHANGELOG.md)
+[![Release](https://github.com/rae004/rae-budget/actions/workflows/release.yml/badge.svg)](https://github.com/rae004/rae-budget/actions/workflows/release.yml)
+[![Version](https://img.shields.io/github/v/release/rae004/rae-budget?color=blue&label=version)](https://github.com/rae004/rae-budget/releases)
 [![License](https://img.shields.io/github/license/rae004/rae-budget?color=blue)](./LICENSE)
 [![Python](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Frae004%2Frae-budget%2Fmain%2Fbackend%2Fpyproject.toml&query=%24.project.requires-python&label=Python&color=3776AB&logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-3-000000?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
@@ -196,10 +196,8 @@ rae-budget/
 ├── docs/                 # Historical implementation plans
 ├── scripts/              # Local CI helpers
 ├── .github/
-│   └── workflows/        # ci.yml + release-please.yml
+│   └── workflows/        # ci.yml, release.yml, pr-title.yml
 ├── docker-compose.yml
-├── release-please-config.json
-├── .release-please-manifest.json
 ├── CHANGELOG.md
 ├── LICENSE
 └── .env.example
@@ -207,14 +205,14 @@ rae-budget/
 
 ## Releases & Versioning
 
-Versions are managed automatically by [release-please](https://github.com/googleapis/release-please) based on [Conventional Commits](https://www.conventionalcommits.org/):
+Every PR is squash-merged with its title as the commit message, and the shared release workflow in [`rae004/.github`](https://github.com/rae004/.github#releases) tags that commit directly, based on [Conventional Commits](https://www.conventionalcommits.org/):
 
 - `feat:` → minor bump
-- `fix:` → patch bump
-- `feat!:` or `BREAKING CHANGE:` → major bump
-- `chore:`, `docs:`, `test:`, `ci:`, `style:`, `refactor:`, `build:`, `perf:` → no bump
+- `fix:`, `perf:` → patch bump
+- `feat!:` or `BREAKING CHANGE:` → minor bump while on 0.x (1.0.0 is only cut by hand)
+- `chore:`, `docs:`, `test:`, `ci:`, `style:`, `refactor:`, `build:` → no release
 
-When commits land on `main`, release-please opens a release PR that bumps both `frontend/package.json` and `backend/pyproject.toml` (kept in lockstep) and prepends a CHANGELOG section. Merging that PR creates the git tag (`vX.Y.Z`) and a GitHub Release.
+There is no release PR and no release commit. The version lives in git tags only (`vX.Y.Z`, one for the whole repo): `frontend/package.json` and `backend/pyproject.toml` carry a fixed `0.0.0` placeholder, and release notes are on the [Releases page](https://github.com/rae004/rae-budget/releases). A required check rejects PR titles that are not Conventional Commits.
 
 ## Pay Period Logic
 
