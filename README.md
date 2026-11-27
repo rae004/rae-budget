@@ -55,8 +55,8 @@ Personal budget tracking application for managing pay periods, bills, and spendi
 
 3. **Access the application**
    - Frontend: http://localhost:5173
-   - API: http://localhost:5000/api
-   - Health: http://localhost:5000/api/health
+   - API: http://localhost:5002/api
+   - Health: http://localhost:5002/api/health
 
 ### Running the frontend on the host instead
 

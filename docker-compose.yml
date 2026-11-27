@@ -31,7 +31,7 @@ services:
     volumes:
       - ./backend:/app
     ports:
-      - "5000:5000"
+      - "5002:5000"
     depends_on:
       postgres:
         condition: service_healthy
