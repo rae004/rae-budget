@@ -83,8 +83,8 @@ docker compose up -d
 
 # URLs
 # Frontend: http://localhost:5173
-# API:      http://localhost:5000/api
-# Health:   http://localhost:5000/api/health
+# API:      http://localhost:5002/api
+# Health:   http://localhost:5002/api/health
 ```
 
 If HMR feels slow under Docker on macOS, run Vite directly on the host instead:
